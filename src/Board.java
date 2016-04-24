@@ -1,6 +1,7 @@
 
 
 import javafx.geometry.Point2D;
+import jdk.management.cmm.SystemResourcePressureMXBean;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -209,8 +210,10 @@ public class Board extends JPanel implements ActionListener {
 
     private void resetBall(String msg){
         message = msg;
-        ball_x = getRandomBallX();
-        ball_y = getRandomBallY();
+//        ball_x = getRandomBallX();
+//        ball_y = getRandomBallY();
+        ball_x = pane_x/2;
+        ball_y = pane_y/2;
 
         BALL_SPEEDX = 1.2;
         BALL_SPEEDY = 0.9;
@@ -251,6 +254,18 @@ public class Board extends JPanel implements ActionListener {
                 e1.printStackTrace();
             }
         }
+        JSONObject key_event = UDPObject.getKeyEvent();
+        if(key_event==null){
+            System.out.println("null");
+        }
+        else{
+
+            String event_type = key_event.getString("event_type");
+            int key_event_code = key_event.getInt("key_event_code");
+            System.out.println(event_type+" "+key_event_code);
+            if(event_type.equals("Pressed")){paddles.keyPressed(key_event_code);}
+            else if(event_type.equals("Released")){paddles.keyReleased(key_event_code);}
+        }
 
         //check for pause
         if(paddles.Space == true){
@@ -279,14 +294,7 @@ public class Board extends JPanel implements ActionListener {
         }
         //apply input from keys
 
-        JSONObject key_event = UDPObject.getKeyEvent();
-        if(key_event==null){}
-        else{
-            String event_type = key_event.getString("event_type");
-            int key_event_code = key_event.getInt("key_event_code");
-            if(event_type.equals("Pressed")){paddles.keyPressed(key_event_code);}
-            else if(event_type.equals("Released")){paddles.keyReleased(key_event_code);}
-        }
+
         InputApply(gameMode);
 
 
