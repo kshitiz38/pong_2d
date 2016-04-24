@@ -456,6 +456,17 @@ public class Board extends JPanel implements ActionListener {
         ball_x += ball_vel_x * BALL_SPEEDX;
         ball_y += ball_vel_y * BALL_SPEEDY;
 
+        boolean virtualHost = UDPObject.getVirtualHost();
+        if(virtualHost) {
+            UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
+        }
+        else {
+            JSONObject ballPosition = UDPObject.getBallPosition();
+            ball_x = ballPosition.getDouble("ball_x");
+            ball_y = ballPosition.getDouble("ball_y");
+            ball_vel_x = ballPosition.getDouble("vel_x");
+            ball_vel_y = ballPosition.getDouble("vel_y");
+        }
         repaint();
 
     }

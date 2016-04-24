@@ -10,7 +10,9 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class UDP implements Runnable, WindowListener, ActionListener {
-    JSONObject key_event;
+    private boolean virtualHost;
+    private JSONObject key_event;
+    private JSONObject ballPosition;
     protected InetAddress group;
     protected int port;
     protected ArrayList<Machine> playerlist;
@@ -141,7 +143,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 //        connectMsg();
     }
 
-
+    public boolean getVirtualHost(){return virtualHost;}
     //send key event
     public void sendKeyEvent(int event_code, String type){
         JSONObject jsonObject= new JSONObject();
@@ -195,6 +197,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         } catch (IOException e) {
             handleIOException(e);
         }
+    }
+    public JSONObject getBallPosition(){
+        return ballPosition;
     }
 
     public void sendPaddleInfo(double paddle_x, double paddle_y, double vel_x, double vel_y, int paddle_id) {
@@ -426,7 +431,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
                 switch (msg_type) {
                     case "Ball_Moving":
-                        output.append(msg_type + "\n");
+                        ballPosition = jsonObject;
                         break;
                     case "Paddle_Moving":
                         break;
@@ -556,6 +561,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             public void actionPerformed(ActionEvent e) {
 
                 playMsg();
+                virtualHost = true;
 //                new Pong(udp);
             }
         });
