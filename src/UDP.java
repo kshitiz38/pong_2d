@@ -10,6 +10,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class UDP implements Runnable, WindowListener, ActionListener {
+    JSONObject key_event;
     protected InetAddress group;
     protected int port;
     protected ArrayList<Machine> playerlist;
@@ -138,6 +139,29 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     public void actionPerformed(ActionEvent event) {
 
 //        connectMsg();
+    }
+
+    //send key event
+    public void sendKeyEvent(int event_code, String type){
+        JSONObject jsonObject= new JSONObject();
+
+        jsonObject.put("key_event_code", event_code);
+        jsonObject.put("MessageType", "Key_Event");
+        jsonObject.put("event_type", type);
+        String jsonString = jsonObject.toString();
+        byte[] bytes = jsonString.getBytes();
+        outgoing.setData(bytes);
+        outgoing.setLength(bytes.length);
+        try {
+            socket.send(outgoing);
+        } catch (IOException e) {
+            handleIOException(e);
+        }
+    }
+
+    //retreiving keyEvent
+    public JSONObject getKeyEvent(){
+        return key_event;
     }
 
     // Send Message Stuff
@@ -403,6 +427,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Ack":
                         break;
                     case "Win":
+                        break;
+                    case "Key_Event":
+                        key_event=jsonObject;
                         break;
                     case "Start" :
                         System.out.println("Start");
