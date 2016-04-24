@@ -23,7 +23,7 @@ public class Pong extends JFrame {
         this.udp = udp;
         String gameMode = "Singl";
         String mode = gameMode;
-        Board board = new Board(mode);
+        Board board = new Board(mode,udp);
         add(board);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

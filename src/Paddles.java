@@ -25,9 +25,10 @@ public class Paddles {
 	 * true = pressed, false = not pressed
 	 */
 
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(int event_code) {
 
-        int key = e.getKeyCode();
+        int key =event_code;
+        //int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_RIGHT) {
             Right = true;
@@ -53,8 +54,10 @@ public class Paddles {
 
 
 
-    public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
+    public void keyReleased(int event_code) {
+
+        int key=event_code;
+        //int key = e.getKeyCode();
         if(key == KeyEvent.VK_RIGHT){
             Right = false;
         }

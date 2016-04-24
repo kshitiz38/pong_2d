@@ -1,6 +1,7 @@
 
 
 import javafx.geometry.Point2D;
+import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -80,6 +81,8 @@ public class Board extends JPanel implements ActionListener {
 
     private String gameMode;
 
+    private UDP UDPObject;
+
 
 
     //hand off key presses to the Paddles class.
@@ -87,11 +90,13 @@ public class Board extends JPanel implements ActionListener {
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
-            paddles.keyReleased(e);
+            paddles.keyReleased(e.getKeyCode());
+            UDPObject.sendKeyEvent(e.getKeyCode(), "Released");
         }
 
         public void keyPressed(KeyEvent e) {
-            paddles.keyPressed(e);
+            paddles.keyPressed(e.getKeyCode());
+            UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed");
         }
     }
 
@@ -111,12 +116,13 @@ public class Board extends JPanel implements ActionListener {
 //		System.out.println(rdmY);
         return rdmY;
     }
-    public Board(String mode) {
+    public Board(String mode,UDP UDPObject) {
         paddles = new Paddles();
         addKeyListener(new TAdapter());
         setFocusable(true);
         setBackground(Color.BLACK);
         this.gameMode = mode;
+        this.UDPObject=UDPObject;
 
         //create polygons used in the game
 //        paddleOne_one = new Rectangle(0,0,PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -273,7 +279,14 @@ public class Board extends JPanel implements ActionListener {
         }
         //apply input from keys
 
-
+        JSONObject key_event = UDPObject.getKeyEvent();
+        if(key_event==null){}
+        else{
+            String event_type = key_event.getString("event_type");
+            int key_event_code = key_event.getInt("key_event_code");
+            if(event_type.equals("Pressed")){paddles.keyPressed(key_event_code);}
+            else if(event_type.equals("Released")){paddles.keyReleased(key_event_code);}
+        }
         InputApply(gameMode);
 
 
