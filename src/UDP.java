@@ -377,6 +377,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
     TextArea textArea;
 
+    //run method for listener thread
     public void run() {
         try {
             while (!Thread.interrupted()) {
@@ -551,7 +552,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     }
 
 
-    ///
+
+    //main method
     public static void main(String[] args) throws IOException {
         if ((args.length != 1) || (!args[0].contains(":")))
             throw new IllegalArgumentException
