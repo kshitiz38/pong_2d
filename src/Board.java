@@ -447,6 +447,7 @@ public class Board extends JPanel implements ActionListener {
         ball_y += ball_vel_y * BALL_SPEEDY;
 
         boolean virtualHost = UDPObject.getVirtualHost();
+
         if (virtualHost) {
             UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
         } else {
@@ -456,11 +457,13 @@ public class Board extends JPanel implements ActionListener {
                 ball_y = ballPosition.getDouble("ball_y");
                 ball_vel_x = ballPosition.getDouble("vel_x");
                 ball_vel_y = ballPosition.getDouble("vel_y");
+                UDPObject.resetBallPosition();
             }
-        }
-        repaint();
 
-    }
+        }
+            repaint();
+
+        }
 
     public void InputApply(String mode) {
         //single player game mode
