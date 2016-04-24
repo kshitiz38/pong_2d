@@ -141,6 +141,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 //        connectMsg();
     }
 
+
     //send key event
     public void sendKeyEvent(int event_code, String type){
         JSONObject jsonObject= new JSONObject();
@@ -150,12 +151,22 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("event_type", type);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        outgoing.setData(bytes);
-        outgoing.setLength(bytes.length);
-        try {
-            socket.send(outgoing);
-        } catch (IOException e) {
-            handleIOException(e);
+        for (Machine machine : playerlist) {
+            InetAddress broadcast = null;
+            try {
+                broadcast = InetAddress.getByName(machine.getIp());
+//            broadcast = InetAddress.getByName("127.0.0.1");
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+//        outgoing.setData(bytes);
+//        outgoing.setLength(bytes.length);
+            try {
+                socket.send(startGame);
+            } catch (IOException e) {
+                handleIOException(e);
+            }
         }
     }
 
