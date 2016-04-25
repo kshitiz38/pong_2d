@@ -21,7 +21,6 @@ public class Pong extends JFrame {
     //creates the window and instantiates the game board
     public Pong(UDP udp) {
 
-        this("Multiplayer");
         this.udp = udp;
     }
 
