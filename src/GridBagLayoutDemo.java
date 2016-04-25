@@ -1,8 +1,7 @@
 import java.awt.*;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.*;
 
-public class GridBagLayoutDemo {
+public class GridBagLayoutDemo extends JWindow{
     final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;
     final static boolean RIGHT_TO_LEFT = false;
@@ -56,6 +55,19 @@ public class GridBagLayoutDemo {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.ipady = 0;       //reset to default
         c.weighty = 1.0;   //request any extra vertical space
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+        c.insets = new Insets(10,0,0,0);  //top padding
+        c.gridx = 1;       //aligned with button 2
+        c.gridwidth = 2;   //2 columns wide
+        c.gridy = 2;       //third row
+        pane.add(button, c);
+
+        button = new JButton("CLose");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.ipady = 0;       //reset to default
+        c.weighty = 1.0;   //request any extra vertical space
+        c.weightx = 0.5;
         c.anchor = GridBagConstraints.PAGE_END; //bottom of space
         c.insets = new Insets(10,0,0,0);  //top padding
         c.gridx = 1;       //aligned with button 2
