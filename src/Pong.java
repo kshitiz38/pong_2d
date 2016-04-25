@@ -20,10 +20,14 @@ public class Pong extends JFrame {
     UDP udp;
     //creates the window and instantiates the game board
     public Pong(UDP udp) {
+
+        this("Multiplayer");
         this.udp = udp;
-        String gameMode = "Singl";
-        String mode = gameMode;
-        Board board = new Board(mode,udp);
+    }
+
+    public Pong(String gameMode) {
+
+        Board board = new Board(gameMode,udp);
         add(board);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,7 +43,6 @@ public class Pong extends JFrame {
         //tell the board to update it's game state variables
         //to account for the setSize parameters above.
         board.Update_Dimensions();
-
     }
 
 //    public Pong(UDP udp) {

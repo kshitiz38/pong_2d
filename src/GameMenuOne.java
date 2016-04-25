@@ -37,11 +37,11 @@ public class GameMenuOne extends JFrame{
         container.setLayout(new BorderLayout());
         container.setBackground(Color.BLACK);
 
-        JPanel options = new JPanel();
-        options.setLayout(new GridBagLayout());
+        JPanel optionsMain = new JPanel();
+        optionsMain.setLayout(new GridBagLayout());
 
-//        options.setBorder(new LineBorder(Color.yellow));
-        options.setBackground(Color.BLACK);
+//        optionsMain.setBorder(new LineBorder(Color.yellow));
+        optionsMain.setBackground(Color.BLACK);
 
         JLabel title = new JLabel("Select an Option", JLabel.CENTER);
         title.setFont(new Font("Verdana", Font.PLAIN, 18));
@@ -79,10 +79,10 @@ public class GameMenuOne extends JFrame{
         gbc3.gridy = 3;
         gbc3.ipady = 5;
 
-        options.add(label,gbc);
-        options.add(label1,gbc1);
-        options.add(label2,gbc2);
-        options.add(label3,gbc3);
+        optionsMain.add(label,gbc);
+        optionsMain.add(label1,gbc1);
+        optionsMain.add(label2,gbc2);
+        optionsMain.add(label3,gbc3);
 
 
         JLabel labelDeveloper = new JLabel("Developed by BETABUGGERS", JLabel.CENTER);
@@ -90,7 +90,7 @@ public class GameMenuOne extends JFrame{
         labelDeveloper.setForeground(Color.WHITE);
 
         container.add(labelDeveloper, BorderLayout.SOUTH);
-        container.add(options, BorderLayout.CENTER);
+        container.add(optionsMain, BorderLayout.CENTER);
         container.add(title,BorderLayout.NORTH);
 
         setSize(500, 300);
@@ -103,6 +103,49 @@ public class GameMenuOne extends JFrame{
             public void mouseClicked(MouseEvent e)
             {
                 // TODO
+                JPanel optionsClassic = new JPanel();
+                optionsClassic.setLayout(new GridBagLayout());
+                optionsClassic.setBackground(Color.BLACK);
+
+                JLabel label = new JLabel("Single Player", JLabel.CENTER);
+                label.setFont(new Font("Verdana", Font.BOLD, 16));
+                label.setForeground(Color.WHITE);
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.fill = GridBagConstraints.RELATIVE;
+                gbc.gridy = 0;
+                gbc.ipady = 5;
+                label.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked(MouseEvent e)
+                    {
+                        new Pong("Single");
+                    }
+                });
+
+                JLabel label1 = new JLabel("Two Player", JLabel.CENTER);
+                label1.setFont(new Font("Verdana", Font.BOLD, 16));
+                label1.setForeground(Color.WHITE);
+                GridBagConstraints gbc1 = new GridBagConstraints();
+                gbc1.fill = GridBagConstraints.RELATIVE;
+                gbc1.gridy = 1;
+                gbc1.ipady = 5;
+
+                JLabel label2 = new JLabel("Back", JLabel.CENTER);
+                label2.setFont(new Font("Verdana", Font.BOLD, 16));
+                label2.setForeground(Color.WHITE);
+                GridBagConstraints gbc2 = new GridBagConstraints();
+                gbc2.fill = GridBagConstraints.RELATIVE;
+                gbc2.gridy = 2;
+                gbc2.ipady = 5;
+
+                optionsClassic.add(label, gbc);
+                optionsClassic.add(label1, gbc1);
+                optionsClassic.add(label2, gbc2);
+
+                container.remove(optionsMain);
+                container.add(optionsClassic, BorderLayout.CENTER);
+                container.revalidate();
             }
         });
 
@@ -149,6 +192,7 @@ public class GameMenuOne extends JFrame{
                 // TODO
             }
         });
+
 
 
 
