@@ -95,12 +95,14 @@ public class Board extends JPanel implements ActionListener {
 
         public void keyReleased(KeyEvent e) {
             paddles.keyReleased(e.getKeyCode());
-            UDPObject.sendKeyEvent(e.getKeyCode(), "Released");
+            if(UDPObject!=null)
+                UDPObject.sendKeyEvent(e.getKeyCode(), "Released");
         }
 
         public void keyPressed(KeyEvent e) {
             paddles.keyPressed(e.getKeyCode());
-            UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed");
+            if(UDPObject!=null)
+                UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed");
         }
     }
 
@@ -259,21 +261,23 @@ public class Board extends JPanel implements ActionListener {
                 e1.printStackTrace();
             }
         }
-        JSONObject key_event = UDPObject.getKeyEvent();
-        if (key_event == null) {
-            System.out.println("null");
-        } else {
+        JSONObject key_event;
+        if(UDPObject!=null) {
+            key_event = UDPObject.getKeyEvent();
+            if (key_event == null) {
+//                System.out.println("null");
+            } else {
 
-            String event_type = key_event.getString("event_type");
-            int key_event_code = key_event.getInt("key_event_code");
-            System.out.println(event_type + " " + key_event_code);
-            if (event_type.equals("Pressed")) {
-                paddles.keyPressed(key_event_code);
-            } else if (event_type.equals("Released")) {
-                paddles.keyReleased(key_event_code);
+                String event_type = key_event.getString("event_type");
+                int key_event_code = key_event.getInt("key_event_code");
+//                System.out.println(event_type + " " + key_event_code);
+                if (event_type.equals("Pressed")) {
+                    paddles.keyPressed(key_event_code);
+                } else if (event_type.equals("Released")) {
+                    paddles.keyReleased(key_event_code);
+                }
             }
         }
-
         //check for pause
         if (paddles.Space == true) {
             //wait for debounce
@@ -321,7 +325,7 @@ public class Board extends JPanel implements ActionListener {
             } else if (positiveYOne_one == positiveBallY) {
                 BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneY + PADDLE_HEIGHT / 2 - ball_y));
                 ball_vel_y *= 1;
-                System.out.println("X:" + ball_x + "  Y:" + ball_y + "SPEED: " + BALL_SPEEDX + "::" + BALL_SPEEDY);
+//                System.out.println("X:" + ball_x + "  Y:" + ball_y + "SPEED: " + BALL_SPEEDX + "::" + BALL_SPEEDY);
 
             } else {
                 BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneY + PADDLE_HEIGHT / 2 - ball_y));
@@ -449,23 +453,23 @@ public class Board extends JPanel implements ActionListener {
         ball_x += ball_vel_x * BALL_SPEEDX;
         ball_y += ball_vel_y * BALL_SPEEDY;
 
-        boolean virtualHost = UDPObject.getVirtualHost();
-
-        if (virtualHost) {
-            UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
-        } else {
-//            checkVirtualHost(UDPObject);
-            JSONObject ballPosition = UDPObject.getBallPosition();
-            if (ballPosition != null) {
-                ball_x = ballPosition.getDouble("ball_x");
-                ball_y = ballPosition.getDouble("ball_y");
-                ball_vel_x = ballPosition.getDouble("vel_x");
-                ball_vel_y = ballPosition.getDouble("vel_y");
-                UDPObject.resetBallPosition();
+        if(UDPObject!=null) {
+            boolean virtualHost = UDPObject.getVirtualHost();
+            if (virtualHost) {
+                UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
+            } else {
+                //            checkVirtualHost(UDPObject);
+                JSONObject ballPosition = UDPObject.getBallPosition();
+                if (ballPosition != null) {
+                    ball_x = ballPosition.getDouble("ball_x");
+                    ball_y = ballPosition.getDouble("ball_y");
+                    ball_vel_x = ballPosition.getDouble("vel_x");
+                    ball_vel_y = ballPosition.getDouble("vel_y");
+                    UDPObject.resetBallPosition();
+                }
             }
-
         }
-            repaint();
+        repaint();
 
         }
 
