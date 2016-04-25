@@ -91,7 +91,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         socket = new DatagramSocket(port);
         //socket.setTimeToLive (5);
         //socket.joinGroup (group);
-        outgoing = new DatagramPacket(new byte[1], 1, group, 1234);
+        outgoing = new DatagramPacket(new byte[1], 1);
         incoming = new DatagramPacket(new byte[65508], 65508);
     }
 
@@ -153,23 +153,24 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("event_type", type);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        for (Machine machine : playerlist) {
-            InetAddress broadcast = null;
-            try {
-                broadcast = InetAddress.getByName(machine.getIp());
-//            broadcast = InetAddress.getByName("127.0.0.1");
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
-//        outgoing.setData(bytes);
-//        outgoing.setLength(bytes.length);
-            try {
-                socket.send(startGame);
-            } catch (IOException e) {
-                handleIOException(e);
-            }
-        }
+//        for (Machine machine : playerlist) {
+//            InetAddress broadcast = null;
+//            try {
+//                broadcast = InetAddress.getByName(machine.getIp());
+////            broadcast = InetAddress.getByName("127.0.0.1");
+//            } catch (UnknownHostException e) {
+//                e.printStackTrace();
+//            }
+//            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+////        outgoing.setData(bytes);
+////        outgoing.setLength(bytes.length);
+//            try {
+//                socket.send(startGame);
+//            } catch (IOException e) {
+//                handleIOException(e);
+//            }
+//        }
+        sendToPlayers(bytes);
     }
 
     //retreiving keyEvent
@@ -190,23 +191,24 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        for (Machine machine : playerlist) {
-            InetAddress broadcast = null;
-            try {
-                broadcast = InetAddress.getByName(machine.getIp());
-//            broadcast = InetAddress.getByName("127.0.0.1");
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
-//        outgoing.setData(bytes);
-//        outgoing.setLength(bytes.length);
-            try {
-                socket.send(startGame);
-            } catch (IOException e) {
-                handleIOException(e);
-            }
-        }
+//        for (Machine machine : playerlist) {
+//            InetAddress broadcast = null;
+//            try {
+//                broadcast = InetAddress.getByName(machine.getIp());
+////            broadcast = InetAddress.getByName("127.0.0.1");
+//            } catch (UnknownHostException e) {
+//                e.printStackTrace();
+//            }
+//            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+////        outgoing.setData(bytes);
+////        outgoing.setLength(bytes.length);
+//            try {
+//                socket.send(startGame);
+//            } catch (IOException e) {
+//                handleIOException(e);
+//            }
+//        }
+        sendToPlayers(bytes);
     }
     public JSONObject getBallPosition(){
         return ballPosition;
@@ -610,7 +612,29 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         frame.setVisible(true);
     }
 
+    public void sendToPlayers(byte[] bytes){ //method to send json object to all including the player itself
+        for (Machine machine : playerlist) {
+            if(!(machine.getIp().equals(group.getHostAddress())))
+            {
+                InetAddress broadcast = null;
+                try {
+                    broadcast = InetAddress.getByName(machine.getIp());
+//            broadcast = InetAddress.getByName("127.0.0.1");
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+                DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+//        outgoing.setData(bytes);
+//        outgoing.setLength(bytes.length);
+                try {
+                    socket.send(startGame);
+                } catch (IOException e) {
+                    handleIOException(e);
+                }
+            }
 
+        }
+    }
 
     //main method
     public static void main(String[] args) throws IOException {
