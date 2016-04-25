@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+import static com.sun.glass.ui.Cursor.setVisible;
+
 public class UDP implements Runnable, WindowListener, ActionListener {
     private boolean virtualHost;
     private JSONObject key_event;
@@ -16,7 +18,18 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     protected InetAddress group;
     protected int port;
     protected ArrayList<Machine> playerlist;
-    static UDP udp;
+    private static UDP udp;
+    private long acknum = 0;
+
+    public ArrayList<Machine> getPlayerlist() {
+        return playerlist;
+    }
+
+    public void setPlayerlist(ArrayList<Machine> playerlist) {
+        this.playerlist = playerlist;
+    }
+
+    protected JFrame frameMain;
 
     public UDP(InetAddress group, int port) {
         this.group = group;
@@ -96,7 +109,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     }
 
     public synchronized void stop() throws IOException {
-        frame.setVisible(false);
+        //frame.setVisible(false);
         if (listener != null) {
             listener.interrupt();
             listener = null;
@@ -374,6 +387,33 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
+    public void leaveRoomMsg(){
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("MessageType", "checkRoom");
+        jsonObject.put("connect", false);
+//        jsonObject.put("Messagetype",Messagetype);
+
+        String jsonString = jsonObject.toString(); //only for string data ?? put(String,bool)??
+        byte[] bytes = jsonString.getBytes();
+        InetAddress broadcast = null;
+        try {
+            broadcast = InetAddress.getByName("255.255.255.255");
+//            broadcast = InetAddress.getByName("127.0.0.1");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        DatagramPacket lobbyServer = new DatagramPacket(bytes, bytes.length, broadcast, 1235);
+//        outgoing.setData(bytes);
+//        outgoing.setLength(bytes.length);
+        try {
+            socket.send(lobbyServer);
+        } catch (IOException e) {
+            handleIOException(e);
+        }
+    }
+
+
     public void connectMsg() {
         JSONObject jsonObject = new JSONObject();
 
@@ -417,9 +457,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     //
     protected synchronized void handleIOException(IOException ex) {
         if (listener != null) {
-            output.append(ex + "\n");
-            input.setVisible(false);
-            frame.validate();
+//            output.append(ex + "\n");
+//            input.setVisible(false);
+//            frame.validate();
             if (listener != Thread.currentThread())
                 listener.interrupt();
             listener = null;
@@ -428,6 +468,24 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             //} catch (IOException ignored) {
             //}
             socket.close();
+        }
+    }
+
+    public void isConnected(){
+        try {
+            InetAddress inetAddress = InetAddress.getByName(playerlist.get(0).getIp());
+            int port = playerlist.get(0).getPort();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("MessageType","isConnected");
+
+            byte[] bytes = jsonObject.toString().getBytes();
+
+            DatagramPacket packet = new DatagramPacket(bytes,bytes.length,inetAddress,port);
+            socket.send(packet);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -445,9 +503,14 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
                 String msg_type = jsonObject.getString("MessageType");
 
+
                 switch (msg_type) {
                     case "Ball_Moving":
+//                        output.append(msg_type + "\n");
                         ballPosition = jsonObject;
+                        break;
+                    case "isConnected":
+                        sendAck();
                         break;
                     case "Paddle_Moving":
                         break;
@@ -458,6 +521,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Paddle_Remove":
                         break;
                     case "Ack":
+                        acknum++;
                         break;
                     case "Win":
                         break;
@@ -467,6 +531,38 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Start" :
                         System.out.println("Start");
                         new Pong(udp);
+                        Thread sendPackets = new Thread(){
+                            long sentnum = 0;
+                            @Override
+                            public void run() {
+                                //sendPacketof isConnected
+
+                                while (!virtualHost) {
+                                    isConnected();
+                                    try {
+                                        Thread.sleep(200);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if ((sentnum - acknum) > 5) {
+                                        if (playerlist.size() > 1) {
+                                            if (playerlist.get(1).getIp().equals(group.getHostAddress()))
+                                                virtualHost = true;
+                                        }
+
+                                        ArrayList<Machine> newarraylist = new ArrayList<>();
+                                        for (int i = 0; i < playerlist.size(); i++) {
+                                            if (i > 0) {
+                                                newarraylist.add(playerlist.get(i));
+                                            }
+                                        }
+                                        setPlayerlist(newarraylist);
+                                    }
+                                    sentnum++;
+                                }
+                            }
+                        };
+                        sendPackets.start();
                         break;
                     case "lobbyResp":
 
@@ -495,6 +591,14 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
+    public void sendAck() {
+        JSONObject jsonobject = new JSONObject();
+        jsonobject.put("MessageType","Ack");
+        byte[] bytes = jsonobject.toString().getBytes();
+        sendToPlayers(bytes);
+    }
+
+
     ///
     final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;
@@ -505,7 +609,13 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             pane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         }
 
-        JButton button;
+        JButton buttonCreateRoom;
+        JButton buttonJoinRoom;
+        JButton buttonCheckPlayer;
+        JButton buttonPlay;
+        JButton buttonClose;
+        JButton buttonDisconnect;
+
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         if (shouldFill) {
@@ -513,8 +623,120 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             c.fill = GridBagConstraints.HORIZONTAL;
         }
 
-        button = new JButton("Create Room");
-        button.addActionListener(new ActionListener() {
+
+        buttonCreateRoom = new JButton("Create Room");
+        if (shouldWeightX) {
+            c.weightx = 0.5;
+        }
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        pane.add(buttonCreateRoom, c);
+
+        buttonJoinRoom = new JButton("Join Room");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 1;
+        c.gridy = 0;
+        pane.add(buttonJoinRoom, c);
+
+        buttonCheckPlayer = new JButton("CheckPlayers");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridy = 0;
+        pane.add(buttonCheckPlayer, c);
+
+        textArea = new TextArea();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.ipady = 40;      //make this component tall
+        c.weightx = 0.0;
+        c.gridwidth = 3;
+        c.gridx = 0;
+        c.gridy = 1;
+        pane.add(textArea, c);
+
+//<<<<<<< HEAD
+//        button = new JButton("Play");
+//        button.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//
+//                playMsg();
+//                virtualHost = true;
+////                new Pong(udp);
+//            }
+//        });
+//=======
+        buttonPlay = new JButton("Play");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.ipady = 0;       //reset to default
+        c.weighty = 1.0;   //request any extra vertical space
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+        c.insets = new Insets(10, 0, 0, 0);  //top padding
+        c.gridx = 2;       //aligned with button 2
+        c.gridwidth = 1;   //2 columns wide
+        c.gridy = 2;       //third row
+        pane.add(buttonPlay, c);
+
+
+        buttonClose = new JButton("Close");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.ipady = 0;       //reset to default
+        c.weighty = 1.0;   //request any extra vertical space
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+        c.insets = new Insets(10, 0, 0, 0);  //top padding
+        c.gridx = 0;       //aligned with button 2
+        c.gridwidth = 1;   //2 columns wide
+        c.gridy = 2;       //third row
+        pane.add(buttonClose, c);
+
+
+        buttonDisconnect = new JButton("Disconnect");
+//>>>>>>> dc977fedb654b34dc6e7d05dcc18f680146828cf
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.ipady = 0;       //reset to default
+        c.weighty = 1.0;   //request any extra vertical space
+        c.weightx = 1.5;
+        c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+        c.insets = new Insets(10, 0, 0, 0);  //top padding
+        c.gridx = 1;       //aligned with button 2
+        c.gridwidth = 1;   //2 columns wide
+        c.gridy = 2;       //third row
+        pane.add(buttonDisconnect, c);
+
+        buttonCreateRoom.setBorderPainted(true);
+        buttonCreateRoom.setFocusPainted(false);
+        buttonCreateRoom.setContentAreaFilled(false);
+
+        buttonJoinRoom.setBorderPainted(true);
+        buttonJoinRoom.setFocusPainted(false);
+        buttonJoinRoom.setContentAreaFilled(false);
+
+        buttonCheckPlayer.setBorderPainted(true);
+        buttonCheckPlayer.setFocusPainted(false);
+        buttonCheckPlayer.setContentAreaFilled(false);
+
+        buttonClose.setBorderPainted(true);
+        buttonClose.setFocusPainted(false);
+        buttonClose.setContentAreaFilled(false);
+
+        buttonDisconnect.setBorderPainted(true);
+        buttonDisconnect.setFocusPainted(false);
+        buttonDisconnect.setContentAreaFilled(false);
+
+        buttonPlay.setBorderPainted(true);
+        buttonPlay.setFocusPainted(false);
+        buttonPlay.setContentAreaFilled(false);
+
+
+        buttonCheckPlayer.setEnabled(false);
+        buttonDisconnect.setEnabled(false);
+        buttonPlay.setEnabled(false);
+
+        buttonCreateRoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 //                lobbyServer = new LobbyServer();
@@ -526,71 +748,77 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                 };
                 threadLobby.start();
                 connectMsg();
+                buttonCreateRoom.setEnabled(false);
+                buttonJoinRoom.setEnabled(false);
+                buttonCheckPlayer.setEnabled(true);
+                buttonDisconnect.setEnabled(true);
+                buttonPlay.setEnabled(true);
             }
         });
-        if (shouldWeightX) {
-            c.weightx = 0.5;
-        }
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        pane.add(button, c);
 
-        button = new JButton("Join Room");
-        button.addActionListener(new ActionListener() {
+        buttonJoinRoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 connectMsg();
+                buttonJoinRoom.setEnabled(false);
+                buttonCreateRoom.setEnabled(false);
+                buttonCheckPlayer.setEnabled(true);
+                buttonDisconnect.setEnabled(true);
+                buttonPlay.setEnabled(true);
             }
         });
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 1;
-        c.gridy = 0;
-        pane.add(button, c);
 
-        button = new JButton("CheckPlayers");
-        button.addActionListener(new ActionListener() {
+        buttonDisconnect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                checkRoomMsg();
+                leaveRoomMsg();
+                playerlist = new ArrayList<Machine>();
+                //socket.disconnect();
+                lobbyServer.closeSocket();
+                buttonJoinRoom.setEnabled(true);
+                buttonCreateRoom.setEnabled(true);
+                buttonCheckPlayer.setEnabled(false);
+                buttonDisconnect.setEnabled(false);
+                buttonPlay.setEnabled(false);
             }
         });
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 2;
-        c.gridy = 0;
-        pane.add(button, c);
 
-        textArea = new TextArea();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipady = 40;      //make this component tall
-        c.weightx = 0.0;
-        c.gridwidth = 3;
-        c.gridx = 0;
-        c.gridy = 1;
-        pane.add(textArea, c);
-
-        button = new JButton("Play");
-        button.addActionListener(new ActionListener() {
+        buttonClose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                frameMain.setVisible(false);
+                lobbyServer.closeSocket();
+                socket.disconnect();
+                socket.close();
+                listener.interrupt();
+                listener = null;
+            }
+        });
 
+
+        buttonPlay.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 playMsg();
                 virtualHost = true;
+                //
+
+
+                //
 //                new Pong(udp);
             }
         });
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipady = 0;       //reset to default
-        c.weighty = 1.0;   //request any extra vertical space
-        c.anchor = GridBagConstraints.PAGE_END; //bottom of space
-        c.insets = new Insets(10, 0, 0, 0);  //top padding
-        c.gridx = 1;       //aligned with button 2
-        c.gridwidth = 2;   //2 columns wide
-        c.gridy = 2;       //third row
 
-        pane.add(button, c);
+        buttonCheckPlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkRoomMsg();
+                buttonJoinRoom.setEnabled(false);
+                buttonCheckPlayer.setEnabled(true);
+                buttonDisconnect.setEnabled(true);
+                buttonPlay.setEnabled(true);
+            }
+        });
     }
 
 
@@ -601,18 +829,19 @@ public class UDP implements Runnable, WindowListener, ActionListener {
      */
     private void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("GridBagLayoutDemo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameMain = new JFrame("Multiplayer");
+        frameMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Set up the content pane.
-        addComponentsToPane(frame.getContentPane());
-
+        addComponentsToPane(frameMain.getContentPane());
         //Display the window.
-        frame.pack();
-        frame.setVisible(true);
+//frame.setUndecorated(true);
+        frameMain.pack();
+        frameMain.setLocationRelativeTo(null);
+        frameMain.setVisible(true);
     }
 
-    public void sendToPlayers(byte[] bytes){ //method to send json object to all including the player itself
+    public void sendToPlayers(byte[] bytes){ //method to send json object to all excluding itself
         for (Machine machine : playerlist) {
             if(!(machine.getIp().equals(group.getHostAddress())))
             {
@@ -636,20 +865,26 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
-    //main method
-    public static void main(String[] args) throws IOException {
-        if ((args.length != 1) || (!args[0].contains(":")))
-            throw new IllegalArgumentException
-                    ("Syntax: UDP <group>:<port>");
+//    //main method
 
-        int idx = args[0].indexOf(":");
-        InetAddress group = InetAddress.getByName(args[0].substring(0, idx));
-        int port = Integer.parseInt(args[0].substring(idx + 1));
 
-        UDP pong = new UDP(group, port);
-        udp = pong;
-        pong.start();
+    public void setUDP(UDP udp) {
+        this.udp = udp;
     }
+    ///
+//    public static void main(String[] args) throws IOException {
+//        if ((args.length != 1) || (!args[0].contains(":")))
+//            throw new IllegalArgumentException
+//                    ("Syntax: UDP <group>:<port>");
+//
+//        int idx = args[0].indexOf(":");
+//        InetAddress group = InetAddress.getByName(args[0].substring(0, idx));
+//        int port = Integer.parseInt(args[0].substring(idx + 1));
+//
+//        UDP pong = new UDP(group, port);
+//        udp = pong;
+//        pong.start();
+//    }
 
 
 }

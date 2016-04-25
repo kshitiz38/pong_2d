@@ -16,6 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Board extends JPanel implements ActionListener {
@@ -451,6 +454,7 @@ public class Board extends JPanel implements ActionListener {
         if (virtualHost) {
             UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
         } else {
+//            checkVirtualHost(UDPObject);
             JSONObject ballPosition = UDPObject.getBallPosition();
             if (ballPosition != null) {
                 ball_x = ballPosition.getDouble("ball_x");
@@ -464,6 +468,19 @@ public class Board extends JPanel implements ActionListener {
             repaint();
 
         }
+
+    public synchronized void checkVirtualHost(UDP udpObject) {
+        ArrayList<Machine> arraylist = udpObject.getPlayerlist();
+        Machine machine = arraylist.get(0);
+        InetAddress inet = null;
+        try {
+            inet = InetAddress.getByName(machine.getIp());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        int port = machine.getPort();
+
+    }
 
     public void InputApply(String mode) {
         //single player game mode

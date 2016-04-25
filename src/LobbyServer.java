@@ -206,6 +206,11 @@ public class LobbyServer {//implements Runnable {//Lobby server will be hosted o
     private void handleIOException(IOException e) {
         e.printStackTrace();
     }
+
+    public void closeSocket() {
+        socket.disconnect();
+        socket.close();
+    }
 }
 
 //    public static void main(String[] args) {
