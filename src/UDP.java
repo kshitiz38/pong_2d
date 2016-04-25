@@ -698,6 +698,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         buttonClose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                leaveRoomMsg();
                 frameMain.setVisible(false);
                 lobbyServer.closeSocket();
                 socket.disconnect();
