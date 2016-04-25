@@ -19,6 +19,15 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     protected int port;
     protected ArrayList<Machine> playerlist;
     private static UDP udp;
+    private long acknum = 0;
+
+    public ArrayList<Machine> getPlayerlist() {
+        return playerlist;
+    }
+
+    public void setPlayerlist(ArrayList<Machine> playerlist) {
+        this.playerlist = playerlist;
+    }
 
     protected JFrame frameMain;
 
@@ -95,7 +104,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         socket = new DatagramSocket(port);
         //socket.setTimeToLive (5);
         //socket.joinGroup (group);
-        outgoing = new DatagramPacket(new byte[1], 1, group, 1234);
+        outgoing = new DatagramPacket(new byte[1], 1);
         incoming = new DatagramPacket(new byte[65508], 65508);
     }
 
@@ -157,23 +166,24 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("event_type", type);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        for (Machine machine : playerlist) {
-            InetAddress broadcast = null;
-            try {
-                broadcast = InetAddress.getByName(machine.getIp());
-//            broadcast = InetAddress.getByName("127.0.0.1");
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
-//        outgoing.setData(bytes);
-//        outgoing.setLength(bytes.length);
-            try {
-                socket.send(startGame);
-            } catch (IOException e) {
-                handleIOException(e);
-            }
-        }
+//        for (Machine machine : playerlist) {
+//            InetAddress broadcast = null;
+//            try {
+//                broadcast = InetAddress.getByName(machine.getIp());
+////            broadcast = InetAddress.getByName("127.0.0.1");
+//            } catch (UnknownHostException e) {
+//                e.printStackTrace();
+//            }
+//            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+////        outgoing.setData(bytes);
+////        outgoing.setLength(bytes.length);
+//            try {
+//                socket.send(startGame);
+//            } catch (IOException e) {
+//                handleIOException(e);
+//            }
+//        }
+        sendToPlayers(bytes);
     }
 
     //retreiving keyEvent
@@ -194,23 +204,24 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        for (Machine machine : playerlist) {
-            InetAddress broadcast = null;
-            try {
-                broadcast = InetAddress.getByName(machine.getIp());
-//            broadcast = InetAddress.getByName("127.0.0.1");
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
-//        outgoing.setData(bytes);
-//        outgoing.setLength(bytes.length);
-            try {
-                socket.send(startGame);
-            } catch (IOException e) {
-                handleIOException(e);
-            }
-        }
+//        for (Machine machine : playerlist) {
+//            InetAddress broadcast = null;
+//            try {
+//                broadcast = InetAddress.getByName(machine.getIp());
+////            broadcast = InetAddress.getByName("127.0.0.1");
+//            } catch (UnknownHostException e) {
+//                e.printStackTrace();
+//            }
+//            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+////        outgoing.setData(bytes);
+////        outgoing.setLength(bytes.length);
+//            try {
+//                socket.send(startGame);
+//            } catch (IOException e) {
+//                handleIOException(e);
+//            }
+//        }
+        sendToPlayers(bytes);
     }
     public JSONObject getBallPosition(){
         return ballPosition;
@@ -460,8 +471,27 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
+    public void isConnected(){
+        try {
+            InetAddress inetAddress = InetAddress.getByName(playerlist.get(0).getIp());
+            int port = playerlist.get(0).getPort();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("MessageType","isConnected");
+
+            byte[] bytes = jsonObject.toString().getBytes();
+
+            DatagramPacket packet = new DatagramPacket(bytes,bytes.length,inetAddress,port);
+            socket.send(packet);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     TextArea textArea;
 
+    //run method for listener thread
     public void run() {
         try {
             while (!Thread.interrupted()) {
@@ -473,10 +503,14 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
                 String msg_type = jsonObject.getString("MessageType");
 
+
                 switch (msg_type) {
                     case "Ball_Moving":
 //                        output.append(msg_type + "\n");
                         ballPosition = jsonObject;
+                        break;
+                    case "isConnected":
+                        sendAck();
                         break;
                     case "Paddle_Moving":
                         break;
@@ -487,6 +521,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Paddle_Remove":
                         break;
                     case "Ack":
+                        acknum++;
                         break;
                     case "Win":
                         break;
@@ -496,6 +531,38 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Start" :
                         System.out.println("Start");
                         new Pong(udp);
+                        Thread sendPackets = new Thread(){
+                            long sentnum = 0;
+                            @Override
+                            public void run() {
+                                //sendPacketof isConnected
+
+                                while (!virtualHost) {
+                                    isConnected();
+                                    try {
+                                        Thread.sleep(200);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if ((sentnum - acknum) > 5) {
+                                        if (playerlist.size() > 1) {
+                                            if (playerlist.get(1).getIp().equals(group.getHostAddress()))
+                                                virtualHost = true;
+                                        }
+
+                                        ArrayList<Machine> newarraylist = new ArrayList<>();
+                                        for (int i = 0; i < playerlist.size(); i++) {
+                                            if (i > 0) {
+                                                newarraylist.add(playerlist.get(i));
+                                            }
+                                        }
+                                        setPlayerlist(newarraylist);
+                                    }
+                                    sentnum++;
+                                }
+                            }
+                        };
+                        sendPackets.start();
                         break;
                     case "lobbyResp":
 
@@ -523,6 +590,14 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             handleIOException(ex);
         }
     }
+
+    public void sendAck() {
+        JSONObject jsonobject = new JSONObject();
+        jsonobject.put("MessageType","Ack");
+        byte[] bytes = jsonobject.toString().getBytes();
+        sendToPlayers(bytes);
+    }
+
 
     ///
     final static boolean shouldFill = true;
@@ -581,6 +656,18 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         c.gridy = 1;
         pane.add(textArea, c);
 
+//<<<<<<< HEAD
+//        button = new JButton("Play");
+//        button.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//
+//                playMsg();
+//                virtualHost = true;
+////                new Pong(udp);
+//            }
+//        });
+//=======
         buttonPlay = new JButton("Play");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.ipady = 0;       //reset to default
@@ -608,6 +695,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
 
         buttonDisconnect = new JButton("Disconnect");
+//>>>>>>> dc977fedb654b34dc6e7d05dcc18f680146828cf
         c.fill = GridBagConstraints.HORIZONTAL;
         c.ipady = 0;       //reset to default
         c.weighty = 1.0;   //request any extra vertical space
@@ -714,6 +802,10 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             public void actionPerformed(ActionEvent e) {
                 playMsg();
                 virtualHost = true;
+                //
+
+
+                //
 //                new Pong(udp);
             }
         });
@@ -744,13 +836,39 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         //Set up the content pane.
         addComponentsToPane(frameMain.getContentPane());
         //Display the window.
-        //frame.setUndecorated(true);
+//frame.setUndecorated(true);
         frameMain.pack();
         frameMain.setLocationRelativeTo(null);
         frameMain.setVisible(true);
-
-
     }
+
+    public void sendToPlayers(byte[] bytes){ //method to send json object to all excluding itself
+        for (Machine machine : playerlist) {
+            if(!(machine.getIp().equals(group.getHostAddress())))
+            {
+                InetAddress broadcast = null;
+                try {
+                    broadcast = InetAddress.getByName(machine.getIp());
+//            broadcast = InetAddress.getByName("127.0.0.1");
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+                DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+//        outgoing.setData(bytes);
+//        outgoing.setLength(bytes.length);
+                try {
+                    socket.send(startGame);
+                } catch (IOException e) {
+                    handleIOException(e);
+                }
+            }
+
+        }
+    }
+
+//    //main method
+
+
     public void setUDP(UDP udp) {
         this.udp = udp;
     }
