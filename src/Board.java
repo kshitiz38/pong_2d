@@ -265,12 +265,12 @@ public class Board extends JPanel implements ActionListener {
         if(UDPObject!=null) {
             key_event = UDPObject.getKeyEvent();
             if (key_event == null) {
-                System.out.println("null");
+//                System.out.println("null");
             } else {
 
                 String event_type = key_event.getString("event_type");
                 int key_event_code = key_event.getInt("key_event_code");
-                System.out.println(event_type + " " + key_event_code);
+//                System.out.println(event_type + " " + key_event_code);
                 if (event_type.equals("Pressed")) {
                     paddles.keyPressed(key_event_code);
                 } else if (event_type.equals("Released")) {
@@ -325,7 +325,7 @@ public class Board extends JPanel implements ActionListener {
             } else if (positiveYOne_one == positiveBallY) {
                 BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneY + PADDLE_HEIGHT / 2 - ball_y));
                 ball_vel_y *= 1;
-                System.out.println("X:" + ball_x + "  Y:" + ball_y + "SPEED: " + BALL_SPEEDX + "::" + BALL_SPEEDY);
+//                System.out.println("X:" + ball_x + "  Y:" + ball_y + "SPEED: " + BALL_SPEEDX + "::" + BALL_SPEEDY);
 
             } else {
                 BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneY + PADDLE_HEIGHT / 2 - ball_y));
