@@ -191,7 +191,7 @@ public class LobbyServer {//implements Runnable {//Lobby server will be hosted o
                     }
                     break;
                 case "connectToGame":
-                    JSONObject serverResp = new JSONObject();
+//                    JSONObject serverResp = new JSONObject();
 
                     Machine machine = new Machine(ip_string, port_received);
                     if (!groupMembers.contains(machine))

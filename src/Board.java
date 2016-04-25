@@ -266,7 +266,7 @@ public class Board extends JPanel implements ActionListener {
 
             String event_type = key_event.getString("event_type");
             int key_event_code = key_event.getInt("key_event_code");
-            System.out.println(event_type + " " + key_event_code);
+//            System.out.println(event_type + " " + key_event_code);
             if (event_type.equals("Pressed")) {
                 paddles.keyPressed(key_event_code);
             } else if (event_type.equals("Released")) {

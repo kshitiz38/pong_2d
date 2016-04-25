@@ -510,7 +510,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         ballPosition = jsonObject;
                         break;
                     case "isConnected":
-                        sendAck();
+                        sendAck(new Machine(incoming.getAddress().getHostAddress(),incoming.getPort()));
                         break;
                     case "Paddle_Moving":
                         break;
@@ -544,21 +544,33 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
+                                    System.out.println("Sent: "+sentnum);
+                                    System.out.println("Ack: "+acknum);
                                     if ((sentnum - acknum) > 5) {
                                         if (playerlist.size() > 1) {
-                                            if (playerlist.get(1).getIp().equals(group.getHostAddress()))
-                                                virtualHost = true;
+
+                                            try {
+                                                if (playerlist.get(1).getIp().equals(InetAddress.getLocalHost().getHostAddress()))
+                                                    virtualHost = true;
+                                            } catch (UnknownHostException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
 
                                         ArrayList<Machine> newarraylist = new ArrayList<>();
                                         for (int i = 0; i < playerlist.size(); i++) {
+                                            System.out.println("this time");
                                             if (i > 0) {
                                                 newarraylist.add(playerlist.get(i));
                                             }
                                         }
+
                                         setPlayerlist(newarraylist);
+                                        sentnum = 0;
+                                        acknum = 0;
                                     }
                                     sentnum++;
+                                    System.out.println(virtualHost);
                                 }
                             }
                         };
@@ -591,11 +603,26 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
-    public void sendAck() {
+    public void sendAck(Machine machine) {
         JSONObject jsonobject = new JSONObject();
         jsonobject.put("MessageType","Ack");
         byte[] bytes = jsonobject.toString().getBytes();
-        sendToPlayers(bytes);
+//        sendToPlayers(bytes);
+        InetAddress broadcast = null;
+        try {
+            broadcast = InetAddress.getByName(machine.getIp());
+            //            broadcast = InetAddress.getByName("127.0.0.1");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+        //        outgoing.setData(bytes);
+        //        outgoing.setLength(bytes.length);
+        try {
+            socket.send(startGame);
+        } catch (IOException e) {
+            handleIOException(e);
+        }
     }
 
 
@@ -844,23 +871,27 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
     public void sendToPlayers(byte[] bytes){ //method to send json object to all excluding itself
         for (Machine machine : playerlist) {
-            if(!(machine.getIp().equals(group.getHostAddress())))
-            {
-                InetAddress broadcast = null;
-                try {
-                    broadcast = InetAddress.getByName(machine.getIp());
-//            broadcast = InetAddress.getByName("127.0.0.1");
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
+            try {
+                if(!(machine.getIp().equals(InetAddress.getLocalHost().getHostAddress())))
+                {
+                    InetAddress broadcast = null;
+                    try {
+                        broadcast = InetAddress.getByName(machine.getIp());
+    //            broadcast = InetAddress.getByName("127.0.0.1");
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                    DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+    //        outgoing.setData(bytes);
+    //        outgoing.setLength(bytes.length);
+                    try {
+                        socket.send(startGame);
+                    } catch (IOException e) {
+                        handleIOException(e);
+                    }
                 }
-                DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
-//        outgoing.setData(bytes);
-//        outgoing.setLength(bytes.length);
-                try {
-                    socket.send(startGame);
-                } catch (IOException e) {
-                    handleIOException(e);
-                }
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
             }
 
         }
