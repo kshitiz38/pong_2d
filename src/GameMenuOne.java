@@ -9,15 +9,14 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 /*
@@ -33,6 +32,8 @@ import javax.swing.border.LineBorder;
 public class GameMenuOne extends JFrame {
 
     JPanel current;
+    public String difficulty;
+    public int numberOfBalls;
 
     public GameMenuOne() {
 
@@ -42,13 +43,22 @@ public class GameMenuOne extends JFrame {
 
         optionsMain panel = new optionsMain();
         current = panel.getPanel();
+
+        JLabel title = new JLabel("Select an Option", JLabel.CENTER);
+        title.setFont(new Font("Verdana", Font.PLAIN, 18));
+        title.setForeground(Color.WHITE);
+
+        JLabel labelDeveloper = new JLabel("Developed by BETABUGGERS", JLabel.CENTER);
+        labelDeveloper.setFont(new Font("Verdana", Font.PLAIN, 14));
+        labelDeveloper.setForeground(Color.WHITE);
+
         container.add(current, BorderLayout.CENTER);
+        container.add(title, BorderLayout.NORTH);
+        container.add(labelDeveloper, BorderLayout.SOUTH);
 
         setSize(500, 300);
         setLocationRelativeTo(null);
         setVisible(true);
-
-
     }
 
 
@@ -64,10 +74,6 @@ public class GameMenuOne extends JFrame {
 //                optionsMain.setBorder(new LineBorder(Color.yellow));
             optionsMain.setBackground(Color.BLACK);
 
-            JLabel title = new JLabel("Select an Option", JLabel.CENTER);
-            title.setFont(new Font("Verdana", Font.PLAIN, 18));
-            title.setForeground(Color.WHITE);
-
             JLabel label = new JLabel("Classic Game", JLabel.CENTER);
             label.setFont(new Font("Verdana", Font.BOLD, 16));
             label.setForeground(Color.WHITE);
@@ -78,7 +84,7 @@ public class GameMenuOne extends JFrame {
             label.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    // TODO
+
                     optionsClassic panel = new optionsClassic();
                     Container container = getContentPane();
                     container.remove(current);
@@ -143,7 +149,14 @@ public class GameMenuOne extends JFrame {
             label3.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    // TODO
+
+                    optionsSettings panel = new optionsSettings();
+                    Container container = getContentPane();
+                    container.remove(current);
+                    current = panel.getPanel();
+                    container.add(current, BorderLayout.CENTER);
+                    container.revalidate();
+
                 }
             });
 
@@ -151,11 +164,6 @@ public class GameMenuOne extends JFrame {
             optionsMain.add(label1, gbc1);
             optionsMain.add(label2, gbc2);
             optionsMain.add(label3, gbc3);
-
-
-            JLabel labelDeveloper = new JLabel("Developed by BETABUGGERS", JLabel.CENTER);
-            labelDeveloper.setFont(new Font("Verdana", Font.PLAIN, 14));
-            labelDeveloper.setForeground(Color.WHITE);
 
         }
 
@@ -214,6 +222,13 @@ public class GameMenuOne extends JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
 
+                    optionsMain panel = new optionsMain();
+                    Container container = getContentPane();
+                    container.remove(current);
+                    current = panel.getPanel();
+                    container.add(current, BorderLayout.CENTER);
+                    container.revalidate();
+
                 }
             });
 
@@ -221,13 +236,109 @@ public class GameMenuOne extends JFrame {
             optionsClassic.add(label1, gbc1);
             optionsClassic.add(label2, gbc2);
 
-//                container.remove(optionsMain);
-//                container.add(optionsClassic, BorderLayout.CENTER);
-//                container.revalidate();
         }
 
         public JPanel getPanel() {
             return optionsClassic;
+        }
+    }
+
+    class optionsSettings extends JPanel {
+
+        private JPanel optionsSettings;
+
+        public optionsSettings() {
+
+            optionsSettings = new JPanel();
+            optionsSettings.setLayout(new GridBagLayout());
+            optionsSettings.setBackground(Color.BLACK);
+
+            JLabel label = new JLabel("Difficulty Level : ", JLabel.CENTER);
+            label.setFont(new Font("Verdana", Font.BOLD, 16));
+            label.setForeground(Color.WHITE);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.RELATIVE;
+            gbc.gridy = 0;
+            gbc.gridx = 0;
+            gbc.ipady = 5;
+
+            JComboBox level = new JComboBox();
+            String[] levels = {"Easy", "Medium", "Hard"};
+            for (int i=0; i<3; i++) {
+                level.addItem(levels[i]);
+            }
+            level.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    difficulty = level.getSelectedItem().toString();
+                }
+            });
+            GridBagConstraints gbcD = new GridBagConstraints();
+            gbcD.fill = GridBagConstraints.RELATIVE;
+            gbcD.gridy = 0;
+            gbcD.gridx = 1;
+            gbcD.ipady = 5;
+
+            JLabel label1 = new JLabel("Number of Balls : ", JLabel.CENTER);
+            label1.setFont(new Font("Verdana", Font.BOLD, 16));
+            label1.setForeground(Color.WHITE);
+            GridBagConstraints gbc1 = new GridBagConstraints();
+            gbc1.fill = GridBagConstraints.RELATIVE;
+            gbc1.gridy = 1;
+            gbc1.gridx = 0;
+            gbc1.ipady = 5;
+
+            JComboBox balls = new JComboBox();
+            String[] ballNumber = {"1", "2"};
+            for (int i=0; i<2; i++) {
+                balls.addItem(ballNumber[i]);
+            }
+            balls.setSize(100,40);
+            balls.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    numberOfBalls = Integer.parseInt(balls.getSelectedItem().toString());
+                }
+            });
+            GridBagConstraints gbcB = new GridBagConstraints();
+            gbcB.fill = GridBagConstraints.RELATIVE;
+            gbcB.gridy = 1;
+            gbcB.gridx = 1;
+            gbcB.ipady = 5;
+
+
+
+            JLabel label2 = new JLabel("Back", JLabel.CENTER);
+            label2.setFont(new Font("Verdana", Font.BOLD, 16));
+            label2.setForeground(Color.WHITE);
+            GridBagConstraints gbc2 = new GridBagConstraints();
+            gbc2.fill = GridBagConstraints.RELATIVE;
+            gbc2.gridy = 2;
+            gbc2.gridx = 0;
+            gbc2.ipady = 5;
+            label2.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                    optionsMain panel = new optionsMain();
+                    Container container = getContentPane();
+                    container.remove(current);
+                    current = panel.getPanel();
+                    container.add(current, BorderLayout.CENTER);
+                    container.revalidate();
+                }
+            });
+
+            optionsSettings.add(label,gbc);
+            optionsSettings.add(label1,gbc1);
+            optionsSettings.add(label2,gbc2);
+            optionsSettings.add(level,gbcD);
+            optionsSettings.add(balls,gbcB);
+        }
+
+        public JPanel getPanel() {
+            return optionsSettings;
+
         }
     }
 }
