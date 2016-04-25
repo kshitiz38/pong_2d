@@ -191,6 +191,10 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         return key_event;
     }
 
+    public void resetKeyEvent(){
+        key_event=null;
+    }
+
     // Send Message Stuff
     public void sendBallInfo(double ball_x, double ball_y, double vel_x, double vel_y, int ball_id) {
         JSONObject jsonObject = new JSONObject();
