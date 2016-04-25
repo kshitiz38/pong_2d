@@ -85,9 +85,9 @@ public class Board extends JPanel implements ActionListener {
     private UDP UDPObject;
 
 
-
     //hand off key presses to the Paddles class.
     private Paddles paddles;
+
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
@@ -102,28 +102,30 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public int getRandomBallX() {
-        int max=pane_x/2+100;
-        int min=pane_x/2-100;
+        int max = pane_x / 2 + 100;
+        int min = pane_x / 2 - 100;
         Random random = new Random();
-        int rdmX = random.nextInt(max-min+1) + min;
+        int rdmX = random.nextInt(max - min + 1) + min;
 //		System.out.println(rdmX);
         return rdmX;
     }
+
     public int getRandomBallY() {
-        int max=pane_x/2+100;
-        int min=pane_x/2-100;
+        int max = pane_x / 2 + 100;
+        int min = pane_x / 2 - 100;
         Random random = new Random();
-        int rdmY = random.nextInt(max-min+1) + min;
+        int rdmY = random.nextInt(max - min + 1) + min;
 //		System.out.println(rdmY);
         return rdmY;
     }
-    public Board(String mode,UDP UDPObject) {
+
+    public Board(String mode, UDP UDPObject) {
         paddles = new Paddles();
         addKeyListener(new TAdapter());
         setFocusable(true);
         setBackground(Color.BLACK);
         this.gameMode = mode;
-        this.UDPObject=UDPObject;
+        this.UDPObject = UDPObject;
 
         //create polygons used in the game
 //        paddleOne_one = new Rectangle(0,0,PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -136,45 +138,45 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
     }
 
-    public void Update_Dimensions(){
+    public void Update_Dimensions() {
         pane_y = this.getHeight();
         pane_x = this.getWidth();
         resetBall("Begin Game");
         //System.out.println(pane_x + "::" + pane_y);
-        paddleOneY = pane_y /2 - PADDLE_HEIGHT /2;
-        paddleOneOppY = pane_y/2 - PADDLE_HEIGHT/2;
-        paddleTwoX = pane_x /2 - PADDLE_HEIGHT /2;
-        paddleTwoOppX = pane_x/2 - PADDLE_HEIGHT/2;
+        paddleOneY = pane_y / 2 - PADDLE_HEIGHT / 2;
+        paddleOneOppY = pane_y / 2 - PADDLE_HEIGHT / 2;
+        paddleTwoX = pane_x / 2 - PADDLE_HEIGHT / 2;
+        paddleTwoOppX = pane_x / 2 - PADDLE_HEIGHT / 2;
     }
+
     public void paint(Graphics g) {
 
         super.paint(g);
-        Graphics2D g2d = (Graphics2D)g;
+        Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         Font font = new Font("Arial", Font.PLAIN, 40);
 
         g2d.setFont(font);
         g2d.setColor(Color.WHITE);
-        if(message.length() > 0){
+        if (message.length() > 0) {
 
-            g2d.drawString(message, pane_x/2 - (60 + message.length() * 4 ), 120);
-            if(pause == true){
-                g2d.drawString("Press SPACE to Start", pane_x/2 - (140 + message.length() * 4 ), 220);
+            g2d.drawString(message, pane_x / 2 - (60 + message.length() * 4), 120);
+            if (pause == true) {
+                g2d.drawString("Press SPACE to Start", pane_x / 2 - (140 + message.length() * 4), 220);
             }
         }
         //draw scores on the left and rightn
 
 
         if (gameMode.equals("Single")) {
-            g2d.drawString(player_1_score.toString(), pane_x/2, pane_y/2 + 60);
-            g2d.drawString(player_2_score.toString(), pane_x/2 - 60, pane_y/2);
+            g2d.drawString(player_1_score.toString(), pane_x / 2, pane_y / 2 + 60);
+            g2d.drawString(player_2_score.toString(), pane_x / 2 - 60, pane_y / 2);
             g2d.drawString(player_3_score.toString(), pane_x / 2, pane_y / 2 - 60);
             g2d.drawString(player_4_score.toString(), pane_x / 2 + 60, pane_y / 2);
-        }
-        else {
-            g2d.drawString(player_1_score.toString(), pane_x/2 - 60, pane_y/2);
-            g2d.drawString(player_2_score.toString(), pane_x/2 + 60, pane_y/2);
+        } else {
+            g2d.drawString(player_1_score.toString(), pane_x / 2 - 60, pane_y / 2);
+            g2d.drawString(player_2_score.toString(), pane_x / 2 + 60, pane_y / 2);
         }
 
         //update paddle locations
@@ -183,10 +185,10 @@ public class Board extends JPanel implements ActionListener {
 //        paddleTwo_one.setLocation(paddleTwoX, 0);
 //		paddleTwo_two.setLocation(paddleTwoOppX, pane_y-PADDLE_WIDTH);
 
-        paddleOne_one = new Rectangle2D.Double(0,paddleOneY,PADDLE_WIDTH, PADDLE_HEIGHT);
-        paddleOne_two = new Rectangle2D.Double(pane_x-PADDLE_WIDTH,paddleOneOppY,PADDLE_WIDTH, PADDLE_HEIGHT);
-        paddleTwo_one = new Rectangle2D.Double(paddleTwoX,0,PADDLE_HEIGHT, PADDLE_WIDTH);
-        paddleTwo_two = new Rectangle2D.Double(paddleTwoOppX,pane_y-PADDLE_WIDTH,PADDLE_HEIGHT, PADDLE_WIDTH);
+        paddleOne_one = new Rectangle2D.Double(0, paddleOneY, PADDLE_WIDTH, PADDLE_HEIGHT);
+        paddleOne_two = new Rectangle2D.Double(pane_x - PADDLE_WIDTH, paddleOneOppY, PADDLE_WIDTH, PADDLE_HEIGHT);
+        paddleTwo_one = new Rectangle2D.Double(paddleTwoX, 0, PADDLE_HEIGHT, PADDLE_WIDTH);
+        paddleTwo_two = new Rectangle2D.Double(paddleTwoOppX, pane_y - PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_WIDTH);
 
         g2d.setColor(Color.WHITE);
         g2d.fill(paddleOne_one);
@@ -208,12 +210,12 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    private void resetBall(String msg){
+    private void resetBall(String msg) {
         message = msg;
 //        ball_x = getRandomBallX();
 //        ball_y = getRandomBallY();
-        ball_x = pane_x/2;
-        ball_y = pane_y/2;
+        ball_x = pane_x / 2;
+        ball_y = pane_y / 2;
 
         BALL_SPEEDX = 1.2;
         BALL_SPEEDY = 0.9;
@@ -234,7 +236,7 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    private void resetScore(){
+    private void resetScore() {
         player_1_score = 0;
         player_2_score = 0;
     }
@@ -245,7 +247,7 @@ public class Board extends JPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         //wait for message display
-        if(message.length() > 0){
+        if (message.length() > 0) {
             try {
                 Thread.sleep(1000);
                 message = "";
@@ -255,20 +257,22 @@ public class Board extends JPanel implements ActionListener {
             }
         }
         JSONObject key_event = UDPObject.getKeyEvent();
-        if(key_event==null){
+        if (key_event == null) {
             System.out.println("null");
-        }
-        else{
+        } else {
 
             String event_type = key_event.getString("event_type");
             int key_event_code = key_event.getInt("key_event_code");
-            System.out.println(event_type+" "+key_event_code);
-            if(event_type.equals("Pressed")){paddles.keyPressed(key_event_code);}
-            else if(event_type.equals("Released")){paddles.keyReleased(key_event_code);}
+            System.out.println(event_type + " " + key_event_code);
+            if (event_type.equals("Pressed")) {
+                paddles.keyPressed(key_event_code);
+            } else if (event_type.equals("Released")) {
+                paddles.keyReleased(key_event_code);
+            }
         }
 
         //check for pause
-        if(paddles.Space == true){
+        if (paddles.Space == true) {
             //wait for debounce
             try {
                 Thread.sleep(500);
@@ -278,13 +282,13 @@ public class Board extends JPanel implements ActionListener {
             }
             pause = !pause;
         }
-        if(pause == true){
+        if (pause == true) {
             return;
         }
 
 
         //check for end game
-        if(paddles.Esc == true){
+        if (paddles.Esc == true) {
             resetScore();
             resetBall("Game Over");
             repaint();
@@ -298,45 +302,39 @@ public class Board extends JPanel implements ActionListener {
         InputApply(gameMode);
 
 
-
-
-
         //collision detection
-    	/*	The math here is generous to the players.
+        /*	The math here is generous to the players.
     		Hitting the side of the paddle still results in a bounce.
     	*/
         //hit one_one paddle and one_two
-        if(ball_x < PADDLE_WIDTH && (ball_y + BALL_HEIGHT > paddleOneY && ball_y < paddleOneY + PADDLE_HEIGHT)) {
+        if (ball_x < PADDLE_WIDTH && (ball_y + BALL_HEIGHT > paddleOneY && ball_y < paddleOneY + PADDLE_HEIGHT)) {
 
             ball_vel_x *= -1;
             ball_x = PADDLE_WIDTH;
-            BALL_SPEEDX *= (1+eRestitution*(Math.abs(paddleOneY + PADDLE_HEIGHT/2 - ball_y)));
+            BALL_SPEEDX *= (1 + eRestitution * (Math.abs(paddleOneY + PADDLE_HEIGHT / 2 - ball_y)));
 
-            if (OneOneStop){
+            if (OneOneStop) {
 
-            }
-            else if (positiveYOne_one==positiveBallY){
-                BALL_SPEEDY += (PADDLE_SPEED)*(aRestitution*Math.abs(paddleOneY + PADDLE_HEIGHT/2 - ball_y));
+            } else if (positiveYOne_one == positiveBallY) {
+                BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneY + PADDLE_HEIGHT / 2 - ball_y));
                 ball_vel_y *= 1;
                 System.out.println("X:" + ball_x + "  Y:" + ball_y + "SPEED: " + BALL_SPEEDX + "::" + BALL_SPEEDY);
 
             } else {
-                BALL_SPEEDY += (PADDLE_SPEED)*(aRestitution*Math.abs(paddleOneY + PADDLE_HEIGHT/2 - ball_y));
+                BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneY + PADDLE_HEIGHT / 2 - ball_y));
                 ball_vel_y *= -1;
             }
 
             ; // put back in front of paddle if it's behind.
-        }
-        else if(ball_x <0){
+        } else if (ball_x < 0) {
             //hit left wall
             ball_vel_x *= -1;
-            if (gameMode.equals("Single")){
+            if (gameMode.equals("Single")) {
                 player_2_score++;
-                if(player_2_score >= MAX_SCORE){
+                if (player_2_score >= MAX_SCORE) {
                     //Do Checks
                 }
-            }
-            else {
+            } else {
                 player_1_score++;
                 if (player_1_score >= MAX_SCORE) {
                     resetBall("Player 2 Wins!");
@@ -345,33 +343,30 @@ public class Board extends JPanel implements ActionListener {
             }
         }
         //hit one_two
-        else if(ball_x + BALL_HEIGHT> pane_x - PADDLE_WIDTH && (ball_y + BALL_HEIGHT > paddleOneOppY && ball_y < paddleOneOppY + PADDLE_HEIGHT)) {
+        else if (ball_x + BALL_HEIGHT > pane_x - PADDLE_WIDTH && (ball_y + BALL_HEIGHT > paddleOneOppY && ball_y < paddleOneOppY + PADDLE_HEIGHT)) {
 
             ball_vel_x *= -1;
-            ball_x = pane_x -BALL_HEIGHT -PADDLE_WIDTH;
-            BALL_SPEEDX *= (1+eRestitution*(Math.abs(paddleOneOppY + PADDLE_HEIGHT/2 - ball_y)));
+            ball_x = pane_x - BALL_HEIGHT - PADDLE_WIDTH;
+            BALL_SPEEDX *= (1 + eRestitution * (Math.abs(paddleOneOppY + PADDLE_HEIGHT / 2 - ball_y)));
 
-            if (OneTwoStop){
+            if (OneTwoStop) {
 
-            }
-            else if (positiveYOne_two==positiveBallY){
-                BALL_SPEEDY += (PADDLE_SPEED)*(aRestitution*Math.abs(paddleOneOppY + PADDLE_HEIGHT/2 - ball_y));
+            } else if (positiveYOne_two == positiveBallY) {
+                BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneOppY + PADDLE_HEIGHT / 2 - ball_y));
                 ball_vel_y *= 1;
             } else {
-                BALL_SPEEDY += (PADDLE_SPEED)*(aRestitution*Math.abs(paddleOneOppY + PADDLE_HEIGHT/2 - ball_y));
+                BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneOppY + PADDLE_HEIGHT / 2 - ball_y));
                 ball_vel_y *= -1;
             }
-        }
-        else if(ball_x + BALL_HEIGHT> pane_x){
+        } else if (ball_x + BALL_HEIGHT > pane_x) {
             //hit right wall
-            ball_vel_x *=-1;
-            if (gameMode.equals("Single")){
+            ball_vel_x *= -1;
+            if (gameMode.equals("Single")) {
                 player_4_score++;
-                if(player_4_score >= MAX_SCORE){
+                if (player_4_score >= MAX_SCORE) {
                     //Do Checks
                 }
-            }
-            else {
+            } else {
                 player_1_score++;
                 if (player_1_score >= MAX_SCORE) {
                     resetBall("Player 2 Wins!");
@@ -382,15 +377,14 @@ public class Board extends JPanel implements ActionListener {
 
 
         //hit top wall
-        if(ball_y < 0){
+        if (ball_y < 0) {
             ball_vel_y *= -1;
-            if (gameMode.equals("Single")){
+            if (gameMode.equals("Single")) {
                 player_3_score++;
-                if(player_3_score >= MAX_SCORE){
+                if (player_3_score >= MAX_SCORE) {
                     //DO Checks
                 }
-            }
-            else {
+            } else {
                 player_2_score++;
                 if (player_2_score >= MAX_SCORE) {
                     resetBall("Player 1 Wins!");
@@ -399,52 +393,48 @@ public class Board extends JPanel implements ActionListener {
             }
         }
         //hit paddle two
-        else if(ball_y < PADDLE_WIDTH && (ball_x + BALL_HEIGHT > paddleTwoX && ball_x + BALL_HEIGHT< paddleTwoX + PADDLE_HEIGHT)) {
+        else if (ball_y < PADDLE_WIDTH && (ball_x + BALL_HEIGHT > paddleTwoX && ball_x + BALL_HEIGHT < paddleTwoX + PADDLE_HEIGHT)) {
 
             ball_vel_y *= -1;
             ball_y = PADDLE_WIDTH;
             // ball_x can be behind paddle. put back out in front.
             //ball_x = pane_x - BALL_WIDTH - PADDLE_WIDTH;
-            BALL_SPEEDY *= (1+eRestitution*Math.abs(paddleTwoX + PADDLE_HEIGHT/2 - ball_x));
+            BALL_SPEEDY *= (1 + eRestitution * Math.abs(paddleTwoX + PADDLE_HEIGHT / 2 - ball_x));
 
-            if (TwoOneStop){
+            if (TwoOneStop) {
 
-            }
-            else if (positiveXTwo_one==positiveBallX){
-                BALL_SPEEDX += (PADDLE_SPEED)*(aRestitution*Math.abs(paddleTwoX + PADDLE_HEIGHT/2 - ball_x));
+            } else if (positiveXTwo_one == positiveBallX) {
+                BALL_SPEEDX += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleTwoX + PADDLE_HEIGHT / 2 - ball_x));
                 ball_vel_x *= 1;
             } else {
-                BALL_SPEEDX += (PADDLE_SPEED)*(aRestitution*Math.abs(paddleTwoX + PADDLE_HEIGHT/2 - ball_x));
+                BALL_SPEEDX += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleTwoX + PADDLE_HEIGHT / 2 - ball_x));
                 ball_vel_x *= -1;
             }
-        }
-        else if (ball_y + BALL_HEIGHT> pane_y - PADDLE_WIDTH && (ball_x + BALL_HEIGHT > paddleTwoOppX && ball_x + BALL_HEIGHT< paddleTwoOppX + PADDLE_HEIGHT)) {
+        } else if (ball_y + BALL_HEIGHT > pane_y - PADDLE_WIDTH && (ball_x + BALL_HEIGHT > paddleTwoOppX && ball_x + BALL_HEIGHT < paddleTwoOppX + PADDLE_HEIGHT)) {
 
             ball_vel_y *= -1;
-            ball_y = pane_y - BALL_HEIGHT -PADDLE_WIDTH;
-            BALL_SPEEDY *= (1+eRestitution*Math.abs(paddleTwoOppX + PADDLE_HEIGHT/2 - ball_x));
+            ball_y = pane_y - BALL_HEIGHT - PADDLE_WIDTH;
+            BALL_SPEEDY *= (1 + eRestitution * Math.abs(paddleTwoOppX + PADDLE_HEIGHT / 2 - ball_x));
 
-            if (TwoTwoStop){
+            if (TwoTwoStop) {
 
-            }
-            else if (positiveXTwo_two==positiveBallX){
-                BALL_SPEEDX += (PADDLE_SPEED)*(aRestitution*Math.abs(paddleTwoOppX + PADDLE_HEIGHT/2 - ball_x));
+            } else if (positiveXTwo_two == positiveBallX) {
+                BALL_SPEEDX += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleTwoOppX + PADDLE_HEIGHT / 2 - ball_x));
                 ball_vel_x *= 1;
             } else {
-                BALL_SPEEDX += (PADDLE_SPEED)*(aRestitution*Math.abs(paddleTwoOppX + PADDLE_HEIGHT/2 - ball_x));
+                BALL_SPEEDX += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleTwoOppX + PADDLE_HEIGHT / 2 - ball_x));
                 ball_vel_x *= -1;
             }
         }
         //hit bottom wall
-        else if(ball_y +BALL_HEIGHT > pane_y){
+        else if (ball_y + BALL_HEIGHT > pane_y) {
             ball_vel_y *= -1;
-            if (gameMode.equals("Single")){
+            if (gameMode.equals("Single")) {
                 player_1_score++;
-                if(player_1_score >= MAX_SCORE){
+                if (player_1_score >= MAX_SCORE) {
                     //Do Checks
                 }
-            }
-            else {
+            } else {
                 player_2_score++;
                 if (player_2_score >= MAX_SCORE) {
                     resetBall("Player 1 Wins!");
@@ -456,50 +446,60 @@ public class Board extends JPanel implements ActionListener {
         ball_x += ball_vel_x * BALL_SPEEDX;
         ball_y += ball_vel_y * BALL_SPEEDY;
 
-        repaint();
+        boolean virtualHost = UDPObject.getVirtualHost();
+        System.out.println("virtualHost "+virtualHost);
+        if (virtualHost) {
+            UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
+        } else {
+            JSONObject ballPosition = UDPObject.getBallPosition();
+            if (ballPosition != null) {
+                ball_x = ballPosition.getDouble("ball_x");
+                ball_y = ballPosition.getDouble("ball_y");
+                ball_vel_x = ballPosition.getDouble("vel_x");
+                ball_vel_y = ballPosition.getDouble("vel_y");
+                UDPObject.resetBallPosition();
+            }
 
-    }
+        }
+            repaint();
 
-    public void InputApply(String mode){
+        }
+
+    public void InputApply(String mode) {
         //single player game mode
-        if (mode.equals("Single")){
-            if(paddles.Left == true){
+        if (mode.equals("Single")) {
+            if (paddles.Left == true) {
 
                 positiveXTwo_two = false;
                 TwoTwoStop = false;
 
-                if(paddleTwoOppX >0){
+                if (paddleTwoOppX > 0) {
                     paddleTwoOppX -= PADDLE_SPEED;
                 }
-            }
-            else if(paddles.Right == true){
+            } else if (paddles.Right == true) {
 
                 positiveXTwo_two = true;
                 TwoTwoStop = false;
 
-                if(paddleTwoOppX < pane_x - PADDLE_HEIGHT){
+                if (paddleTwoOppX < pane_x - PADDLE_HEIGHT) {
                     paddleTwoOppX += PADDLE_SPEED;
                 }
-            }
-            else {
+            } else {
                 TwoTwoStop = true;
             }
 
 
             //paddleOne_one AI
-            if(paddleOneY+PADDLE_HEIGHT/2>ball_y)
-            {
-                if(paddleOneY >0){
+            if (paddleOneY + PADDLE_HEIGHT / 2 > ball_y) {
+                if (paddleOneY > 0) {
                     paddleOneY -= PADDLE_SPEED_AI;
                 }
                 positiveYOne_one = false;
                 OneOneStop = false;
-            }
-            else if (paddleOneY+PADDLE_HEIGHT/2==ball_y){
+            } else if (paddleOneY + PADDLE_HEIGHT / 2 == ball_y) {
                 OneOneStop = true;
-            }
-            else {
-                if(paddleOneY < pane_y - PADDLE_HEIGHT){
+            } else {
+                if (paddleOneY < pane_y - PADDLE_HEIGHT) {
                     paddleOneY += PADDLE_SPEED_AI;
                 }
                 positiveYOne_one = true;
@@ -507,19 +507,16 @@ public class Board extends JPanel implements ActionListener {
             }
 
             //paddleOne_two AI
-            if(paddleOneOppY+PADDLE_HEIGHT/2>ball_y)
-            {
-                if(paddleOneOppY >0){
+            if (paddleOneOppY + PADDLE_HEIGHT / 2 > ball_y) {
+                if (paddleOneOppY > 0) {
                     paddleOneOppY -= PADDLE_SPEED_AI;
                 }
                 positiveYOne_two = false;
                 OneOneStop = false;
-            }
-            else if (paddleOneOppY+PADDLE_HEIGHT/2==ball_y){
+            } else if (paddleOneOppY + PADDLE_HEIGHT / 2 == ball_y) {
                 OneOneStop = true;
-            }
-            else {
-                if(paddleOneOppY < pane_y - PADDLE_HEIGHT){
+            } else {
+                if (paddleOneOppY < pane_y - PADDLE_HEIGHT) {
                     paddleOneOppY += PADDLE_SPEED_AI;
                 }
                 positiveYOne_two = true;
@@ -527,19 +524,16 @@ public class Board extends JPanel implements ActionListener {
             }
 
             //paddleTwo_one AI
-            if(paddleTwoX+PADDLE_HEIGHT/2>ball_x)
-            {
-                if(paddleTwoX >0){
+            if (paddleTwoX + PADDLE_HEIGHT / 2 > ball_x) {
+                if (paddleTwoX > 0) {
                     paddleTwoX -= PADDLE_SPEED_AI;
                 }
                 positiveXTwo_one = false;
                 OneOneStop = false;
-            }
-            else if (paddleTwoX+PADDLE_HEIGHT/2==ball_x){
+            } else if (paddleTwoX + PADDLE_HEIGHT / 2 == ball_x) {
                 OneOneStop = true;
-            }
-            else {
-                if(paddleTwoX < pane_x - PADDLE_HEIGHT){
+            } else {
+                if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
                     paddleTwoX += PADDLE_SPEED_AI;
                 }
                 positiveXTwo_one = true;
@@ -548,55 +542,51 @@ public class Board extends JPanel implements ActionListener {
         }
         //game mode two player
         else {
-            if (paddles.S == true){
+            if (paddles.S == true) {
 
                 positiveYOne_one = true;
                 positiveYOne_two = true;
                 OneOneStop = false;
 
-                if(paddleOneY < pane_y - PADDLE_HEIGHT){
+                if (paddleOneY < pane_y - PADDLE_HEIGHT) {
                     paddleOneY += PADDLE_SPEED;
                     paddleOneOppY += PADDLE_SPEED;
                 }
-            }
-            else if(paddles.W == true){
+            } else if (paddles.W == true) {
 
                 positiveYOne_one = false;
                 positiveYOne_two = false;
                 OneOneStop = false;
 
-                if(paddleOneY >0){
+                if (paddleOneY > 0) {
                     paddleOneY -= PADDLE_SPEED;
                     paddleOneOppY -= PADDLE_SPEED;
                 }
-            }
-            else {
+            } else {
                 OneOneStop = true;
             }
 
-            if(paddles.Left == true){
+            if (paddles.Left == true) {
 
                 positiveXTwo_one = false;
                 positiveXTwo_two = false;
                 OneOneStop = false;
 
-                if(paddleTwoX >0){
+                if (paddleTwoX > 0) {
                     paddleTwoX -= PADDLE_SPEED;
                     paddleTwoOppX -= PADDLE_SPEED;
                 }
-            }
-            else if(paddles.Right == true){
+            } else if (paddles.Right == true) {
 
                 positiveXTwo_one = true;
                 positiveXTwo_two = true;
                 OneOneStop = false;
 
-                if(paddleTwoX < pane_x - PADDLE_HEIGHT){
+                if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
                     paddleTwoX += PADDLE_SPEED;
                     paddleTwoOppX += PADDLE_SPEED;
                 }
-            }
-            else {
+            } else {
                 OneOneStop = true;
             }
         }

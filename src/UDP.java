@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import static com.sun.glass.ui.Cursor.setVisible;
 
 public class UDP implements Runnable, WindowListener, ActionListener {
-    JSONObject key_event;
+    private boolean virtualHost;
+    private JSONObject key_event;
+    private JSONObject ballPosition;
     protected InetAddress group;
     protected int port;
     protected ArrayList<Machine> playerlist;
@@ -98,7 +100,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     }
 
     public synchronized void stop() throws IOException {
-        frame.setVisible(false);
+        //frame.setVisible(false);
         if (listener != null) {
             listener.interrupt();
             listener = null;
@@ -145,7 +147,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 //        connectMsg();
     }
 
-
+    public boolean getVirtualHost(){return virtualHost;}
     //send key event
     public void sendKeyEvent(int event_code, String type){
         JSONObject jsonObject= new JSONObject();
@@ -192,13 +194,30 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        outgoing.setData(bytes);
-        outgoing.setLength(bytes.length);
-        try {
-            socket.send(outgoing);
-        } catch (IOException e) {
-            handleIOException(e);
+        for (Machine machine : playerlist) {
+            InetAddress broadcast = null;
+            try {
+                broadcast = InetAddress.getByName(machine.getIp());
+//            broadcast = InetAddress.getByName("127.0.0.1");
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            DatagramPacket startGame = new DatagramPacket(bytes, bytes.length, broadcast, machine.getPort());
+//        outgoing.setData(bytes);
+//        outgoing.setLength(bytes.length);
+            try {
+                socket.send(startGame);
+            } catch (IOException e) {
+                handleIOException(e);
+            }
         }
+    }
+    public JSONObject getBallPosition(){
+        return ballPosition;
+    }
+
+    public void resetBallPosition() {
+        this.ballPosition = null;
     }
 
     public void sendPaddleInfo(double paddle_x, double paddle_y, double vel_x, double vel_y, int paddle_id) {
@@ -428,8 +447,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     protected synchronized void handleIOException(IOException ex) {
         if (listener != null) {
 //            output.append(ex + "\n");
-            input.setVisible(false);
-            frame.validate();
+//            input.setVisible(false);
+//            frame.validate();
             if (listener != Thread.currentThread())
                 listener.interrupt();
             listener = null;
@@ -457,6 +476,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                 switch (msg_type) {
                     case "Ball_Moving":
 //                        output.append(msg_type + "\n");
+                        ballPosition = jsonObject;
                         break;
                     case "Paddle_Moving":
                         break;
@@ -599,27 +619,27 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         c.gridy = 2;       //third row
         pane.add(buttonDisconnect, c);
 
-        buttonCreateRoom.setBorderPainted(false);
+        buttonCreateRoom.setBorderPainted(true);
         buttonCreateRoom.setFocusPainted(false);
         buttonCreateRoom.setContentAreaFilled(false);
 
-        buttonJoinRoom.setBorderPainted(false);
+        buttonJoinRoom.setBorderPainted(true);
         buttonJoinRoom.setFocusPainted(false);
         buttonJoinRoom.setContentAreaFilled(false);
 
-        buttonCheckPlayer.setBorderPainted(false);
+        buttonCheckPlayer.setBorderPainted(true);
         buttonCheckPlayer.setFocusPainted(false);
         buttonCheckPlayer.setContentAreaFilled(false);
 
-        buttonClose.setBorderPainted(false);
+        buttonClose.setBorderPainted(true);
         buttonClose.setFocusPainted(false);
         buttonClose.setContentAreaFilled(false);
 
-        buttonDisconnect.setBorderPainted(false);
+        buttonDisconnect.setBorderPainted(true);
         buttonDisconnect.setFocusPainted(false);
         buttonDisconnect.setContentAreaFilled(false);
 
-        buttonPlay.setBorderPainted(false);
+        buttonPlay.setBorderPainted(true);
         buttonPlay.setFocusPainted(false);
         buttonPlay.setContentAreaFilled(false);
 
@@ -665,7 +685,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             public void actionPerformed(ActionEvent e) {
                 leaveRoomMsg();
                 playerlist = new ArrayList<Machine>();
-
+                //socket.disconnect();
+                lobbyServer.closeSocket();
                 buttonJoinRoom.setEnabled(true);
                 buttonCreateRoom.setEnabled(true);
                 buttonCheckPlayer.setEnabled(false);
@@ -678,6 +699,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frameMain.setVisible(false);
+                lobbyServer.closeSocket();
+                socket.disconnect();
                 socket.close();
                 listener.interrupt();
                 listener = null;
@@ -689,6 +712,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 playMsg();
+                virtualHost = true;
 //                new Pong(udp);
             }
         });
