@@ -234,7 +234,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                                 }
                             }
                         };
-                        sendPackets.start();
+//                        sendPackets.start();
                         break;
                     case "lobbyResp":
 
