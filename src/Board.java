@@ -77,6 +77,8 @@ public class Board extends JPanel implements ActionListener {
     private double ball_vel_x = 1;
     private double ball_vel_y = 1;
 
+    private int indexPlayer;
+
     private boolean positiveBallX = true;
     private boolean positiveBallY = true;
 
@@ -131,6 +133,25 @@ public class Board extends JPanel implements ActionListener {
         setBackground(Color.BLACK);
         this.gameMode = mode;
         this.UDPObject = UDPObject;
+
+        if (UDPObject!=null) {
+            ArrayList<Machine> playersList = UDPObject.getPlayerlist();
+
+            try {
+                String ipMy = InetAddress.getLocalHost().getHostAddress();
+
+                for(int i=0; i<playersList.size(); i++)
+                {
+                    if (playersList.get(i).getIp().equals(ipMy)){
+                        indexPlayer = i;
+                        return;
+                    }
+                }
+            } catch (UnknownHostException e1) {
+                e1.printStackTrace();
+            }
+        }
+
 
         //create polygons used in the game
 //        paddleOne_one = new Rectangle(0,0,PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -456,6 +477,7 @@ public class Board extends JPanel implements ActionListener {
 
         if(UDPObject!=null) {
             boolean virtualHost = UDPObject.getVirtualHost();
+
             if (virtualHost) {
                 UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
             } else {
