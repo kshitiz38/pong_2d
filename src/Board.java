@@ -89,6 +89,8 @@ public class Board extends JPanel implements ActionListener {
 
     private UDP UDPObject;
 
+    private int playerIndex;
+
 
     //hand off key presses to the Paddles class.
     private Paddles paddles;
@@ -96,15 +98,15 @@ public class Board extends JPanel implements ActionListener {
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
-            paddles.keyReleased(e.getKeyCode());
+            paddles.keyReleased(e.getKeyCode(), playerIndex);
             if(UDPObject!=null)
-                UDPObject.sendKeyEvent(e.getKeyCode(), "Released");
+                UDPObject.sendKeyEvent(e.getKeyCode(), "Released", playerIndex);
         }
 
         public void keyPressed(KeyEvent e) {
-            paddles.keyPressed(e.getKeyCode());
+            paddles.keyPressed(e.getKeyCode(), playerIndex);
             if(UDPObject!=null)
-                UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed");
+                UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed", playerIndex);
         }
     }
 
@@ -285,17 +287,19 @@ public class Board extends JPanel implements ActionListener {
         JSONObject key_event;
         if(UDPObject!=null) {
             key_event = UDPObject.getKeyEvent();
+
             if (key_event == null) {
 //                System.out.println("null");
             } else {
 
                 String event_type = key_event.getString("event_type");
                 int key_event_code = key_event.getInt("key_event_code");
+                int playerIndex_others = key_event.getInt("playerIndex");
 //                System.out.println(event_type + " " + key_event_code);
                 if (event_type.equals("Pressed")) {
-                    paddles.keyPressed(key_event_code);
+                    paddles.keyPressed(key_event_code, playerIndex_others);
                 } else if (event_type.equals("Released")) {
-                    paddles.keyReleased(key_event_code);
+                    paddles.keyReleased(key_event_code, playerIndex_others);
                 }
 
             }
@@ -474,14 +478,17 @@ public class Board extends JPanel implements ActionListener {
 
         ball_x += ball_vel_x * BALL_SPEEDX;
         ball_y += ball_vel_y * BALL_SPEEDY;
+        //send ball position and velocity and player scores
 
         if(UDPObject!=null) {
             boolean virtualHost = UDPObject.getVirtualHost();
 
             if (virtualHost) {
                 UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
+                UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
             } else {
                 //            checkVirtualHost(UDPObject);
+                JSONObject player_scores = UDPObject.getPlayerScore();
                 JSONObject ballPosition = UDPObject.getBallPosition();
                 if (ballPosition != null) {
                     ball_x = ballPosition.getDouble("ball_x");
@@ -489,6 +496,13 @@ public class Board extends JPanel implements ActionListener {
                     ball_vel_x = ballPosition.getDouble("vel_x");
                     ball_vel_y = ballPosition.getDouble("vel_y");
                     UDPObject.resetBallPosition();
+                }
+                if (player_scores!=null){
+                    player_1_score = player_scores.getInt("player_1_score");
+                    player_2_score = player_scores.getInt("player_2_score");
+                    player_3_score = player_scores.getInt("player_3_score");
+                    player_4_score = player_scores.getInt("player_4_score");
+                    UDPObject.resetScoreEvent();
                 }
             }
         }
@@ -586,7 +600,7 @@ public class Board extends JPanel implements ActionListener {
         }
         //game mode two player
         else {
-            if (paddles.S == true) {
+            if ((paddles.S == true) && (paddles.playerIndex == 0)) {
 
                 positiveYOne_one = true;
                 positiveYOne_two = true;
@@ -596,7 +610,7 @@ public class Board extends JPanel implements ActionListener {
                     paddleOneY += PADDLE_SPEED;
                     paddleOneOppY += PADDLE_SPEED;
                 }
-            } else if (paddles.W == true) {
+            } else if ((paddles.W == true) && (paddles.playerIndex == 0)) {
 
                 positiveYOne_one = false;
                 positiveYOne_two = false;
@@ -610,7 +624,7 @@ public class Board extends JPanel implements ActionListener {
                 OneOneStop = true;
             }
 
-            if (paddles.Left == true) {
+            if (((paddles.Left == true) && (paddles.playerIndex == 1))) {
 
                 positiveXTwo_one = false;
                 positiveXTwo_two = false;
@@ -620,7 +634,7 @@ public class Board extends JPanel implements ActionListener {
                     paddleTwoX -= PADDLE_SPEED;
                     paddleTwoOppX -= PADDLE_SPEED;
                 }
-            } else if (paddles.Right == true) {
+            } else if ((paddles.Right == true) && (paddles.playerIndex == 1)) {
 
                 positiveXTwo_one = true;
                 positiveXTwo_two = true;
