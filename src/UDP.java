@@ -19,7 +19,11 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     private boolean virtualHost;
     private JSONObject key_event;
     private JSONObject ballPosition;
+
     protected InetAddress inetAddress;
+
+    private JSONObject player_score;
+
     protected int port;
     protected ArrayList<Machine> playerlist;
     private UDP udp;
@@ -31,6 +35,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
     //Acknowledgement Signals' Hashmap
     HashMap<String,Boolean> StartGameHM;
+    private boolean started = false;
 
     public UDP(InetAddress inetAddress, int port) {
         this.inetAddress = inetAddress;
@@ -161,11 +166,29 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         break;
                     case "Win":
                         break;
+                    case "Player_Score":
+                        player_score=jsonObject;
+                        break;
                     case "Key_Event":
                         key_event=jsonObject;
                         break;
                     case "Start" :
                         System.out.println("Start");
+                        if(started){
+                            break;
+                        }
+                        started = true;
+//                        System.out.println("Start");
+                        JSONObject jsonObject1 = new JSONObject();
+                        jsonObject1.put("MessageType","Acknowledge");
+                        jsonObject1.put("responseType", "GameStart");
+
+                        String messageack = jsonObject1.toString();
+                        byte[] bytes1 = messageack.getBytes();
+
+                        DatagramPacket datagramPacket = new DatagramPacket(bytes1,bytes1.length,incoming.getAddress(),incoming.getPort());
+                        socket.send(datagramPacket);
+
                         checkRoomMsg();//to get latest players
                         new Pong(udp);
                         Thread sendPackets = new Thread(){
@@ -238,15 +261,31 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
     public boolean getVirtualHost(){return virtualHost;}
     //send key event
-    public void sendKeyEvent(int event_code, String type){
+    public void sendKeyEvent(int event_code, String type, int playerIndex){
         JSONObject jsonObject= new JSONObject();
 
         jsonObject.put("key_event_code", event_code);
         jsonObject.put("MessageType", "Key_Event");
         jsonObject.put("event_type", type);
+        jsonObject.put("playerIndex", playerIndex);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
         sendToPlayers(bytes);
+    }
+    //send score
+    public void sendPlayerScore(Integer player_1_score, Integer player_2_score, Integer player_3_score, Integer player_4_score){
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("MessageType", "Player_Score");
+        jsonObject.put("player_1_score", player_1_score);
+        jsonObject.put("player_2_score", player_2_score);
+        jsonObject.put("player_3_score", player_3_score);
+        jsonObject.put("player_4_score", player_4_score);
+        String jsonString = jsonObject.toString();
+        byte[] bytes = jsonString.getBytes();
+
+        sendToPlayers(bytes);
+
     }
 
     //retreiving keyEvent
@@ -254,8 +293,15 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         return key_event;
     }
 
+    public JSONObject getPlayerScore(){
+        return player_score;
+    }
+
     public void resetKeyEvent(){
         key_event=null;
+    }
+    public void resetScoreEvent(){
+        player_score=null;
     }
 
 
@@ -463,6 +509,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+
 
         DatagramPacket lobbyServer = new DatagramPacket(bytes, bytes.length, broadcast, 1235);
         try {
