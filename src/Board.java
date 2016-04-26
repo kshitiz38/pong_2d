@@ -277,7 +277,7 @@ public class Board extends JPanel implements ActionListener {
         //wait for message display
         if (message.length() > 0) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(800);
                 message = "";
             } catch (InterruptedException e1) {
                 // TODO Auto-generated catch block
