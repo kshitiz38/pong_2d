@@ -570,15 +570,15 @@ public class Board extends JPanel implements ActionListener {
                     paddleOneOppY -= PADDLE_SPEED_AI;
                 }
                 positiveYOne_two = false;
-                OneOneStop = false;
+                OneTwoStop = false;
             } else if (paddleOneOppY + PADDLE_HEIGHT / 2 == ball_y) {
-                OneOneStop = true;
+                OneTwoStop = true;
             } else {
                 if (paddleOneOppY < pane_y - PADDLE_HEIGHT) {
                     paddleOneOppY += PADDLE_SPEED_AI;
                 }
                 positiveYOne_two = true;
-                OneOneStop = false;
+                OneTwoStop = false;
             }
 
             //paddleTwo_one AI
@@ -587,15 +587,15 @@ public class Board extends JPanel implements ActionListener {
                     paddleTwoX -= PADDLE_SPEED_AI;
                 }
                 positiveXTwo_one = false;
-                OneOneStop = false;
+                TwoOneStop = false;
             } else if (paddleTwoX + PADDLE_HEIGHT / 2 == ball_x) {
-                OneOneStop = true;
+                TwoOneStop = true;
             } else {
                 if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
                     paddleTwoX += PADDLE_SPEED_AI;
                 }
                 positiveXTwo_one = true;
-                OneOneStop = false;
+                TwoOneStop = false;
             }
         }
         //game mode two player
@@ -605,6 +605,7 @@ public class Board extends JPanel implements ActionListener {
                 positiveYOne_one = true;
                 positiveYOne_two = true;
                 OneOneStop = false;
+                OneTwoStop = false;
 
                 if (paddleOneY < pane_y - PADDLE_HEIGHT) {
                     paddleOneY += PADDLE_SPEED;
@@ -615,6 +616,7 @@ public class Board extends JPanel implements ActionListener {
                 positiveYOne_one = false;
                 positiveYOne_two = false;
                 OneOneStop = false;
+                OneTwoStop = false;
 
                 if (paddleOneY > 0) {
                     paddleOneY -= PADDLE_SPEED;
@@ -622,13 +624,15 @@ public class Board extends JPanel implements ActionListener {
                 }
             } else {
                 OneOneStop = true;
+                OneTwoStop = true;
             }
 
             if (((paddles.Left == true) && (paddles.playerIndex == 1))) {
 
                 positiveXTwo_one = false;
                 positiveXTwo_two = false;
-                OneOneStop = false;
+                TwoOneStop = false;
+                TwoTwoStop = false;
 
                 if (paddleTwoX > 0) {
                     paddleTwoX -= PADDLE_SPEED;
@@ -638,14 +642,16 @@ public class Board extends JPanel implements ActionListener {
 
                 positiveXTwo_one = true;
                 positiveXTwo_two = true;
-                OneOneStop = false;
+                TwoOneStop = false;
+                TwoTwoStop = false;
 
                 if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
                     paddleTwoX += PADDLE_SPEED;
                     paddleTwoOppX += PADDLE_SPEED;
                 }
             } else {
-                OneOneStop = true;
+                TwoOneStop = true;
+                TwoTwoStop = true;
             }
         }
     }
