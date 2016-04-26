@@ -146,7 +146,7 @@ public class Board extends JPanel implements ActionListener {
                 {
                     if (playersList.get(i).getIp().equals(ipMy)){
                         indexPlayer = i;
-                        return;
+                        break;
                     }
                 }
             } catch (UnknownHostException e1) {
