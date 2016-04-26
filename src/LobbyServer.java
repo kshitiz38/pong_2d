@@ -45,7 +45,7 @@ public class LobbyServer {//implements Runnable {//Lobby server will be hosted o
             }
             InetAddress ipaddress = incoming.getAddress();
             String ip_string = ipaddress.getHostAddress();
-            System.out.println(ip_string);
+//            System.out.println(ip_string);
             int port_received = incoming.getPort();
 
             String message = new String(incoming.getData(), 0, incoming.getLength());
