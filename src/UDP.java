@@ -223,7 +223,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     }
 
     //send score
-    public void sendPlayerScore(Integer player_1_score, Integer player_2_score, Integer player_3_score, Integer player_4_score) {
+    public void sendPlayerScore(int player_1_score, int player_2_score, int player_3_score, int player_4_score) {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("MessageType", "Player_Score");
