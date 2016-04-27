@@ -433,7 +433,7 @@ public class Board extends JPanel implements ActionListener {
                         UDPObject.resetBallPosition();
                     }
                     if (player_scores != null) {
-                        player_1_score = player_scores.getInt("player_1_score");
+                        player_1_score = player_scores.getInt("player_1_score");//check get int
                         player_2_score = player_scores.getInt("player_2_score");
                         player_3_score = player_scores.getInt("player_3_score");
                         player_4_score = player_scores.getInt("player_4_score");
