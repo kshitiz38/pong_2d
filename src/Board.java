@@ -203,6 +203,12 @@ public class Board extends JPanel implements ActionListener {
             g2d.drawString(Integer.toString(player_3_score), pane_x / 2, pane_y / 2 - 60);
             g2d.drawString(Integer.toString(player_4_score), pane_x / 2 + 60, pane_y / 2);
         }
+        else if (gameMode.equals("Multiplayer")) {
+            g2d.drawString(Integer.toString(player_1_score), pane_x / 2 - 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 , pane_y / 2 + 60);
+            g2d.drawString(Integer.toString(player_3_score), pane_x / 2 + 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_4_score), pane_x / 2 , pane_y / 2 - 60);
+        }
         else {
             g2d.drawString(Integer.toString(player_1_score), pane_x / 2 - 60, pane_y / 2);
             g2d.drawString(Integer.toString(player_2_score), pane_x / 2 + 60, pane_y / 2);
@@ -411,8 +417,8 @@ public class Board extends JPanel implements ActionListener {
             } else {
                 player_1_score++;
                 if (player_1_score >= MAX_SCORE) {
-                    resetBall("Player 2 Wins!");
-                    resetScore();
+//                    resetBall("Player 2 Wins!");
+//                    resetScore();
                 }
             }
 
@@ -422,30 +428,26 @@ public class Board extends JPanel implements ActionListener {
                     ball_x += ball_vel_x * BALL_SPEEDX;
                     ball_y += ball_vel_y * BALL_SPEEDY;
 
-                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
-                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+//                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+//                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1, player_1_score, player_2_score, player_3_score, player_4_score);
 
                 } else {
 
-                    JSONObject ballPosition = UDPObject.getBallPosition();
-                    JSONObject player_scores = UDPObject.getBallPosition();
+                    JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
 
-                    if (ballPosition != null) {
-                        ball_x = ballPosition.getDouble("ball_x");
-                        ball_y = ballPosition.getDouble("ball_y");
-                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
-                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
-                        ball_vel_x = ballPosition.getDouble("vel_x");
-                        ball_vel_y = ballPosition.getDouble("vel_y");
-
+                    if (score_and_balls != null) {
+                        ball_x = score_and_balls.getDouble("ball_x");
+                        ball_y = score_and_balls.getDouble("ball_y");
+                        BALL_SPEEDX = score_and_balls.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = score_and_balls.getDouble("BALL_SPEEDY");
+                        ball_vel_x = score_and_balls.getDouble("vel_x");
+                        ball_vel_y = score_and_balls.getDouble("vel_y");
+                        player_1_score = score_and_balls.getInt("player_1_score");
+                        player_2_score = score_and_balls.getInt("player_2_score");
+                        player_3_score = score_and_balls.getInt("player_3_score");
+                        player_4_score = score_and_balls.getInt("player_4_score");
                         UDPObject.resetBallPosition();
-                    }
-                    if (player_scores != null) {
-                        player_1_score = player_scores.getInt("player_1_score");//check get int
-                        player_2_score = player_scores.getInt("player_2_score");
-                        player_3_score = player_scores.getInt("player_3_score");
-                        player_4_score = player_scores.getInt("player_4_score");
-
                         UDPObject.resetScoreEvent();
                     }
                 }
@@ -505,10 +507,10 @@ public class Board extends JPanel implements ActionListener {
                     //Do Checks
                 }
             } else {
-                player_1_score++;
-                if (player_1_score >= MAX_SCORE) {
-                    resetBall("Player 2 Wins!");
-                    resetScore();
+                player_3_score++;
+                if (player_3_score >= MAX_SCORE) {
+//                    resetBall("Player 2 Wins!");
+//                    resetScore();
                 }
             }
 
@@ -518,30 +520,26 @@ public class Board extends JPanel implements ActionListener {
                     ball_x += ball_vel_x * BALL_SPEEDX;
                     ball_y += ball_vel_y * BALL_SPEEDY;
 
-                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
-                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+//                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+//                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1, player_1_score, player_2_score, player_3_score, player_4_score);
+
 
                 } else {
+                    JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
 
-                    JSONObject ballPosition = UDPObject.getBallPosition();
-                    JSONObject player_scores = UDPObject.getBallPosition();
-
-                    if (ballPosition != null) {
-                        ball_x = ballPosition.getDouble("ball_x");
-                        ball_y = ballPosition.getDouble("ball_y");
-                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
-                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
-                        ball_vel_x = ballPosition.getDouble("vel_x");
-                        ball_vel_y = ballPosition.getDouble("vel_y");
-
+                    if (score_and_balls != null) {
+                        ball_x = score_and_balls.getDouble("ball_x");
+                        ball_y = score_and_balls.getDouble("ball_y");
+                        BALL_SPEEDX = score_and_balls.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = score_and_balls.getDouble("BALL_SPEEDY");
+                        ball_vel_x = score_and_balls.getDouble("vel_x");
+                        ball_vel_y = score_and_balls.getDouble("vel_y");
+                        player_1_score = score_and_balls.getInt("player_1_score");
+                        player_2_score = score_and_balls.getInt("player_2_score");
+                        player_3_score = score_and_balls.getInt("player_3_score");
+                        player_4_score = score_and_balls.getInt("player_4_score");
                         UDPObject.resetBallPosition();
-                    }
-                    if (player_scores != null) {
-                        player_1_score = player_scores.getInt("player_1_score");
-                        player_2_score = player_scores.getInt("player_2_score");
-                        player_3_score = player_scores.getInt("player_3_score");
-                        player_4_score = player_scores.getInt("player_4_score");
-
                         UDPObject.resetScoreEvent();
                     }
                 }
@@ -561,8 +559,8 @@ public class Board extends JPanel implements ActionListener {
             } else {
                 player_2_score++;
                 if (player_2_score >= MAX_SCORE) {
-                    resetBall("Player 1 Wins!");
-                    resetScore();
+//                    resetBall("Player 1 Wins!");
+//                    resetScore();
                 }
             }
 
@@ -572,30 +570,27 @@ public class Board extends JPanel implements ActionListener {
                     ball_x += ball_vel_x * BALL_SPEEDX;
                     ball_y += ball_vel_y * BALL_SPEEDY;
 
-                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
-                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+//                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+//                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1, player_1_score, player_2_score, player_3_score, player_4_score);
+
 
                 } else {
 
-                    JSONObject ballPosition = UDPObject.getBallPosition();
-                    JSONObject player_scores = UDPObject.getBallPosition();
+                    JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
 
-                    if (ballPosition != null) {
-                        ball_x = ballPosition.getDouble("ball_x");
-                        ball_y = ballPosition.getDouble("ball_y");
-                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
-                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
-                        ball_vel_x = ballPosition.getDouble("vel_x");
-                        ball_vel_y = ballPosition.getDouble("vel_y");
-
+                    if (score_and_balls != null) {
+                        ball_x = score_and_balls.getDouble("ball_x");
+                        ball_y = score_and_balls.getDouble("ball_y");
+                        BALL_SPEEDX = score_and_balls.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = score_and_balls.getDouble("BALL_SPEEDY");
+                        ball_vel_x = score_and_balls.getDouble("vel_x");
+                        ball_vel_y = score_and_balls.getDouble("vel_y");
+                        player_1_score = score_and_balls.getInt("player_1_score");
+                        player_2_score = score_and_balls.getInt("player_2_score");
+                        player_3_score = score_and_balls.getInt("player_3_score");
+                        player_4_score = score_and_balls.getInt("player_4_score");
                         UDPObject.resetBallPosition();
-                    }
-                    if (player_scores != null) {
-                        player_1_score = player_scores.getInt("player_1_score");
-                        player_2_score = player_scores.getInt("player_2_score");
-                        player_3_score = player_scores.getInt("player_3_score");
-                        player_4_score = player_scores.getInt("player_4_score");
-
                         UDPObject.resetScoreEvent();
                     }
                 }
@@ -699,10 +694,10 @@ public class Board extends JPanel implements ActionListener {
                     //Do Checks
                 }
             } else {
-                player_2_score++;
-                if (player_2_score >= MAX_SCORE) {
-                    resetBall("Player 1 Wins!");
-                    resetScore();
+                player_4_score++;
+                if (player_4_score >= MAX_SCORE) {
+//                    resetBall("Player 1 Wins!");
+//                    resetScore();
                 }
             }
 
@@ -712,31 +707,30 @@ public class Board extends JPanel implements ActionListener {
                     ball_x += ball_vel_x * BALL_SPEEDX;
                     ball_y += ball_vel_y * BALL_SPEEDY;
 
-                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
-                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+//                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+//                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1, player_1_score, player_2_score, player_3_score, player_4_score);
+
 
 
                 } else {
 
-                    JSONObject ballPosition = UDPObject.getBallPosition();
-                    JSONObject player_scores = UDPObject.getBallPosition();
+//                    JSONObject ballPosition = UDPObject.getBallPosition();
+//                    JSONObject player_scores = UDPObject.getPlayerScore();
+                    JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
 
-                    if (ballPosition != null) {
-                        ball_x = ballPosition.getDouble("ball_x");
-                        ball_y = ballPosition.getDouble("ball_y");
-                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
-                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
-                        ball_vel_x = ballPosition.getDouble("vel_x");
-                        ball_vel_y = ballPosition.getDouble("vel_y");
-
+                    if (score_and_balls != null) {
+                        ball_x = score_and_balls.getDouble("ball_x");
+                        ball_y = score_and_balls.getDouble("ball_y");
+                        BALL_SPEEDX = score_and_balls.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = score_and_balls.getDouble("BALL_SPEEDY");
+                        ball_vel_x = score_and_balls.getDouble("vel_x");
+                        ball_vel_y = score_and_balls.getDouble("vel_y");
+                        player_1_score = score_and_balls.getInt("player_1_score");
+                        player_2_score = score_and_balls.getInt("player_2_score");
+                        player_3_score = score_and_balls.getInt("player_3_score");
+                        player_4_score = score_and_balls.getInt("player_4_score");
                         UDPObject.resetBallPosition();
-                    }
-                    if (player_scores != null) {
-                        player_1_score = player_scores.getInt("player_1_score");
-                        player_2_score = player_scores.getInt("player_2_score");
-                        player_3_score = player_scores.getInt("player_3_score");
-                        player_4_score = player_scores.getInt("player_4_score");
-
                         UDPObject.resetScoreEvent();
                     }
                 }

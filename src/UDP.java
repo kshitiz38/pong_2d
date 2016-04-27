@@ -21,6 +21,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     private JSONObject ballPosition;
     protected InetAddress inetAddress;
     private JSONObject player_score;
+    private JSONObject ball_and_score;
     protected int port;
     protected ArrayList<Machine> playerlist;
     private static UDP udp;
@@ -155,6 +156,10 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         break;
                     case "Paddle_Moving":
                         break;
+                    case "Ball_And_Score":
+                        ball_and_score = jsonObject;
+//                        sendACK(incoming,socket);
+                        break;
                     case "Wall_Hit":
                         break;
                     case "Paddle_Hit":
@@ -164,6 +169,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Win":
                         break;
                     case "Player_Score":
+                        System.out.println("Score received");
                         player_score = jsonObject;
                         sendACK(incoming,socket);
                         break;
@@ -245,6 +251,10 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         return player_score;
     }
 
+    public JSONObject getPlayerScoreAndBall() {
+        return ball_and_score;
+    }
+
     public void resetKeyEvent() {
         key_event = null;
     }
@@ -273,6 +283,30 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("BALL_SPEEDX", BALL_SPEEDX);
         jsonObject.put("BALL_SPEEDY", BALL_SPEEDY);
         jsonObject.put("ball_id", ball_id);
+
+        String jsonString = jsonObject.toString();
+        byte[] bytes = jsonString.getBytes();
+        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+    }
+
+    public void sendBallAndScore(double ball_x, double ball_y, double BALL_SPEEDX, double BALL_SPEEDY, double vel_x, double vel_y, int ball_id, int player_1_score, int player_2_score, int player_3_score, int player_4_score)
+    {
+
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("MessageType", "Ball_And_Score");
+        jsonObject.put("ball_x", ball_x);
+        jsonObject.put("ball_y", ball_y);
+        jsonObject.put("vel_x", vel_x);
+        jsonObject.put("vel_y", vel_y);
+        jsonObject.put("BALL_SPEEDX", BALL_SPEEDX);
+        jsonObject.put("BALL_SPEEDY", BALL_SPEEDY);
+        jsonObject.put("ball_id", ball_id);
+        jsonObject.put("MessageType", "Player_Score");
+        jsonObject.put("player_1_score", player_1_score);
+        jsonObject.put("player_2_score", player_2_score);
+        jsonObject.put("player_3_score", player_3_score);
+        jsonObject.put("player_4_score", player_4_score);
 
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
