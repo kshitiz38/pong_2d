@@ -92,6 +92,7 @@ public class Board extends JPanel implements ActionListener {
 
     //hand off key presses to the Paddles class.
     private Paddles paddles;
+    private boolean flag = false;
 
     private class TAdapter extends KeyAdapter {
 
@@ -303,9 +304,13 @@ public class Board extends JPanel implements ActionListener {
                 }
 
             }
-            //UDPObject.resetKeyEvent();
+            UDPObject.resetKeyEvent();
         }
         //check for pause
+
+        //System.out.println(pause);
+        System.out.println(paddles.Space);
+
         if (paddles.Space == true) {
             //wait for debounce
             try {
@@ -314,7 +319,13 @@ public class Board extends JPanel implements ActionListener {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-            pause = !pause;
+            if (!flag) {
+                pause = !pause;
+                flag = true;
+            }
+
+        } else {
+            flag = false;
         }
         if (pause == true) {
             return;
