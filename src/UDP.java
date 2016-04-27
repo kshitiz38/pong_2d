@@ -30,17 +30,23 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     private long acknum = 0;
     //  protected DatagramSocket socket;
     protected DatagramSocket socket;
-    protected DatagramPacket outgoing, incoming;
+    protected DatagramPacket incoming;
+    protected DatagramSocket ackSocket;
 
 
     //Acknowledgement Signals' Hashmap
-    HashMap<String,Boolean> StartGameHM = new HashMap<>();
+    HashMap<String, Boolean> StartGameHM = new HashMap<>();
     private boolean started = false;
 
     public UDP(InetAddress inetAddress, int port) {
         this.inetAddress = inetAddress;
         this.port = port;
         createAndShowGUI();
+        try {
+            ackSocket = new DatagramSocket(9500);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setUDP(UDP udp) {
@@ -62,22 +68,23 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
     protected Thread listener;
 
+
+    protected void initNet() throws IOException {
+//        socket = new MulticastSocket (port);
+//        socket.setTimeToLive (5);
+//        socket.joinGroup (inetAddress);
+//        outgoing = new DatagramPacket(new byte[1], 1);
+        socket = new DatagramSocket(port);
+        incoming = new DatagramPacket(new byte[65508], 65508);
+
+    }
+
     public synchronized void start() throws IOException {
         if (listener == null) {
             initNet();
             listener = new Thread(this);
             listener.start();
         }
-    }
-
-
-    protected void initNet() throws IOException {
-//        socket = new MulticastSocket (port);
-        socket = new DatagramSocket(port);
-//        socket.setTimeToLive (5);
-//        socket.joinGroup (inetAddress);
-        outgoing = new DatagramPacket(new byte[1], 1);
-        incoming = new DatagramPacket(new byte[65508], 65508);
     }
 
     public synchronized void stop() throws IOException {
@@ -91,7 +98,6 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     public void windowOpened(WindowEvent event) {
         input.requestFocus();
     }
-
 
 
     public void windowClosing(WindowEvent event) {
@@ -151,7 +157,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         ballPosition = jsonObject;
                         break;
                     case "isConnected":
-                        sendAck(new Machine(incoming.getAddress().getHostAddress(),incoming.getPort()));
+                        sendAck(new Machine(incoming.getAddress().getHostAddress(), incoming.getPort()));
                         break;
                     case "Paddle_Moving":
                         break;
@@ -164,47 +170,54 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Ack":
                         acknum++;
                         break;
-                    case "Acknowledge":
-                        StartGameHM.put(InetAddress.getLocalHost().getHostAddress(),true);
-                        StartGameHM.put(incoming.getAddress().getHostAddress(), true);
-                        System.out.println("Acknowledge: "+ incoming.getAddress().getHostAddress());
-                        JSONObject jsonObject3 = new JSONObject();
-                        jsonObject3.put("MessageType","Start");
-                        String jsonString = jsonObject.toString(); //only for string data ?? put(String,bool)??
-                        byte[] bytes3 = jsonString.getBytes();
+
+//                    case "Acknowledge":
+//                        StartGameHM.put(InetAddress.getLocalHost().getHostAddress(), true);
+//                        StartGameHM.put(incoming.getAddress().getHostAddress(), true);
+//                        System.out.println("Acknowledge: " + incoming.getAddress().getHostAddress());
+//                        JSONObject jsonObject3 = new JSONObject();
+//                        jsonObject3.put("MessageType", "Start");
+//                        String jsonString = jsonObject.toString(); //only for string data ?? put(String,bool)??
+//                        byte[] bytes3 = jsonString.getBytes();
 //                        receiveAcknowledgement(bytes3, playerlist, "StartGame");
-                        new Pong(udp);
-                        break;
+//                        new Pong(udp);
+//                        break;
                     case "Win":
                         break;
                     case "Player_Score":
-                        player_score=jsonObject;
+                        player_score = jsonObject;
                         break;
                     case "Key_Event":
+
 //                        System.out.println("space lodulakhan kaju");
                         key_event=jsonObject;
+
+                        System.out.println("Space received");
+                        key_event = jsonObject;
+
                         break;
-                    case "Start" :
+                    case "Start":
                         System.out.println("Start");
-                        if(started){
+                        if (started) {
                             break;
                         }
                         started = true;
 //                        System.out.println("Start");
                         JSONObject jsonObject1 = new JSONObject();
-                        jsonObject1.put("MessageType","Acknowledge");
-                        jsonObject1.put("responseType", "GameStart");
+                        jsonObject1.put("MessageType", "ACK");
+//                        jsonObject1.put("responseType", "GameStart");
 
                         String messageack = jsonObject1.toString();
                         byte[] bytes1 = messageack.getBytes();
 
-                        DatagramPacket datagramPacket = new DatagramPacket(bytes1,bytes1.length,incoming.getAddress(),incoming.getPort());
+                        DatagramPacket datagramPacket = new DatagramPacket(bytes1, bytes1.length, incoming.getAddress(), 9500);
                         socket.send(datagramPacket);
 
                         checkRoomMsg();//to get latest players
                         new Pong(udp);
-                        Thread sendPackets = new Thread(){
+                        Thread sendPackets = new Thread() {
                             long sentnum = 0;
+
                             @Override
                             public void run() {
                                 //sendPacketof isConnected
@@ -216,8 +229,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    System.out.println("Sent: "+sentnum);
-                                    System.out.println("Ack: "+acknum);
+                                    System.out.println("Sent: " + sentnum);
+                                    System.out.println("Ack: " + acknum);
                                     if ((sentnum - acknum) > 5) {
                                         if (playerlist.size() > 1) {
 
@@ -255,9 +268,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         System.out.println(jsonObject.getInt("numPlayers"));
                         for (int i = 0; i < jsonObject.getInt("numPlayers"); i++) {
                             String ip_port = jsonObject.getString("Player" + i);
-                            textArea.append( ip_port + "\n");
+                            textArea.append(ip_port + "\n");
                             String[] ip_ports = ip_port.split(":");
-                            Machine machine = new Machine(ip_ports[0],Integer.parseInt(ip_ports[1]));
+                            Machine machine = new Machine(ip_ports[0], Integer.parseInt(ip_ports[1]));
                             playerlist.add(machine);
                         }
                         break;
@@ -271,10 +284,13 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
-    public boolean getVirtualHost(){return virtualHost;}
+    public boolean getVirtualHost() {
+        return virtualHost;
+    }
+
     //send key event
-    public void sendKeyEvent(int event_code, String type, int playerIndex){
-        JSONObject jsonObject= new JSONObject();
+    public void sendKeyEvent(int event_code, String type, int playerIndex) {
+        JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("key_event_code", event_code);
         jsonObject.put("MessageType", "Key_Event");
@@ -284,8 +300,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         byte[] bytes = jsonString.getBytes();
         sendToPlayers(bytes);
     }
+
     //send score
-    public void sendPlayerScore(Integer player_1_score, Integer player_2_score, Integer player_3_score, Integer player_4_score){
+    public void sendPlayerScore(Integer player_1_score, Integer player_2_score, Integer player_3_score, Integer player_4_score) {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("MessageType", "Player_Score");
@@ -301,19 +318,20 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     }
 
     //retreiving keyEvent
-    public JSONObject getKeyEvent(){
+    public JSONObject getKeyEvent() {
         return key_event;
     }
 
-    public JSONObject getPlayerScore(){
+    public JSONObject getPlayerScore() {
         return player_score;
     }
 
-    public void resetKeyEvent(){
-        key_event=null;
+    public void resetKeyEvent() {
+        key_event = null;
     }
-    public void resetScoreEvent(){
-        player_score=null;
+
+    public void resetScoreEvent() {
+        player_score = null;
     }
 
 
@@ -323,11 +341,6 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     public void resetBallPosition() {
         this.ballPosition = null;
     }
-
-
-
-
-
 
 
     public void sendBallInfo(double ball_x, double ball_y, double vel_x, double vel_y, int ball_id) {
@@ -345,7 +358,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         sendToPlayers(bytes);
     }
 
-    public JSONObject getBallPosition(){
+    public JSONObject getBallPosition() {
         return ballPosition;
     }
 
@@ -353,103 +366,100 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         JSONObject jsonObject = new JSONObject();
         //initialize StartGameHM
         for (Machine machine : playerlist) {
-            StartGameHM.put(machine.getIp(),false);
+            StartGameHM.put(machine.getIp(), false);
         }
         for (Boolean aBoolean : StartGameHM.values()) {
             System.out.println(aBoolean);
         }
         System.out.println();
-        jsonObject.put("MessageType","Start");
+        jsonObject.put("MessageType", "Start");
 
         String jsonString = jsonObject.toString(); //only for string data ?? put(String,bool)??
         byte[] bytes = jsonString.getBytes();
-        sendToPlayers(bytes);
-
-//        checkRoomMsg();//to get latest players
-
-
+//        sendToPlayers(bytes);
+        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+        new Pong(udp);
     }
 
-    public boolean AndHashMap(HashMap<String,Boolean> hashMap){
-        boolean result = true;
-        for (String s : hashMap.keySet()) {
-            result = result & hashMap.get(s);
-        }
-        return result;
-    }
+//    public boolean AndHashMap(HashMap<String, Boolean> hashMap) {
+//        boolean result = true;
+//        for (String s : hashMap.keySet()) {
+//            result = result & hashMap.get(s);
+//        }
+//        return result;
+//    }
 
-    int acknowledgecount = 0;
-
-    public synchronized void receiveAcknowledgement(byte[] bytes, ArrayList<Machine> playerlist, String startGame) {
-        DatagramPacket acknowledgement = new DatagramPacket(new byte[1024], 1024);
-//        incoming = new DatagramPacket(new byte[65508], 65508);
-        try {
-            socket.setSoTimeout(1000);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-        try {
-            socket.receive(acknowledgement);
-        }
-        catch (SocketTimeoutException e1){
-            for (String s : StartGameHM.keySet()) {
-                try {
-                    if(!StartGameHM.get(s) && !(s.equals(InetAddress.getLocalHost().getHostAddress()))){
-
-                        DatagramPacket packet = null;
-                        try {
-                            packet = new DatagramPacket(bytes,bytes.length, InetAddress.getByName(s),getPort(playerlist, s));
-                        } catch (UnknownHostException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            assert packet != null;
-                            socket.send(packet);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(acknowledgement.getAddress()!=null) {
-            InetAddress ipaddress = acknowledgement.getAddress();
-            String ip = ipaddress.getHostAddress();
-
-//        int portnum = acknowledgement.getPort();
-
-            String message = new String(acknowledgement.getData(), 0, acknowledgement.getLength());
-            JSONObject jsonObject = new JSONObject(message);
-
-            String messageType = jsonObject.getString("MessageType");
-            String responseOf = jsonObject.getString("responseType");
-
-            if (messageType.equals("Acknowledge") && (responseOf.equals("GameStart"))) {
-                StartGameHM.put(ip, true);
-                System.out.println("Acknowledge: " + ip);
-            }
-        }
-        while (!AndHashMap(StartGameHM)){
-            if(acknowledgecount > 4){
-                break;
-            }
-            acknowledgecount++;
-            receiveAcknowledgement(bytes, playerlist, "StartGame");
-
-        }
-
-        return;
-
-
-    }
+//    int acknowledgecount = 0;
+//
+//    public synchronized void receiveAcknowledgement(byte[] bytes, ArrayList<Machine> playerlist, String startGame) {
+//        DatagramPacket acknowledgement = new DatagramPacket(new byte[1024], 1024);
+//        try {
+//            socket.setSoTimeout(1000);
+//        } catch (SocketException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            socket.receive(acknowledgement); //blocking therefore not receiving
+//        } catch (SocketTimeoutException e1) {
+//            for (String s : StartGameHM.keySet()) {
+//                try {
+//                    if (!StartGameHM.get(s) && !(s.equals(InetAddress.getLocalHost().getHostAddress()))) {
+//                        System.out.println("timeout");
+//                        DatagramPacket packet = null;
+//                        try {
+//                            packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(s), getPort(playerlist, s));
+//                        } catch (UnknownHostException e) {
+//                            e.printStackTrace();
+//                        }
+//                        try {
+//                            assert packet != null;
+//                            socket.send(packet);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                } catch (UnknownHostException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        if (acknowledgement.getAddress() != null) {
+//            InetAddress ipaddress = acknowledgement.getAddress();
+//            String ip = ipaddress.getHostAddress();
+//
+////        int portnum = acknowledgement.getPort();
+//
+//            String message = new String(acknowledgement.getData(), 0, acknowledgement.getLength());
+//            JSONObject jsonObject = new JSONObject(message);
+//
+//            String messageType = jsonObject.getString("MessageType");
+//            String responseOf = jsonObject.getString("responseType");
+//
+//            if (messageType.equals("Acknowledge") && (responseOf.equals("GameStart"))) {
+//                StartGameHM.put(ip, true);
+//                System.out.println("Acknowledge: " + ip);
+//            }
+//        }
+//        System.out.println(AndHashMap(StartGameHM));
+//        while (!AndHashMap(StartGameHM)) {
+//            if (acknowledgecount > 4) {
+//                break;
+//            }
+//            acknowledgecount++;
+//            receiveAcknowledgement(bytes, playerlist, "StartGame");
+//
+//        }
+//
+////        return;
+//
+//
+//    }
 
     private int getPort(ArrayList<Machine> playerlist, String s) {
         for (Machine machine : playerlist) {
-            if(machine.getIp().equals(s))
+            if (machine.getIp().equals(s))
                 return machine.getPort();
         }
         return 0;
@@ -479,7 +489,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
-    public void leaveRoomMsg(){
+    public void leaveRoomMsg() {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("MessageType", "checkRoom");
@@ -502,17 +512,16 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     }
 
 
-
-    public void isConnected(){
+    public void isConnected() {
         try {
             InetAddress inetAddress = InetAddress.getByName(playerlist.get(0).getIp());
             int port = playerlist.get(0).getPort();
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("MessageType","isConnected");
+            jsonObject.put("MessageType", "isConnected");
 
             byte[] bytes = jsonObject.toString().getBytes();
 
-            DatagramPacket packet = new DatagramPacket(bytes,bytes.length,inetAddress,port);
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, inetAddress, port);
             socket.send(packet);
         } catch (IOException e) {
             e.printStackTrace();
@@ -543,7 +552,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
     public void sendAck(Machine machine) {
         JSONObject jsonobject = new JSONObject();
-        jsonobject.put("MessageType","Ack");
+        jsonobject.put("MessageType", "Ack");
         byte[] bytes = jsonobject.toString().getBytes();
         InetAddress broadcast = null;
         try {
@@ -559,11 +568,11 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
-    public void sendToPlayers(byte[] bytes){ //method to send json object to all excluding itself
+    public void sendToPlayers(byte[] bytes) { //method to send json object to all excluding itself
+        System.out.println(playerlist.size());
         for (Machine machine : playerlist) {
             try {
-                if(!(machine.getIp().equals(InetAddress.getLocalHost().getHostAddress())))
-                {
+                if (!(machine.getIp().equals(InetAddress.getLocalHost().getHostAddress()))) {
                     InetAddress broadcast = null;
                     try {
                         broadcast = InetAddress.getByName(machine.getIp());
@@ -575,6 +584,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     //        outgoing.setData(bytes);
                     //        outgoing.setLength(bytes.length);
                     try {
+//                        System.out.println("space bheja");
+//                        System.out.println(startGame.getData().toString());
                         socket.send(startGame);
 
                     } catch (IOException e) {
@@ -587,9 +598,6 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
         }
     }
-
-
-
 
 
     /// GUI
@@ -719,7 +727,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         buttonCreateRoom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Thread threadLobby = new Thread(){
+                Thread threadLobby = new Thread() {
                     @Override
                     public void run() {
                         lobbyServer = new LobbyServer();
@@ -818,6 +826,115 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         frameMain.setVisible(true);
     }
 
+    //master method
+    public synchronized void sendMessageToAllExcludingMeWithAcknowledgeMsg(byte[] bytes) {
+        int resends;//to check number of resends of each message
+        InetAddress myInetAddress = null;
+        try {
+            myInetAddress = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        assert myInetAddress != null;
+        String myIp = myInetAddress.getHostAddress();
+        //If resends exceed a particular number assume player lost and unblock the socket.receive by sending message to itself
+        //and perform necessary actions like updating the playerlist and replacing the code with AI
+        for (Machine machine : playerlist) {
+            if (!machine.getIp().equals(myIp)) {//excluding me
+                resends = 0;
+                //DataPacket formed
+                InetAddress ip_of_machine = null;
+                try {
+                    ip_of_machine = InetAddress.getByName(machine.getIp());
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+                DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, ip_of_machine, machine.getPort());
 
+                //Send DataPacket
+                try {
+                    socket.send(datagramPacket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //Wait for acknowledgement
+                DatagramPacket ackPacket = new DatagramPacket(new byte[1024], 1024);
+
+                try {
+                    ackSocket.setSoTimeout(1000); //timeout of 1 second
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
+
+                boolean continueSending = true;
+
+                while (continueSending) {
+                    // send to server omitted
+                    try {
+                        ackSocket.receive(ackPacket);
+                        continueSending = false; // a packet has been received : stop sending
+                    } catch (SocketTimeoutException e) {
+                        // no response received after 1 second. continue sending
+                        if (resends > 4) {
+                            // send message back to the acksocket to unblock it
+                            DatagramSocket datagramSocketToUnblock = null;
+                            try {
+                                datagramSocketToUnblock = new DatagramSocket(9501);
+                            } catch (SocketException e1) {
+                                e1.printStackTrace();
+                            }
+
+                            //unblock message
+                            JSONObject unblockJson = new JSONObject();
+                            unblockJson.put("MessageType", "Unblock");
+                            String unblockString = unblockJson.toString();
+                            byte[] unblockBytes = unblockString.getBytes();
+
+                            //unblockPacket
+                            DatagramPacket datagramPacketUnblock = new DatagramPacket(unblockBytes, unblockBytes.length, myInetAddress, 9500);
+
+                            //sendUnblockPacket
+                            try {
+                                assert datagramSocketToUnblock != null;
+                                datagramSocketToUnblock.send(datagramPacketUnblock);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+
+                        } else {
+                            resends++;
+                            try {
+                                socket.send(datagramPacket);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+
+                        }
+                    }catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                //ack message type
+                String messageAck = new String(ackPacket.getData(), 0, ackPacket.getLength());
+                JSONObject jsonObjectAck = new JSONObject(messageAck);
+                String msg_type_ack = jsonObjectAck.getString("MessageType");
+
+
+                if (ackPacket.getAddress().getHostAddress().equals(myIp)) {
+                    //current machine detected
+                    System.out.println(machine.getIp() + " : disconnected");
+                    //perform actions such as update playerlist
+                } else {
+                    if (msg_type_ack.equals("ACK"))
+                        System.out.println("Ack received from : " + ackPacket.getAddress().getHostAddress());
+                    else
+                        System.out.println("Unknown message type for Ack");
+                }
+            }
+        }
+    }
 
 }

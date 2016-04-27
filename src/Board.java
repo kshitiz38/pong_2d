@@ -103,8 +103,10 @@ public class Board extends JPanel implements ActionListener {
 
         public void keyPressed(KeyEvent e) {
             paddles.keyPressed(e.getKeyCode(), playerIndex);
-            if(UDPObject!=null)
+            if(UDPObject!=null) {
+                System.out.println("Space daba");
                 UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed", playerIndex);
+            }
         }
     }
 

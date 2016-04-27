@@ -111,12 +111,14 @@ public class GameMenuOne extends JFrame {
                     } catch (UnknownHostException e1) {
                         e1.printStackTrace();
                     }
-                    int port = 9685;
-
+                    int port = 9685;//port number of every player
+                    //this is also very important
                     UDP pong = new UDP(group, port);
                     pong.setUDP(pong);
 
                     try {
+                        //TODO
+                        //this is very important
                         pong.start();
                         //setVisible(false);
                     } catch (IOException e1) {
