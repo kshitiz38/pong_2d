@@ -161,6 +161,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
                 switch (msg_type) {
                     case "Ball_Moving":
+                        sendACK(incoming,socket);
                         ballPosition = jsonObject;
                         break;
                     case "isConnected":
@@ -191,6 +192,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Win":
                         break;
                     case "Player_Score":
+                        sendACK(incoming,socket);
                         player_score = jsonObject;
                         break;
                     case "Key_Event":
@@ -318,8 +320,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
 
-        sendToPlayers(bytes);
-
+//        sendToPlayers(bytes);
+        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
     }
 
     //retreiving keyEvent
@@ -360,7 +362,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        sendToPlayers(bytes);
+//        sendToPlayers(bytes);
+        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
     }
 
     public JSONObject getBallPosition() {
