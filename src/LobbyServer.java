@@ -7,26 +7,26 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class LobbyServer {//implements Runnable {//Lobby server will be hosted on any one player and once game is started, it is not even needed
-    private static final int Group_Port = 1235; //Lobby Port number
+//    private static final int Group_Port = 1235; //Lobby Port number
     private ArrayList<Machine> groupMembers = new ArrayList<>(); //list
 //    private static final int port = 1234; //This is the port number of all the players using this game-application
 
     protected DatagramSocket socket;
     protected DatagramPacket outgoing, incoming;
 
-    public LobbyServer() {
+    public LobbyServer(int lobby_Port) {
         //public constructor
         try {
-            initNet();
+            initNet(lobby_Port);
         } catch (IOException e) {
             handleIOException(e);
         }
         receieveConnection(); //added now
     }
 
-    protected void initNet() throws IOException {
+    protected void initNet(int lobby_Port) throws IOException {
         //socket = new MulticastSocket (port);
-        socket = new DatagramSocket(Group_Port);
+        socket = new DatagramSocket(lobby_Port);
         //socket.setTimeToLive (5);
         //socket.joinGroup (inetAddress);
         outgoing = new DatagramPacket(new byte[1], 1);
