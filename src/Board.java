@@ -77,8 +77,6 @@ public class Board extends JPanel implements ActionListener {
     private double ball_vel_x = 1;
     private double ball_vel_y = 1;
 
-    private int indexPlayer;
-
     private boolean positiveBallX = true;
     private boolean positiveBallY = true;
 
@@ -145,7 +143,7 @@ public class Board extends JPanel implements ActionListener {
                 for(int i=0; i<playersList.size(); i++)
                 {
                     if (playersList.get(i).getIp().equals(ipMy)){
-                        indexPlayer = i;
+                        playerIndex = i;
                         break;
                     }
                 }
@@ -153,7 +151,7 @@ public class Board extends JPanel implements ActionListener {
                 e1.printStackTrace();
             }
         }
-
+        System.out.println("KTZ:::: " + playerIndex);
 
         //create polygons used in the game
 //        paddleOne_one = new Rectangle(0,0,PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -303,6 +301,7 @@ public class Board extends JPanel implements ActionListener {
                 }
 
             }
+            //UDPObject.resetKeyEvent();
         }
         //check for pause
         if (paddles.Space == true) {

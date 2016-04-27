@@ -26,7 +26,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
     protected int port;
     protected ArrayList<Machine> playerlist;
-    private UDP udp;
+    private static UDP udp;
     private long acknum = 0;
     //  protected DatagramSocket socket;
     protected DatagramSocket socket;
@@ -172,7 +172,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         jsonObject3.put("MessageType","Start");
                         String jsonString = jsonObject.toString(); //only for string data ?? put(String,bool)??
                         byte[] bytes3 = jsonString.getBytes();
-                        receiveAcknowledgement(bytes3, playerlist, "StartGame");
+//                        receiveAcknowledgement(bytes3, playerlist, "StartGame");
                         new Pong(udp);
                         break;
                     case "Win":
@@ -181,6 +181,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         player_score=jsonObject;
                         break;
                     case "Key_Event":
+//                        System.out.println("space lodulakhan kaju");
                         key_event=jsonObject;
                         break;
                     case "Start" :
