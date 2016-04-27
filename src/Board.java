@@ -447,8 +447,9 @@ public class Board extends JPanel implements ActionListener {
                         player_2_score = score_and_balls.getInt("player_2_score");
                         player_3_score = score_and_balls.getInt("player_3_score");
                         player_4_score = score_and_balls.getInt("player_4_score");
-                        UDPObject.resetBallPosition();
-                        UDPObject.resetScoreEvent();
+                        UDPObject.resetBallAndScore();
+//                        UDPObject.resetBallPosition();
+//                        UDPObject.resetScoreEvent();
                     }
                 }
             }
@@ -539,8 +540,9 @@ public class Board extends JPanel implements ActionListener {
                         player_2_score = score_and_balls.getInt("player_2_score");
                         player_3_score = score_and_balls.getInt("player_3_score");
                         player_4_score = score_and_balls.getInt("player_4_score");
-                        UDPObject.resetBallPosition();
-                        UDPObject.resetScoreEvent();
+                        UDPObject.resetBallAndScore();
+//                        UDPObject.resetBallPosition();
+//                        UDPObject.resetScoreEvent();
                     }
                 }
             }
@@ -590,8 +592,9 @@ public class Board extends JPanel implements ActionListener {
                         player_2_score = score_and_balls.getInt("player_2_score");
                         player_3_score = score_and_balls.getInt("player_3_score");
                         player_4_score = score_and_balls.getInt("player_4_score");
-                        UDPObject.resetBallPosition();
-                        UDPObject.resetScoreEvent();
+                        UDPObject.resetBallAndScore();
+//                        UDPObject.resetBallPosition();
+//                        UDPObject.resetScoreEvent();
                     }
                 }
             }
@@ -730,8 +733,9 @@ public class Board extends JPanel implements ActionListener {
                         player_2_score = score_and_balls.getInt("player_2_score");
                         player_3_score = score_and_balls.getInt("player_3_score");
                         player_4_score = score_and_balls.getInt("player_4_score");
-                        UDPObject.resetBallPosition();
-                        UDPObject.resetScoreEvent();
+                        UDPObject.resetBallAndScore();
+//                        UDPObject.resetBallPosition();
+//                        UDPObject.resetScoreEvent();
                     }
                 }
             }

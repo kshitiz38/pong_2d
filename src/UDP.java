@@ -158,7 +158,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         break;
                     case "Ball_And_Score":
                         ball_and_score = jsonObject;
-//                        sendACK(incoming,socket);
+                        sendACK(incoming,socket);
                         break;
                     case "Wall_Hit":
                         break;
@@ -271,6 +271,10 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         this.ballPosition = null;
     }
 
+    public void resetBallAndScore() {
+        this.ball_and_score = null;
+    }
+
 
     public void sendBallInfo(double ball_x, double ball_y, double BALL_SPEEDX, double BALL_SPEEDY, double vel_x, double vel_y, int ball_id) {
         JSONObject jsonObject = new JSONObject();
@@ -302,7 +306,6 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("BALL_SPEEDX", BALL_SPEEDX);
         jsonObject.put("BALL_SPEEDY", BALL_SPEEDY);
         jsonObject.put("ball_id", ball_id);
-        jsonObject.put("MessageType", "Player_Score");
         jsonObject.put("player_1_score", player_1_score);
         jsonObject.put("player_2_score", player_2_score);
         jsonObject.put("player_3_score", player_3_score);
