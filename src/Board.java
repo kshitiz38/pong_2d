@@ -536,7 +536,7 @@ public class Board extends JPanel implements ActionListener {
 
         //hit top wall *******************************************************************************************************
         //*******************************************************************************************************************
-        if (ball_y < 0) {
+        else if (ball_y < 0) {
             ball_vel_y *= -1;
             if (gameMode.equals("Single")) {
                 player_3_score++;
@@ -712,16 +712,21 @@ public class Board extends JPanel implements ActionListener {
                 }
             }
         }
+        else {
+            ball_x += ball_vel_x * BALL_SPEEDX;
+            ball_y += ball_vel_y * BALL_SPEEDY;
+        }
             //**************************************************END********************************************************//
             //************************************************************************************************//
 
 
-        if (gameMode.equals("Multiplayer")) {
-
-        } else {
-            ball_x += ball_vel_x * BALL_SPEEDX;
-            ball_y += ball_vel_y * BALL_SPEEDY;
-        }
+//        if (gameMode.equals("Multiplayer")) {
+//
+//        } else {
+//
+//        }
+//        ball_x += ball_vel_x * BALL_SPEEDX;
+//        ball_y += ball_vel_y * BALL_SPEEDY;
 
             //send ball position and velocity and player scores
 //
