@@ -105,7 +105,6 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             paddles.keyPressed(e.getKeyCode(), playerIndex);
             if(UDPObject!=null) {
-                System.out.println("Space daba");
                 UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed", playerIndex);
             }
         }
@@ -309,7 +308,7 @@ public class Board extends JPanel implements ActionListener {
         //check for pause
 
         //System.out.println(pause);
-        System.out.println(paddles.Space);
+//        System.out.println(paddles.Space);
 
         if (paddles.Space == true) {
             //wait for debounce
