@@ -359,7 +359,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     }
 
 
-    public void sendBallInfo(double ball_x, double ball_y, double vel_x, double vel_y, int ball_id) {
+    public void sendBallInfo(double ball_x, double ball_y, double BALL_SPEEDX, double BALL_SPEEDY, double vel_x, double vel_y, int ball_id) {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("MessageType", "Ball_Moving");
@@ -367,6 +367,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("ball_y", ball_y);
         jsonObject.put("vel_x", vel_x);
         jsonObject.put("vel_y", vel_y);
+        jsonObject.put("BALL_SPEEDX", BALL_SPEEDX);
+        jsonObject.put("BALL_SPEEDY", BALL_SPEEDY);
         jsonObject.put("ball_id", ball_id);
 
         String jsonString = jsonObject.toString();

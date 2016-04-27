@@ -286,7 +286,7 @@ public class Board extends JPanel implements ActionListener {
             }
         }
         JSONObject key_event;
-        if(UDPObject!=null) {
+        if (UDPObject != null) {
             key_event = UDPObject.getKeyEvent();
 
             if (key_event == null) {
@@ -308,8 +308,9 @@ public class Board extends JPanel implements ActionListener {
         }
         //check for pause
 
-        //System.out.println(pause);
-        System.out.println(paddles.Space);
+//        System.out.println(pause);
+//        System.out.println(paddles.Space);
+//        System.out.println(flag + "\n");
 
         if (paddles.Space == true) {
             //wait for debounce
@@ -352,6 +353,11 @@ public class Board extends JPanel implements ActionListener {
     		Hitting the side of the paddle still results in a bounce.
     	*/
         //hit one_one paddle and one_two
+
+        //paddle one_one ************************************************************************************************
+        //***************************************************************************************************************
+
+
         if (ball_x < PADDLE_WIDTH && (ball_y + BALL_HEIGHT > paddleOneY && ball_y < paddleOneY + PADDLE_HEIGHT)) {
 
             ball_vel_x *= -1;
@@ -370,9 +376,32 @@ public class Board extends JPanel implements ActionListener {
                 ball_vel_y *= -1;
             }
 
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 1) {
+                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getBallPosition();
+                    if (ballPosition != null) {
+                        ball_x = ballPosition.getDouble("ball_x");
+                        ball_y = ballPosition.getDouble("ball_y");
+                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
+                        ball_vel_x = ballPosition.getDouble("vel_x");
+                        ball_vel_y = ballPosition.getDouble("vel_y");
+
+                        UDPObject.resetBallPosition();
+                    }
+                }
+            }
+
+
             ; // put back in front of paddle if it's behind.
         } else if (ball_x < 0) {
-            //hit left wall
+
+            //hit left wall*********************************************************************************************
+            //**********************************************************************************************************
+
             ball_vel_x *= -1;
             if (gameMode.equals("Single")) {
                 player_2_score++;
@@ -386,8 +415,43 @@ public class Board extends JPanel implements ActionListener {
                     resetScore();
                 }
             }
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 1) {
+
+                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getBallPosition();
+                    JSONObject player_scores = UDPObject.getBallPosition();
+
+                    if (ballPosition != null) {
+                        ball_x = ballPosition.getDouble("ball_x");
+                        ball_y = ballPosition.getDouble("ball_y");
+                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
+                        ball_vel_x = ballPosition.getDouble("vel_x");
+                        ball_vel_y = ballPosition.getDouble("vel_y");
+
+                        UDPObject.resetBallPosition();
+                    }
+                    if (player_scores != null) {
+                        player_1_score = player_scores.getInt("player_1_score");
+                        player_2_score = player_scores.getInt("player_2_score");
+                        player_3_score = player_scores.getInt("player_3_score");
+                        player_4_score = player_scores.getInt("player_4_score");
+
+                        UDPObject.resetScoreEvent();
+                    }
+                }
+            }
         }
-        //hit one_two
+
+        //hit one_two ***************************************************************************************************
+        //***************************************************************************************************************
+
         else if (ball_x + BALL_HEIGHT > pane_x - PADDLE_WIDTH && (ball_y + BALL_HEIGHT > paddleOneOppY && ball_y < paddleOneOppY + PADDLE_HEIGHT)) {
 
             ball_vel_x *= -1;
@@ -403,6 +467,28 @@ public class Board extends JPanel implements ActionListener {
                 BALL_SPEEDY += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleOneOppY + PADDLE_HEIGHT / 2 - ball_y));
                 ball_vel_y *= -1;
             }
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 3) {
+                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getBallPosition();
+                    if (ballPosition != null) {
+                        ball_x = ballPosition.getDouble("ball_x");
+                        ball_y = ballPosition.getDouble("ball_y");
+                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
+                        ball_vel_x = ballPosition.getDouble("vel_x");
+                        ball_vel_y = ballPosition.getDouble("vel_y");
+
+                        UDPObject.resetBallPosition();
+                    }
+                }
+            }
+
+            // right wall ***********************************************************************************************
+            //************************************************************************************************************
         } else if (ball_x + BALL_HEIGHT > pane_x) {
             //hit right wall
             ball_vel_x *= -1;
@@ -418,10 +504,43 @@ public class Board extends JPanel implements ActionListener {
                     resetScore();
                 }
             }
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 3) {
+
+                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getBallPosition();
+                    JSONObject player_scores = UDPObject.getBallPosition();
+
+                    if (ballPosition != null) {
+                        ball_x = ballPosition.getDouble("ball_x");
+                        ball_y = ballPosition.getDouble("ball_y");
+                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
+                        ball_vel_x = ballPosition.getDouble("vel_x");
+                        ball_vel_y = ballPosition.getDouble("vel_y");
+
+                        UDPObject.resetBallPosition();
+                    }
+                    if (player_scores != null) {
+                        player_1_score = player_scores.getInt("player_1_score");
+                        player_2_score = player_scores.getInt("player_2_score");
+                        player_3_score = player_scores.getInt("player_3_score");
+                        player_4_score = player_scores.getInt("player_4_score");
+
+                        UDPObject.resetScoreEvent();
+                    }
+                }
+            }
         }
 
 
-        //hit top wall
+        //hit top wall *******************************************************************************************************
+        //*******************************************************************************************************************
         if (ball_y < 0) {
             ball_vel_y *= -1;
             if (gameMode.equals("Single")) {
@@ -436,8 +555,41 @@ public class Board extends JPanel implements ActionListener {
                     resetScore();
                 }
             }
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 2) {
+
+                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getBallPosition();
+                    JSONObject player_scores = UDPObject.getBallPosition();
+
+                    if (ballPosition != null) {
+                        ball_x = ballPosition.getDouble("ball_x");
+                        ball_y = ballPosition.getDouble("ball_y");
+                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
+                        ball_vel_x = ballPosition.getDouble("vel_x");
+                        ball_vel_y = ballPosition.getDouble("vel_y");
+
+                        UDPObject.resetBallPosition();
+                    }
+                    if (player_scores != null) {
+                        player_1_score = player_scores.getInt("player_1_score");
+                        player_2_score = player_scores.getInt("player_2_score");
+                        player_3_score = player_scores.getInt("player_3_score");
+                        player_4_score = player_scores.getInt("player_4_score");
+
+                        UDPObject.resetScoreEvent();
+                    }
+                }
+            }
         }
-        //hit paddle two
+        //hit paddle two_one **********************************************************************************************
+        //********************************************************************************************************************
         else if (ball_y < PADDLE_WIDTH && (ball_x + BALL_HEIGHT > paddleTwoX && ball_x + BALL_HEIGHT < paddleTwoX + PADDLE_HEIGHT)) {
 
             ball_vel_y *= -1;
@@ -455,7 +607,31 @@ public class Board extends JPanel implements ActionListener {
                 BALL_SPEEDX += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleTwoX + PADDLE_HEIGHT / 2 - ball_x));
                 ball_vel_x *= -1;
             }
-        } else if (ball_y + BALL_HEIGHT > pane_y - PADDLE_WIDTH && (ball_x + BALL_HEIGHT > paddleTwoOppX && ball_x + BALL_HEIGHT < paddleTwoOppX + PADDLE_HEIGHT)) {
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 2) {
+                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getBallPosition();
+                    if (ballPosition != null) {
+                        ball_x = ballPosition.getDouble("ball_x");
+                        ball_y = ballPosition.getDouble("ball_y");
+                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
+                        ball_vel_x = ballPosition.getDouble("vel_x");
+                        ball_vel_y = ballPosition.getDouble("vel_y");
+
+                        UDPObject.resetBallPosition();
+                    }
+                }
+            }
+        }
+
+        //paddle two_two*****************************************************************************************************
+        //********************************************************************************************************************
+
+        else if (ball_y + BALL_HEIGHT > pane_y - PADDLE_WIDTH && (ball_x + BALL_HEIGHT > paddleTwoOppX && ball_x + BALL_HEIGHT < paddleTwoOppX + PADDLE_HEIGHT)) {
 
             ball_vel_y *= -1;
             ball_y = pane_y - BALL_HEIGHT - PADDLE_WIDTH;
@@ -470,8 +646,30 @@ public class Board extends JPanel implements ActionListener {
                 BALL_SPEEDX += (PADDLE_SPEED) * (aRestitution * Math.abs(paddleTwoOppX + PADDLE_HEIGHT / 2 - ball_x));
                 ball_vel_x *= -1;
             }
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 0) {
+                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getBallPosition();
+                    if (ballPosition != null) {
+                        ball_x = ballPosition.getDouble("ball_x");
+                        ball_y = ballPosition.getDouble("ball_y");
+                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
+                        ball_vel_x = ballPosition.getDouble("vel_x");
+                        ball_vel_y = ballPosition.getDouble("vel_y");
+
+                        UDPObject.resetBallPosition();
+                    }
+                }
+            }
         }
-        //hit bottom wall
+
+        //hit bottom wall ***********************************************************************************************
+        //*****************************************************************************************************************
+
         else if (ball_y + BALL_HEIGHT > pane_y) {
             ball_vel_y *= -1;
             if (gameMode.equals("Single")) {
@@ -486,41 +684,82 @@ public class Board extends JPanel implements ActionListener {
                     resetScore();
                 }
             }
-        }
 
-        ball_x += ball_vel_x * BALL_SPEEDX;
-        ball_y += ball_vel_y * BALL_SPEEDY;
-        //send ball position and velocity and player scores
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 0) {
 
-        if(UDPObject!=null) {
-            boolean virtualHost = UDPObject.getVirtualHost();
+                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
 
-            if (virtualHost) {
-                UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
-                UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
-            } else {
-                //            checkVirtualHost(UDPObject);
-                JSONObject player_scores = UDPObject.getPlayerScore();
-                JSONObject ballPosition = UDPObject.getBallPosition();
-                if (ballPosition != null) {
-                    ball_x = ballPosition.getDouble("ball_x");
-                    ball_y = ballPosition.getDouble("ball_y");
-                    ball_vel_x = ballPosition.getDouble("vel_x");
-                    ball_vel_y = ballPosition.getDouble("vel_y");
-                    UDPObject.resetBallPosition();
-                }
-                if (player_scores!=null){
-                    player_1_score = player_scores.getInt("player_1_score");
-                    player_2_score = player_scores.getInt("player_2_score");
-                    player_3_score = player_scores.getInt("player_3_score");
-                    player_4_score = player_scores.getInt("player_4_score");
-                    UDPObject.resetScoreEvent();
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getBallPosition();
+                    JSONObject player_scores = UDPObject.getBallPosition();
+
+                    if (ballPosition != null) {
+                        ball_x = ballPosition.getDouble("ball_x");
+                        ball_y = ballPosition.getDouble("ball_y");
+                        BALL_SPEEDX = ballPosition.getDouble("BALL_SPEEDX");
+                        BALL_SPEEDY = ballPosition.getDouble("BALL_SPEEDY");
+                        ball_vel_x = ballPosition.getDouble("vel_x");
+                        ball_vel_y = ballPosition.getDouble("vel_y");
+
+                        UDPObject.resetBallPosition();
+                    }
+                    if (player_scores != null) {
+                        player_1_score = player_scores.getInt("player_1_score");
+                        player_2_score = player_scores.getInt("player_2_score");
+                        player_3_score = player_scores.getInt("player_3_score");
+                        player_4_score = player_scores.getInt("player_4_score");
+
+                        UDPObject.resetScoreEvent();
+                    }
                 }
             }
         }
+            //**************************************************END********************************************************//
+            //************************************************************************************************//
+
+
+        if (gameMode.equals("Multiplayer")) {
+
+        } else {
+            ball_x += ball_vel_x * BALL_SPEEDX;
+            ball_y += ball_vel_y * BALL_SPEEDY;
+        }
+
+            //send ball position and velocity and player scores
+//
+//        if(UDPObject!=null) {
+//            boolean virtualHost = UDPObject.getVirtualHost();
+//
+//            if (virtualHost) {
+//                UDPObject.sendBallInfo(ball_x, ball_y, ball_vel_x, ball_vel_y, 1);
+//                UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+//            } else {
+//                //            checkVirtualHost(UDPObject);
+//                JSONObject player_scores = UDPObject.getPlayerScore();
+//                JSONObject ballPosition = UDPObject.getBallPosition();
+//                if (ballPosition != null) {
+//                    ball_x = ballPosition.getDouble("ball_x");
+//                    ball_y = ballPosition.getDouble("ball_y");
+//                    ball_vel_x = ballPosition.getDouble("vel_x");
+//                    ball_vel_y = ballPosition.getDouble("vel_y");
+//                    UDPObject.resetBallPosition();
+//                }
+//                if (player_scores!=null){
+//                    player_1_score = player_scores.getInt("player_1_score");
+//                    player_2_score = player_scores.getInt("player_2_score");
+//                    player_3_score = player_scores.getInt("player_3_score");
+//                    player_4_score = player_scores.getInt("player_4_score");
+//                    UDPObject.resetScoreEvent();
+//                }
+//            }
+//        }
         repaint();
 
-        }
+
+    }
 
     public synchronized void checkVirtualHost(UDP udpObject) {
         ArrayList<Machine> arraylist = udpObject.getPlayerlist();
