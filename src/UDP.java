@@ -178,6 +178,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Ack":
                         acknum++;
                         break;
+
 //                    case "Acknowledge":
 //                        StartGameHM.put(InetAddress.getLocalHost().getHostAddress(), true);
 //                        StartGameHM.put(incoming.getAddress().getHostAddress(), true);
@@ -196,9 +197,17 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         player_score = jsonObject;
                         break;
                     case "Key_Event":
+
+
+//                        System.out.println("space lodulakhan kaju");
+                        key_event=jsonObject;
+
+
                         sendACK(incoming,socket);
+
                         System.out.println("Space received");
                         key_event = jsonObject;
+
                         break;
                     case "Start":
                         System.out.println("Start");
