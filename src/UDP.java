@@ -316,7 +316,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        DatagramPacket lobbyServer = new DatagramPacket(bytes, bytes.length, broadcast, 1235);
+        DatagramPacket lobbyServer = new DatagramPacket(bytes, bytes.length, broadcast, lobby_Port);
 
         try {
             socket.send(lobbyServer);
@@ -339,7 +339,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        DatagramPacket lobbyServerpacket = new DatagramPacket(bytes, bytes.length, broadcast, 1235);
+        DatagramPacket lobbyServerpacket = new DatagramPacket(bytes, bytes.length, broadcast, lobby_Port);
         try {
             socket.send(lobbyServerpacket);
         } catch (IOException e) {
@@ -378,7 +378,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
 
 
-        DatagramPacket lobbyServer = new DatagramPacket(bytes, bytes.length, broadcast, 1235);
+        DatagramPacket lobbyServer = new DatagramPacket(bytes, bytes.length, broadcast, lobby_Port);
         try {
             socket.send(lobbyServer);
         } catch (IOException e) {
@@ -563,7 +563,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     @Override
                     public void run() {
                         lobbyServer = new LobbyServer(lobby_Port);
-                    }//currently at port 1235
+                    }//currently at port lobby_Port
                 };
                 threadLobby.start();//thread for starting the lobby room
                 connectMsg();//message to join the room as well
