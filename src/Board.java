@@ -44,10 +44,10 @@ public class Board extends JPanel implements ActionListener {
     //game state variables
     private int server = 0; //0 = left, 1 = right
     private String message = "";
-    private Integer player_1_score = 0;
-    private Integer player_2_score = 0;
-    private Integer player_3_score = 0;
-    private Integer player_4_score = 0;
+    private int player_1_score = 0;
+    private int player_2_score = 0;
+    private int player_3_score = 0;
+    private int player_4_score = 0;
     private int pane_x; //the playable game area is smaller than the window
     private int pane_y;
     private boolean pause = true; //start paused for instruction screen
@@ -198,13 +198,14 @@ public class Board extends JPanel implements ActionListener {
 
 
         if (gameMode.equals("Single")) {
-            g2d.drawString(player_1_score.toString(), pane_x / 2, pane_y / 2 + 60);
-            g2d.drawString(player_2_score.toString(), pane_x / 2 - 60, pane_y / 2);
-            g2d.drawString(player_3_score.toString(), pane_x / 2, pane_y / 2 - 60);
-            g2d.drawString(player_4_score.toString(), pane_x / 2 + 60, pane_y / 2);
-        } else {
-            g2d.drawString(player_1_score.toString(), pane_x / 2 - 60, pane_y / 2);
-            g2d.drawString(player_2_score.toString(), pane_x / 2 + 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_1_score), pane_x / 2, pane_y / 2 + 60);
+            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 - 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_3_score), pane_x / 2, pane_y / 2 - 60);
+            g2d.drawString(Integer.toString(player_4_score), pane_x / 2 + 60, pane_y / 2);
+        }
+        else {
+            g2d.drawString(Integer.toString(player_1_score), pane_x / 2 - 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 + 60, pane_y / 2);
         }
 
         //update paddle locations
@@ -464,7 +465,7 @@ public class Board extends JPanel implements ActionListener {
             }
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 3) {
+                if (playerIndex == 3 || playerIndex ==1) {
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                 } else {
 
@@ -501,7 +502,7 @@ public class Board extends JPanel implements ActionListener {
             }
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 3) {
+                if (playerIndex == 3 || playerIndex == 1) {
 
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                     UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
@@ -552,7 +553,7 @@ public class Board extends JPanel implements ActionListener {
             }
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 2) {
+                if (playerIndex == 2 || playerIndex == 0) {
 
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                     UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
@@ -604,7 +605,7 @@ public class Board extends JPanel implements ActionListener {
             }
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 2) {
+                if (playerIndex == 2 || playerIndex == 0) {
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                 } else {
 
