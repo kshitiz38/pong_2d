@@ -32,6 +32,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     protected DatagramSocket socket;
     protected DatagramPacket incoming;
     protected DatagramSocket ackSocket;
+    DatagramSocket datagramSocketToUnblock;
 
 
     //Acknowledgement Signals' Hashmap
@@ -46,6 +47,12 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             ackSocket = new DatagramSocket(9500);
         } catch (SocketException e) {
             e.printStackTrace();
+        }
+
+        try {
+            datagramSocketToUnblock = new DatagramSocket(9501);
+        } catch (SocketException e1) {
+            e1.printStackTrace();
         }
     }
 
@@ -187,6 +194,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         player_score = jsonObject;
                         break;
                     case "Key_Event":
+                        sendACK(incoming,socket);
                         System.out.println("Space received");
                         key_event = jsonObject;
                         break;
@@ -196,16 +204,18 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                             break;
                         }
                         started = true;
-//                        System.out.println("Start");
-                        JSONObject jsonObject1 = new JSONObject();
-                        jsonObject1.put("MessageType", "ACK");
-//                        jsonObject1.put("responseType", "GameStart");
+////                        System.out.println("Start");
+//                        JSONObject jsonObject1 = new JSONObject();
+//                        jsonObject1.put("MessageType", "ACK");
+////                        jsonObject1.put("responseType", "GameStart");
+//
+//                        String messageack = jsonObject1.toString();
+//                        byte[] bytes1 = messageack.getBytes();
+//
+//                        DatagramPacket datagramPacket = new DatagramPacket(bytes1, bytes1.length, incoming.getAddress(), 9500);
+//                        socket.send(datagramPacket);
 
-                        String messageack = jsonObject1.toString();
-                        byte[] bytes1 = messageack.getBytes();
-
-                        DatagramPacket datagramPacket = new DatagramPacket(bytes1, bytes1.length, incoming.getAddress(), 9500);
-                        socket.send(datagramPacket);
+                        sendACK(incoming,socket);
 
                         checkRoomMsg();//to get latest players
                         new Pong(udp);
@@ -292,7 +302,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("playerIndex", playerIndex);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        sendToPlayers(bytes);
+//        sendToPlayers(bytes);
+        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
     }
 
     //send score
@@ -872,12 +883,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         // no response received after 1 second. continue sending
                         if (resends > 4) {
                             // send message back to the acksocket to unblock it
-                            DatagramSocket datagramSocketToUnblock = null;
-                            try {
-                                datagramSocketToUnblock = new DatagramSocket(9501);
-                            } catch (SocketException e1) {
-                                e1.printStackTrace();
-                            }
+
 
                             //unblock message
                             JSONObject unblockJson = new JSONObject();
@@ -886,11 +892,11 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                             byte[] unblockBytes = unblockString.getBytes();
 
                             //unblockPacket
-                            DatagramPacket datagramPacketUnblock = new DatagramPacket(unblockBytes, unblockBytes.length, myInetAddress, getPort(playerlist, myIp));
+                            DatagramPacket datagramPacketUnblock = new DatagramPacket(unblockBytes, unblockBytes.length, myInetAddress, 9500);
 
                             //sendUnblockPacket
                             try {
-                                assert datagramSocketToUnblock != null;
+//                                assert datagramSocketToUnblock != null;
                                 datagramSocketToUnblock.send(datagramPacketUnblock);
                             } catch (IOException e1) {
                                 e1.printStackTrace();
@@ -931,4 +937,19 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
+    public synchronized void sendACK(DatagramPacket incoming,DatagramSocket socket){
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("MessageType", "ACK");
+//                        jsonObject1.put("responseType", "GameStart");
+
+        String messageack = jsonObject1.toString();
+        byte[] bytes1 = messageack.getBytes();
+
+        DatagramPacket datagramPacket = new DatagramPacket(bytes1, bytes1.length, incoming.getAddress(), 9500);
+        try {
+            socket.send(datagramPacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
