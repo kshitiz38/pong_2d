@@ -11,7 +11,6 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class UDP implements Runnable, WindowListener, ActionListener {
@@ -31,6 +30,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     protected DatagramSocket ackSocket;
     DatagramSocket datagramSocketToUnblock;
     private boolean started = false;
+    public int lobby_Port;
 
     public UDP(InetAddress inetAddress, int port) {
         this.inetAddress = inetAddress;
@@ -47,6 +47,12 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         } catch (SocketException e1) {
             e1.printStackTrace();
         }
+    }
+
+    public UDP(InetAddress inetAddress, int port, int port_lobby) {
+        this(inetAddress,port);
+        this.lobby_Port = port_lobby;
+
     }
 
     public void setUDP(UDP udp) {
@@ -144,8 +150,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
                 switch (msg_type) {
                     case "Ball_Moving":
-                        sendACK(incoming,socket);
                         ballPosition = jsonObject;
+                        sendACK(incoming,socket);
                         break;
                     case "Paddle_Moving":
                         break;
@@ -213,6 +219,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
         sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+        //not synchronizing the ball first time it enters space
     }
 
     //send score
@@ -553,7 +560,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                 Thread threadLobby = new Thread() {
                     @Override
                     public void run() {
-                        lobbyServer = new LobbyServer();
+                        lobbyServer = new LobbyServer(lobby_Port);
                     }//currently at port 1235
                 };
                 threadLobby.start();//thread for starting the lobby room

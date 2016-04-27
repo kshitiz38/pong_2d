@@ -35,6 +35,8 @@ public class GameMenuOne extends JFrame {
     public String difficulty;
     public int numberOfBalls;
 
+    public int port_Lobby = 9504;//default port number
+
     public GameMenuOne() {
 
         Container container = getContentPane();
@@ -113,8 +115,9 @@ public class GameMenuOne extends JFrame {
                     }
                     int port = 9685;//port number of every player
                     //this is also very important
-                    UDP pong = new UDP(group, port);
+                    UDP pong = new UDP(group, port,port_Lobby);
                     pong.setUDP(pong);
+
 
                     try {
                         //TODO
