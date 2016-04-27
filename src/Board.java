@@ -435,6 +435,9 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    while(score_and_balls == null){
+                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    }
 
                     if (score_and_balls != null) {
                         ball_x = score_and_balls.getDouble("ball_x");
@@ -527,6 +530,10 @@ public class Board extends JPanel implements ActionListener {
 
                 } else {
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    while(score_and_balls == null){
+                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    }
+
 
                     if (score_and_balls != null) {
                         ball_x = score_and_balls.getDouble("ball_x");
@@ -578,6 +585,10 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    while(score_and_balls == null){
+                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    }
+
 
                     if (score_and_balls != null) {
                         ball_x = score_and_balls.getDouble("ball_x");
@@ -718,6 +729,10 @@ public class Board extends JPanel implements ActionListener {
 //                    JSONObject ballPosition = UDPObject.getBallPosition();
 //                    JSONObject player_scores = UDPObject.getPlayerScore();
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    while(score_and_balls == null){
+                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    }
+
 
                     if (score_and_balls != null) {
                         ball_x = score_and_balls.getDouble("ball_x");
