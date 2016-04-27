@@ -27,6 +27,8 @@ public class Board extends JPanel implements ActionListener {
     private static final long serialVersionUID = 1L; //suppresses warning
 
     //Game constants
+    public int threadtimeout = 2;
+    public int frametimer = 5;
     public int WINDOW_X = 650;
     public int WINDOW_Y = 650;
     private int MAX_SCORE = 5;
@@ -162,7 +164,7 @@ public class Board extends JPanel implements ActionListener {
 //		paddleTwo_two = new Rectangle(0,0,PADDLE_HEIGHT, PADDLE_WIDTH);
 
         setDoubleBuffered(true);
-        timer = new Timer(5, this);
+        timer = new Timer(frametimer, this);
         timer.start();
     }
 
@@ -435,17 +437,22 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
-//                    while(score_and_balls == null){
-//                        score_and_balls = UDPObject.getPlayerScoreAndBall();
-//                    }
-                    if(score_and_balls == null){
+                    while(score_and_balls == null){
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
                             e1.printStackTrace();
                         }
                         score_and_balls = UDPObject.getPlayerScoreAndBall();
                     }
+//                    if(score_and_balls == null){
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e1) {
+//                            e1.printStackTrace();
+//                        }
+//                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+//                    }
 
                     if (score_and_balls != null) {
                         ball_x = score_and_balls.getDouble("ball_x");
@@ -541,7 +548,7 @@ public class Board extends JPanel implements ActionListener {
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
                     while(score_and_balls == null){
                         try {
-                            Thread.sleep(5);
+                            Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
                             e1.printStackTrace();
                         }
@@ -612,7 +619,7 @@ public class Board extends JPanel implements ActionListener {
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
                     while(score_and_balls == null){
                         try {
-                            Thread.sleep(5);
+                            Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
                             e1.printStackTrace();
                         }
@@ -770,7 +777,7 @@ public class Board extends JPanel implements ActionListener {
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
                     while(score_and_balls == null){
                         try {
-                            Thread.sleep(5);
+                            Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
                             e1.printStackTrace();
                         }
