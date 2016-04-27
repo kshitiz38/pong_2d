@@ -374,6 +374,10 @@ public class Board extends JPanel implements ActionListener {
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 1) {
+
+                    ball_x += ball_vel_x * BALL_SPEEDX;
+                    ball_y += ball_vel_y * BALL_SPEEDY;
+
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                 } else {
 
@@ -414,6 +418,9 @@ public class Board extends JPanel implements ActionListener {
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 1) {
+
+                    ball_x += ball_vel_x * BALL_SPEEDX;
+                    ball_y += ball_vel_y * BALL_SPEEDY;
 
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                     UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
@@ -466,6 +473,10 @@ public class Board extends JPanel implements ActionListener {
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 3 || playerIndex ==1) {
+
+                    ball_x += ball_vel_x * BALL_SPEEDX;
+                    ball_y += ball_vel_y * BALL_SPEEDY;
+
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                 } else {
 
@@ -503,6 +514,9 @@ public class Board extends JPanel implements ActionListener {
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 3 || playerIndex == 1) {
+
+                    ball_x += ball_vel_x * BALL_SPEEDX;
+                    ball_y += ball_vel_y * BALL_SPEEDY;
 
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                     UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
@@ -555,6 +569,9 @@ public class Board extends JPanel implements ActionListener {
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 2 || playerIndex == 0) {
 
+                    ball_x += ball_vel_x * BALL_SPEEDX;
+                    ball_y += ball_vel_y * BALL_SPEEDY;
+
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                     UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
 
@@ -606,6 +623,10 @@ public class Board extends JPanel implements ActionListener {
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 2 || playerIndex == 0) {
+
+                    ball_x += ball_vel_x * BALL_SPEEDX;
+                    ball_y += ball_vel_y * BALL_SPEEDY;
+
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                 } else {
 
@@ -645,6 +666,10 @@ public class Board extends JPanel implements ActionListener {
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 0) {
+
+                    ball_x += ball_vel_x * BALL_SPEEDX;
+                    ball_y += ball_vel_y * BALL_SPEEDY;
+
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                 } else {
 
@@ -684,8 +709,12 @@ public class Board extends JPanel implements ActionListener {
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 0) {
 
+                    ball_x += ball_vel_x * BALL_SPEEDX;
+                    ball_y += ball_vel_y * BALL_SPEEDY;
+
                     UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
                     UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+
 
                 } else {
 
