@@ -1,19 +1,13 @@
 
 
-import javafx.geometry.Point2D;
-import jdk.management.cmm.SystemResourcePressureMXBean;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.awt.*;
-
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
-import java.awt.event.ActionListener;
-
-import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.net.InetAddress;
