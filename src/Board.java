@@ -473,6 +473,17 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject ballPosition = UDPObject.getBallPosition();
+
+                    while(ballPosition == null){
+                        try {
+                            Thread.sleep(threadtimeout);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        ballPosition = UDPObject.getBallPosition();
+                    }
+
+
                     if (ballPosition != null) {
                         ball_x = ballPosition.getDouble("ball_x");
                         ball_y = ballPosition.getDouble("ball_y");
@@ -585,6 +596,15 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject ballPosition = UDPObject.getBallPosition();
+                    while(ballPosition == null){
+                        try {
+                            Thread.sleep(threadtimeout);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        ballPosition = UDPObject.getBallPosition();
+                    }
+
                     if (ballPosition != null) {
                         ball_x = ballPosition.getDouble("ball_x");
                         ball_y = ballPosition.getDouble("ball_y");
@@ -766,6 +786,15 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject ballPosition = UDPObject.getBallPosition();
+                    while(ballPosition == null){
+                        try {
+                            Thread.sleep(threadtimeout);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        ballPosition = UDPObject.getBallPosition();
+                    }
+
                     if (ballPosition != null) {
                         ball_x = ballPosition.getDouble("ball_x");
                         ball_y = ballPosition.getDouble("ball_y");
@@ -809,6 +838,15 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject ballPosition = UDPObject.getBallPosition();
+                    while(ballPosition == null){
+                        try {
+                            Thread.sleep(threadtimeout);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        ballPosition = UDPObject.getBallPosition();
+                    }
+
                     if (ballPosition != null) {
                         ball_x = ballPosition.getDouble("ball_x");
                         ball_y = ballPosition.getDouble("ball_y");
