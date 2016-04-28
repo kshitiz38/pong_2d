@@ -166,12 +166,10 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         break;
                     case "Ball_And_Score":
                         int msg_id_rec = jsonObject.getInt("mes_id");
-                        if(msg_id_rec<=ball_score_msg_id){
+                        if(msg_id_rec<=ball_score_msg_id)
                             break;
-                        }
-                        else{
-                            ball_score_msg_id = msg_id_rec;
-                        }
+                        System.out.println("new message");
+                        ball_score_msg_id = msg_id_rec;
                         ball_and_score = jsonObject;
                         sendACK(incoming,socket);
                         break;
@@ -349,19 +347,20 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("MessageType", "Ball_And_Score");
+        ball_score_msg_id++;
+        jsonObject.put("mes_id", ball_score_msg_id);
         jsonObject.put("ball_x", ball_x);
         jsonObject.put("ball_y", ball_y);
         jsonObject.put("vel_x", vel_x);
         jsonObject.put("vel_y", vel_y);
         jsonObject.put("BALL_SPEEDX", BALL_SPEEDX);
         jsonObject.put("BALL_SPEEDY", BALL_SPEEDY);
-        jsonObject.put("ball_id", ball_id);
+//        jsonObject.put("ball_id", ball_id);
         jsonObject.put("player_1_score", player_1_score);
         jsonObject.put("player_2_score", player_2_score);
         jsonObject.put("player_3_score", player_3_score);
         jsonObject.put("player_4_score", player_4_score);
-        ball_score_msg_id++;
-        jsonObject.put("mes_id", ball_score_msg_id);
+
 
 
         String jsonString = jsonObject.toString();

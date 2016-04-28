@@ -502,7 +502,7 @@ public class Board extends JPanel implements ActionListener {
                         ball_vel_x = ballPosition.getDouble("vel_x");
                         ball_vel_y = ballPosition.getDouble("vel_y");
 
-                        UDPObject.resetBallPosition();
+                        UDPObject.resetBallAndScore();
                     }
                 }
             }
@@ -625,7 +625,7 @@ public class Board extends JPanel implements ActionListener {
                         ball_vel_x = ballPosition.getDouble("vel_x");
                         ball_vel_y = ballPosition.getDouble("vel_y");
 
-                        UDPObject.resetBallPosition();
+                        UDPObject.resetBallAndScore();
                     }
                 }
             }
@@ -821,7 +821,7 @@ public class Board extends JPanel implements ActionListener {
                         ball_vel_x = ballPosition.getDouble("vel_x");
                         ball_vel_y = ballPosition.getDouble("vel_y");
 
-                        UDPObject.resetBallPosition();
+                        UDPObject.resetBallAndScore();
                     }
                 }
             }
@@ -874,7 +874,7 @@ public class Board extends JPanel implements ActionListener {
                         ball_vel_x = ballPosition.getDouble("vel_x");
                         ball_vel_y = ballPosition.getDouble("vel_y");
 
-                        UDPObject.resetBallPosition();
+                        UDPObject.resetBallAndScore();
                     }
                 }
             }
