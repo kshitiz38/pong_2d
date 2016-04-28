@@ -435,6 +435,15 @@ public class Board extends JPanel implements ActionListener {
         InputApply(gameMode);
 
 
+
+
+
+
+
+
+
+
+
         //collision detection
         /*	The math here is generous to the players.
     		Hitting the side of the paddle still results in a bounce.
@@ -1001,6 +1010,7 @@ public class Board extends JPanel implements ActionListener {
         int port = machine.getPort();
 
     }
+
 
     public void InputApply(String mode) {
         //single player game mode
