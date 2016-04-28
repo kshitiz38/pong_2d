@@ -30,7 +30,7 @@ public class Paddles {
 	 * true = pressed, false = not pressed
 	 */
 
-    public void keyPressed(int event_code, int playerIndex) {
+    public void keyPressed(int event_code) {
 
         int key = event_code;
         //int key = e.getKeyCode();
@@ -73,7 +73,7 @@ public class Paddles {
 
 
 
-    public void keyReleased(int event_code, int playerIndex) {
+    public void keyReleased(int event_code) {
 
         this.playerIndex = playerIndex;
 
