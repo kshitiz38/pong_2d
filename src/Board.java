@@ -188,20 +188,6 @@ public class Board extends JPanel implements ActionListener {
         paddle2 = new Paddles();
         paddle3 = new Paddles();
 
-        if((numberOfPlayers==2) || (mode.equals("2Player"))){
-            paddle0a = paddle0;
-            paddle2a = paddle0;
-            paddle1a = paddle1;
-            paddle3a = paddle1;
-        }
-        if(numberOfPlayers==3){
-            paddle0a = paddle0;
-            paddle1a = paddle1;
-            paddle2a = paddle0;
-            paddle3a = paddle3;
-
-        }
-
         addKeyListener(new TAdapter());
         setFocusable(true);
         setBackground(Color.BLACK);
@@ -224,6 +210,19 @@ public class Board extends JPanel implements ActionListener {
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
             }
+        }
+        if((numberOfPlayers==2) || (mode.equals("2Player"))){
+            paddle0a = paddle0;
+            paddle2a = paddle0;
+            paddle1a = paddle1;
+            paddle3a = paddle1;
+        }
+        if(numberOfPlayers==3){
+            paddle0a = paddle0;
+            paddle1a = paddle1;
+            paddle2a = paddle2;
+            paddle3a = paddle1;
+
         }
         System.out.println("MyIndex " + playerIndex);
 
@@ -544,7 +543,7 @@ public class Board extends JPanel implements ActionListener {
             ball_y += ball_vel_y * BALL_SPEEDY;
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 3 || ((playerIndex ==1)&&(numberOfPlayers==2))) {
+                if (playerIndex == 3 || ((playerIndex ==1)&&(numberOfPlayers==2))||((playerIndex ==1)&&(numberOfPlayers==3))) {
 
                     UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_3_score);
 
@@ -599,7 +598,7 @@ public class Board extends JPanel implements ActionListener {
 
 //            System.out.println("Paddle collide 1");
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))||((playerIndex == 0)&&(numberOfPlayers==3))) {
+                if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))) {
 
                     System.out.println("Paddle collide");
                     UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_2_score);
@@ -776,7 +775,7 @@ public class Board extends JPanel implements ActionListener {
             }
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 3 || ((playerIndex == 1)&&(numberOfPlayers==2))) {
+                if (playerIndex == 3 || ((playerIndex == 1)&&(numberOfPlayers==2))||((playerIndex == 1)&&(numberOfPlayers==3))) {
 
 
 //                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
@@ -848,7 +847,7 @@ public class Board extends JPanel implements ActionListener {
 
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))||((playerIndex == 0)&&(numberOfPlayers==3))) {
+                if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))) {
 
 
 //                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
