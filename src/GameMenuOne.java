@@ -110,10 +110,11 @@ public class GameMenuOne extends JFrame {
                     InetAddress group = null;
                     try {
                         group = InetAddress.getByName("127.0.0.1");
+
                     } catch (UnknownHostException e1) {
                         e1.printStackTrace();
                     }
-                    int port = 9685;//port number of every player
+                    int port = 9686;//port number of every player
                     //this is also very important
                     UDP pong = new UDP(group, port,port_Lobby);
                     pong.setUDP(pong);

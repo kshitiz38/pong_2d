@@ -44,6 +44,12 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
 
         try {
+            ackSocket.setSoTimeout(1000); //timeout of 1 second
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+        try {
             datagramSocketToUnblock = new DatagramSocket(9501);
         } catch (SocketException e1) {
             e1.printStackTrace();
@@ -761,76 +767,74 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     e.printStackTrace();
                 }
 
-                //Wait for acknowledgement
-                DatagramPacket ackPacket = new DatagramPacket(new byte[1024], 1024);
+                {
+                    //Wait for acknowledgement
+                    DatagramPacket ackPacket = new DatagramPacket(new byte[1024], 1024);
 
-                try {
-                    ackSocket.setSoTimeout(1000); //timeout of 1 second
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                }
+                    boolean continueSending = true;
 
-                boolean continueSending = true;
-
-                while (continueSending) {
-                    // send to server omitted
-                    try {
-                        ackSocket.receive(ackPacket);
-                        continueSending = false; // a packet has been received : stop sending
-                    } catch (SocketTimeoutException e) {
-                        // no response received after 1 second. continue sending
-                        if (resends > 4) {
-                            // send message back to the acksocket to unblock it
+                    while (continueSending) {
+                        // send to server omitted
+                        try {
+                            ackSocket.receive(ackPacket);
+                            continueSending = false; // a packet has been received : stop sending
+                        } catch (SocketTimeoutException e) {
+                            // no response received after 1 second. continue sending
+                            if (resends > 4) {
+                                // send message back to the acksocket to unblock it
 
 
-                            //unblock message
-                            JSONObject unblockJson = new JSONObject();
-                            unblockJson.put("MessageType", "Unblock");
-                            String unblockString = unblockJson.toString();
-                            byte[] unblockBytes = unblockString.getBytes();
+                                //unblock message
+                                JSONObject unblockJson = new JSONObject();
+                                unblockJson.put("MessageType", "Unblock");
+                                String unblockString = unblockJson.toString();
+                                byte[] unblockBytes = unblockString.getBytes();
 
-                            //unblockPacket
-                            DatagramPacket datagramPacketUnblock = new DatagramPacket(unblockBytes, unblockBytes.length, myInetAddress, 9500);
+                                //unblockPacket
+                                DatagramPacket datagramPacketUnblock = new DatagramPacket(unblockBytes, unblockBytes.length, myInetAddress, 9500);
 
-                            //sendUnblockPacket
-                            try {
+                                //sendUnblockPacket
+                                try {
 //                                assert datagramSocketToUnblock != null;
-                                datagramSocketToUnblock.send(datagramPacketUnblock);
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
+                                    datagramSocketToUnblock.send(datagramPacketUnblock);
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
 
-                        } else {
-                            resends++;
-                            try {
-                                socket.send(datagramPacket);
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
+                            } else {
+                                resends++;
+                                try {
+                                    socket.send(datagramPacket);
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
 
+                            }
+                        }catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    }catch (IOException e) {
-                        e.printStackTrace();
+
                     }
 
+                    //ack message type
+                    String messageAck = new String(ackPacket.getData(), 0, ackPacket.getLength());
+                    JSONObject jsonObjectAck = new JSONObject(messageAck);
+                    String msg_type_ack = jsonObjectAck.getString("MessageType");
+
+
+                    if (ackPacket.getAddress().getHostAddress().equals(myIp)) {
+                        //current machine detected
+                        System.out.println(machine.getIp() + " : disconnected");
+                        //perform actions such as update playerlist
+                    } else {
+                        if (msg_type_ack.equals("ACK"))
+                            System.out.println("Ack received from : " + ackPacket.getAddress().getHostAddress());
+                        else
+                            System.out.println("Unknown message type for Ack");
+                    }
                 }
 
-                //ack message type
-                String messageAck = new String(ackPacket.getData(), 0, ackPacket.getLength());
-                JSONObject jsonObjectAck = new JSONObject(messageAck);
-                String msg_type_ack = jsonObjectAck.getString("MessageType");
 
-
-                if (ackPacket.getAddress().getHostAddress().equals(myIp)) {
-                    //current machine detected
-                    System.out.println(machine.getIp() + " : disconnected");
-                    //perform actions such as update playerlist
-                } else {
-                    if (msg_type_ack.equals("ACK"))
-                        System.out.println("Ack received from : " + ackPacket.getAddress().getHostAddress());
-                    else
-                        System.out.println("Unknown message type for Ack");
-                }
             }
         }
     }
@@ -848,4 +852,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             e.printStackTrace();
         }
     }
+
+
+
 }
