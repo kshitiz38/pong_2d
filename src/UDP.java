@@ -170,7 +170,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                             break;
                         System.out.println("new message");
                         ball_score_msg_id = msg_id_rec;
-                        ball_and_score = jsonObject;
+                        synchronized (this) {
+                            ball_and_score = jsonObject;
+                        }
                         sendACK(incoming,socket);
                         break;
                     case "Wall_Hit":
@@ -779,7 +781,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     e.printStackTrace();
                 }
 
-                {
+
                     //Wait for acknowledgement
                     DatagramPacket ackPacket = new DatagramPacket(new byte[1024], 1024);
 
@@ -844,8 +846,6 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         else
                             System.out.println("Unknown message type for Ack");
                     }
-                }
-
 
             }
         }

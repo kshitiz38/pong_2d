@@ -478,7 +478,7 @@ public class Board extends JPanel implements ActionListener {
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 1) {
 
-                    System.out.println("Paddle Collide");
+//                    System.out.println("Paddle Collide");
                     UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_1_score,player_2_score,player_3_score,player_4_score);
 
                 } else {
@@ -794,7 +794,7 @@ public class Board extends JPanel implements ActionListener {
             ball_x += ball_vel_x * BALL_SPEEDX;
             ball_y += ball_vel_y * BALL_SPEEDY;
 
-            System.out.println("Paddle collide 1");
+//            System.out.println("Paddle collide 1");
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 2 || playerIndex == 0) {
 
