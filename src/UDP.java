@@ -202,7 +202,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         synchronized (this) {
                             key_event = jsonObject;
                         }
-                        sendACK(incoming,socket);
+//                        sendACK(incoming,socket);
                         break;
                     case "Start":
                         System.out.println("Start");
@@ -253,8 +253,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("playerIndex", playerIndex);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
-//        sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
+//        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+        sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
         //not synchronizing the ball first time it enters space
     }
 

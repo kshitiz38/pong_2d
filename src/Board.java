@@ -487,7 +487,6 @@ public class Board extends JPanel implements ActionListener {
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 1) {
-
 //                    System.out.println("Paddle Collide");
                     UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_1_score);
 
@@ -511,7 +510,7 @@ public class Board extends JPanel implements ActionListener {
                         BALL_SPEEDY = ballPosition.getDouble("B_Y");
                         ball_vel_x = ballPosition.getDouble("v_x");
                         ball_vel_y = ballPosition.getDouble("v_y");
-
+                        player_1_score = ballPosition.getInt("p_score");
                         UDPObject.resetBallAndScore();
                     }
                 }
@@ -567,6 +566,7 @@ public class Board extends JPanel implements ActionListener {
                         BALL_SPEEDY = ballPosition.getDouble("B_Y");
                         ball_vel_x = ballPosition.getDouble("v_x");
                         ball_vel_y = ballPosition.getDouble("v_y");
+                        player_3_score = ballPosition.getInt("p_score");
 
                         UDPObject.resetBallAndScore();
                     }
@@ -623,6 +623,7 @@ public class Board extends JPanel implements ActionListener {
                         BALL_SPEEDY = ballPosition.getDouble("B_Y");
                         ball_vel_x = ballPosition.getDouble("v_x");
                         ball_vel_y = ballPosition.getDouble("v_y");
+                        player_2_score = ballPosition.getInt("p_score");
 
                         UDPObject.resetBallAndScore();
                     }
@@ -675,6 +676,7 @@ public class Board extends JPanel implements ActionListener {
                         BALL_SPEEDY = ballPosition.getDouble("B_Y");
                         ball_vel_x = ballPosition.getDouble("v_x");
                         ball_vel_y = ballPosition.getDouble("v_y");
+                        player_4_score = ballPosition.getInt("p_score");
 
                         UDPObject.resetBallAndScore();
                     }
