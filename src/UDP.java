@@ -33,6 +33,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     private boolean started = false;
     public int lobby_Port;
     public int ball_score_msg_id = 0;
+    public int key_event_msg_id = 0;
 //    public int received_msg_id = 0;
 
     public UDP(InetAddress inetAddress, int port) {
@@ -169,7 +170,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         if(msg_id_rec<=ball_score_msg_id)
                             break;
                         System.out.println("new message");
-                        ball_score_msg_id = msg_id_rec;
+                        synchronized (this) {
+                            ball_score_msg_id = msg_id_rec;
+                        }
                         synchronized (this) {
                             ball_and_score = jsonObject;
                         }
@@ -189,8 +192,17 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         sendACK(incoming,socket);
                         break;
                     case "Key_Event":
-                        key_event=jsonObject;
-//                        sendACK(incoming,socket);
+                        int msg_id_rec2 = jsonObject.getInt("mid");
+                        if(msg_id_rec2<=key_event_msg_id)
+                            break;
+//                        System.out.println("new message");
+                        synchronized (this) {
+                            key_event_msg_id = msg_id_rec2;
+                        }
+                        synchronized (this) {
+                            key_event = jsonObject;
+                        }
+                        sendACK(incoming,socket);
                         break;
                     case "Start":
                         System.out.println("Start");
@@ -235,12 +247,14 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 
         jsonObject.put("key_event_code", event_code);
         jsonObject.put("MessageType", "Key_Event");
+        key_event_msg_id++;
+        jsonObject.put("mid",key_event_msg_id);
         jsonObject.put("event_type", type);
         jsonObject.put("playerIndex", playerIndex);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-//        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
-        sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
+        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+//        sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
         //not synchronizing the ball first time it enters space
     }
 
@@ -343,7 +357,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
     }
 
-    public void sendBallAndScore(double ball_x, double ball_y, double BALL_SPEEDX, double BALL_SPEEDY, double vel_x, double vel_y, int ball_id, int player_1_score, int player_2_score, int player_3_score, int player_4_score)
+    public void sendBallAndScore(double ball_x, double ball_y, double BALL_SPEEDX, double BALL_SPEEDY, double vel_x, double vel_y, int ball_id, int player_score)
     {
 
         JSONObject jsonObject = new JSONObject();
@@ -351,18 +365,14 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("MessageType", "Ball_And_Score");
         ball_score_msg_id++;
         jsonObject.put("mes_id", ball_score_msg_id);
-        jsonObject.put("ball_x", ball_x);
-        jsonObject.put("ball_y", ball_y);
-        jsonObject.put("vel_x", vel_x);
-        jsonObject.put("vel_y", vel_y);
-        jsonObject.put("BALL_SPEEDX", BALL_SPEEDX);
-        jsonObject.put("BALL_SPEEDY", BALL_SPEEDY);
+        jsonObject.put("b_x", ball_x);
+        jsonObject.put("b_y", ball_y);
+        jsonObject.put("v_x", vel_x);
+        jsonObject.put("v_y", vel_y);
+        jsonObject.put("B_X", BALL_SPEEDX);
+        jsonObject.put("B_Y", BALL_SPEEDY);
 //        jsonObject.put("ball_id", ball_id);
-        jsonObject.put("player_1_score", player_1_score);
-        jsonObject.put("player_2_score", player_2_score);
-        jsonObject.put("player_3_score", player_3_score);
-        jsonObject.put("player_4_score", player_4_score);
-
+        jsonObject.put("p_score", player_score);
 
 
         String jsonString = jsonObject.toString();
