@@ -32,6 +32,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     DatagramSocket datagramSocketToUnblock;
     private boolean started = false;
     public int lobby_Port;
+    public int ball_score_msg_id = 0;
+//    public int received_msg_id = 0;
 
     public UDP(InetAddress inetAddress, int port) {
         this.inetAddress = inetAddress;
@@ -163,6 +165,13 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "Paddle_Moving":
                         break;
                     case "Ball_And_Score":
+                        int msg_id_rec = jsonObject.getInt("mes_id");
+                        if(msg_id_rec<=ball_score_msg_id){
+                            break;
+                        }
+                        else{
+                            ball_score_msg_id = msg_id_rec;
+                        }
                         ball_and_score = jsonObject;
                         sendACK(incoming,socket);
                         break;
@@ -328,6 +337,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("BALL_SPEEDY", BALL_SPEEDY);
         jsonObject.put("ball_id", ball_id);
 
+
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
         sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
@@ -350,6 +360,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("player_2_score", player_2_score);
         jsonObject.put("player_3_score", player_3_score);
         jsonObject.put("player_4_score", player_4_score);
+        ball_score_msg_id++;
+        jsonObject.put("mes_id", ball_score_msg_id);
+
 
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
@@ -780,7 +793,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                             continueSending = false; // a packet has been received : stop sending
                         } catch (SocketTimeoutException e) {
                             // no response received after 1 second. continue sending
-                            if (resends > 4) {
+                            if (resends > 1) {
                                 // send message back to the acksocket to unblock it
 
 
