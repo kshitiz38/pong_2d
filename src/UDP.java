@@ -169,7 +169,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         if(msg_id_rec<=ball_score_msg_id)
                             break;
                         System.out.println("new message");
-                        ball_score_msg_id = msg_id_rec;
+                        synchronized (this) {
+                            ball_score_msg_id = msg_id_rec;
+                        }
                         synchronized (this) {
                             ball_and_score = jsonObject;
                         }
@@ -189,7 +191,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         sendACK(incoming,socket);
                         break;
                     case "Key_Event":
-                        key_event=jsonObject;
+                        synchronized (this) {
+                            key_event = jsonObject;
+                        }
 //                        sendACK(incoming,socket);
                         break;
                     case "Start":

@@ -82,8 +82,8 @@ public class Board extends JPanel implements ActionListener {
     private boolean positiveBallX = true;
     private boolean positiveBallY = true;
 
-    double eRestitution = 0.003; //restitution
-    double aRestitution = 0.003; //resitution
+    double eRestitution = 0.0009; //restitution
+    double aRestitution = 0.0009; //resitution
 
     private String gameMode;
 
@@ -508,7 +508,7 @@ public class Board extends JPanel implements ActionListener {
             }
 
 
-            ; // put back in front of paddle if it's behind.
+            // put back in front of paddle if it's behind.
         } else if (ball_x < 0) {
 
             //hit left wall*********************************************************************************************
