@@ -91,24 +91,75 @@ public class Board extends JPanel implements ActionListener {
 
     private int playerIndex;
 
+    //special keys
+    public boolean Esc = false;
+    public boolean Space = false;
+
 
     //hand off key presses to the Paddles class.
-    private Paddles paddles;
+    private Paddles paddle0;
+    private Paddles paddle1;
+    private Paddles paddle2;
+    private Paddles paddle3;
+
     private boolean flag = false;
 
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
-            paddles.keyReleased(e.getKeyCode(), playerIndex);
+            if(e.getKeyCode() == KeyEvent.VK_SPACE){Space = false;}
+            else if(e.getKeyCode() == KeyEvent.VK_ESCAPE){Esc = false;}
+            else {
+                if(!gameMode.equals("Multiplayer")){
+                    paddle0.keyReleased(e.getKeyCode());
+                    paddle1.keyReleased(e.getKeyCode());
+                    paddle2.keyReleased(e.getKeyCode());
+                    paddle3.keyReleased(e.getKeyCode());
+                }else {
+                    if (playerIndex == 0) {
+                        paddle0.keyReleased(e.getKeyCode());
+                    }
+                    if (playerIndex == 1) {
+                        paddle1.keyReleased(e.getKeyCode());
+                    }
+                    if (playerIndex == 2) {
+                        paddle2.keyReleased(e.getKeyCode());
+                    }
+                    if (playerIndex == 3) {
+                        paddle3.keyReleased(e.getKeyCode());
+                    }
+                }
+            }
             if(UDPObject!=null)
                 UDPObject.sendKeyEvent(e.getKeyCode(), "Released", playerIndex);
         }
 
         public void keyPressed(KeyEvent e) {
-            paddles.keyPressed(e.getKeyCode(), playerIndex);
-            if(UDPObject!=null) {
-                UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed", playerIndex);
+            if(e.getKeyCode() == KeyEvent.VK_SPACE){Space = true;}
+            else if(e.getKeyCode() == KeyEvent.VK_ESCAPE){Esc = true;}
+            else{
+                if(!gameMode.equals("Multiplayer")){
+                    paddle0.keyPressed(e.getKeyCode());
+                    paddle1.keyPressed(e.getKeyCode());
+                    paddle2.keyPressed(e.getKeyCode());
+                    paddle3.keyPressed(e.getKeyCode());
+                }else {
+                    if (playerIndex == 0) {
+                        paddle0.keyPressed(e.getKeyCode());
+                    }
+                    if (playerIndex == 1) {
+                        paddle1.keyPressed(e.getKeyCode());
+                    }
+                    if (playerIndex == 2) {
+                        paddle2.keyPressed(e.getKeyCode());
+                    }
+                    if (playerIndex == 3) {
+                        paddle3.keyPressed(e.getKeyCode());
+                    }
+                }
             }
+            if(UDPObject!=null)
+                UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed", playerIndex);
         }
     }
 
@@ -131,7 +182,10 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public Board(String mode, UDP UDPObject) {
-        paddles = new Paddles();
+        paddle0 = new Paddles();
+        paddle1 = new Paddles();
+        paddle2 = new Paddles();
+        paddle3 = new Paddles();
         addKeyListener(new TAdapter());
         setFocusable(true);
         setBackground(Color.BLACK);
@@ -155,7 +209,7 @@ public class Board extends JPanel implements ActionListener {
                 e1.printStackTrace();
             }
         }
-        System.out.println("KTZ:::: " + playerIndex);
+        System.out.println("MyIndex " + playerIndex);
 
         //create polygons used in the game
 //        paddleOne_one = new Rectangle(0,0,PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -294,9 +348,8 @@ public class Board extends JPanel implements ActionListener {
             }
         }
         JSONObject key_event;
-        if (UDPObject != null) {
+        if(UDPObject!=null) {
             key_event = UDPObject.getKeyEvent();
-
             if (key_event == null) {
 //                System.out.println("null");
             } else {
@@ -304,11 +357,41 @@ public class Board extends JPanel implements ActionListener {
                 String event_type = key_event.getString("event_type");
                 int key_event_code = key_event.getInt("key_event_code");
                 int playerIndex_others = key_event.getInt("playerIndex");
-//                System.out.println(event_type + " " + key_event_code);
-                if (event_type.equals("Pressed")) {
-                    paddles.keyPressed(key_event_code, playerIndex_others);
-                } else if (event_type.equals("Released")) {
-                    paddles.keyReleased(key_event_code, playerIndex_others);
+                //System.out.println("player index others" + playerIndex_others);
+                if(key_event_code==KeyEvent.VK_SPACE && event_type.equals("Pressed")){Space = true;}
+                else if(key_event_code==KeyEvent.VK_SPACE && event_type.equals("Released")){Space = false;}
+                else if(key_event_code==KeyEvent.VK_ESCAPE && event_type.equals("Pressed")){Esc = true;}
+                else if(key_event_code==KeyEvent.VK_ESCAPE && event_type.equals("Released")){Esc = false;}
+
+                else{
+                    if(event_type.equals("Released")) {
+                        if (playerIndex_others == 0) {
+                            paddle0.keyReleased(key_event_code);
+                        }
+                        if (playerIndex_others == 1) {
+                            paddle1.keyReleased(key_event_code);
+                        }
+                        if (playerIndex_others == 2) {
+                            paddle2.keyReleased(key_event_code);
+                        }
+                        if (playerIndex_others == 3) {
+                            paddle3.keyReleased(key_event_code);
+                        }
+                    }else{
+                        if (playerIndex_others == 0) {
+                            paddle0.keyPressed(key_event_code);
+                        }
+                        if (playerIndex_others == 1) {
+                            paddle1.keyPressed(key_event_code);
+                        }
+                        if (playerIndex_others == 2) {
+                            paddle2.keyPressed(key_event_code);
+                        }
+                        if (playerIndex_others == 3) {
+                            paddle3.keyPressed(key_event_code);
+                        }
+                    }
+
                 }
 
             }
@@ -316,7 +399,7 @@ public class Board extends JPanel implements ActionListener {
         }
         //check for pause
 
-        if (paddles.Space == true) {
+        if (Space == true) {
             //wait for debounce
             try {
                 Thread.sleep(500);
@@ -338,7 +421,7 @@ public class Board extends JPanel implements ActionListener {
 
 
         //check for end game
-        if (paddles.Esc == true) {
+        if (Esc == true) {
             resetScore();
             resetBall("Game Over");
             repaint();
@@ -876,7 +959,7 @@ public class Board extends JPanel implements ActionListener {
     public void InputApply(String mode) {
         //single player game mode
         if (mode.equals("Single")) {
-            if (paddles.Left == true) {
+            if (paddle3.Left == true) {
 
                 positiveXTwo_two = false;
                 TwoTwoStop = false;
@@ -884,7 +967,7 @@ public class Board extends JPanel implements ActionListener {
                 if (paddleTwoOppX > 0) {
                     paddleTwoOppX -= PADDLE_SPEED;
                 }
-            } else if (paddles.Right == true) {
+            } else if (paddle3.Right == true) {
 
                 positiveXTwo_two = true;
                 TwoTwoStop = false;
@@ -950,7 +1033,7 @@ public class Board extends JPanel implements ActionListener {
         }
         //game mode two player
         else {
-            if ((paddles.S == true) && (paddles.playerIndex == 0)) {
+            if ((paddle1.S == true) && (paddle1.playerIndex == 0)) {
 
                 positiveYOne_one = true;
                 positiveYOne_two = true;
@@ -961,7 +1044,7 @@ public class Board extends JPanel implements ActionListener {
                     paddleOneY += PADDLE_SPEED;
                     paddleOneOppY += PADDLE_SPEED;
                 }
-            } else if ((paddles.W == true) && (paddles.playerIndex == 0)) {
+            } else if ((paddle1.W == true) && (paddle1.playerIndex == 0)) {
 
                 positiveYOne_one = false;
                 positiveYOne_two = false;
@@ -977,7 +1060,7 @@ public class Board extends JPanel implements ActionListener {
                 OneTwoStop = true;
             }
 
-            if (((paddles.Left == true) && (paddles.playerIndex == 1))) {
+            if (((paddle0.Left == true) && (paddle0.playerIndex == 1))) {
 
                 positiveXTwo_one = false;
                 positiveXTwo_two = false;
@@ -988,7 +1071,7 @@ public class Board extends JPanel implements ActionListener {
                     paddleTwoX -= PADDLE_SPEED;
                     paddleTwoOppX -= PADDLE_SPEED;
                 }
-            } else if ((paddles.Right == true) && (paddles.playerIndex == 1)) {
+            } else if ((paddle0.Right == true) && (paddle0.playerIndex == 1)) {
 
                 positiveXTwo_one = true;
                 positiveXTwo_two = true;
