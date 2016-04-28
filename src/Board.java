@@ -188,20 +188,6 @@ public class Board extends JPanel implements ActionListener {
         paddle2 = new Paddles();
         paddle3 = new Paddles();
 
-        if((numberOfPlayers==2) || (mode.equals("2Player"))){
-            paddle0a = paddle0;
-            paddle2a = paddle0;
-            paddle1a = paddle1;
-            paddle3a = paddle1;
-        }
-        if(numberOfPlayers==3){
-            paddle0a = paddle0;
-            paddle1a = paddle1;
-            paddle2a = paddle0;
-            paddle3a = paddle3;
-
-        }
-
         addKeyListener(new TAdapter());
         setFocusable(true);
         setBackground(Color.BLACK);
@@ -226,6 +212,20 @@ public class Board extends JPanel implements ActionListener {
             }
         }
         System.out.println("MyIndex " + playerIndex);
+
+        if((numberOfPlayers==2) || (mode.equals("2Player"))){
+            paddle0a = paddle0;
+            paddle2a = paddle0;
+            paddle1a = paddle1;
+            paddle3a = paddle1;
+        }
+        if(numberOfPlayers==3){
+            paddle0a = paddle0;
+            paddle1a = paddle1;
+            paddle2a = paddle0;
+            paddle3a = paddle3;
+
+        }
 
         //create polygons used in the game
 //        paddleOne_one = new Rectangle(0,0,PADDLE_WIDTH, PADDLE_HEIGHT);
