@@ -175,7 +175,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         break;
                     case "Key_Event":
                         key_event=jsonObject;
-                        sendACK(incoming,socket);
+//                        sendACK(incoming,socket);
                         break;
                     case "Start":
                         System.out.println("Start");
@@ -224,8 +224,42 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("playerIndex", playerIndex);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+//        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+        sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
         //not synchronizing the ball first time it enters space
+    }
+
+    private void sendMessageToAllExcludingMeWithoutAcknowledgeMsg(byte[] bytes) {
+        InetAddress myInetAddress = null;
+        try {
+            myInetAddress = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        assert myInetAddress != null;
+        String myIp = myInetAddress.getHostAddress();
+        //If resends exceed a particular number assume player lost and unblock the socket.receive by sending message to itself
+        //and perform necessary actions like updating the playerlist and replacing the code with AI
+        for (Machine machine : playerlist) {
+            if (!machine.getIp().equals(myIp)) {//excluding me
+                //DataPacket formed
+                InetAddress ip_of_machine = null;
+                try {
+                    ip_of_machine = InetAddress.getByName(machine.getIp());
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+                DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, ip_of_machine, machine.getPort());
+
+                //Send DataPacket
+                try {
+                    socket.send(datagramPacket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     //send score
