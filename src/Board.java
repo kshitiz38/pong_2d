@@ -1041,7 +1041,7 @@ public class Board extends JPanel implements ActionListener {
         }
         //game mode two player
         else {
-            if ((paddle1.S == true) && (paddle1.playerIndex == 0)) {
+            if ((paddle1.S == true)) {
 
                 positiveYOne_one = true;
                 positiveYOne_two = true;
@@ -1052,7 +1052,7 @@ public class Board extends JPanel implements ActionListener {
                     paddleOneY += PADDLE_SPEED;
                     paddleOneOppY += PADDLE_SPEED;
                 }
-            } else if ((paddle1.W == true) && (paddle1.playerIndex == 0)) {
+            } else if ((paddle1.W == true)) {
 
                 positiveYOne_one = false;
                 positiveYOne_two = false;
@@ -1068,7 +1068,7 @@ public class Board extends JPanel implements ActionListener {
                 OneTwoStop = true;
             }
 
-            if (((paddle0.Left == true) && (paddle0.playerIndex == 1))) {
+            if (paddle0.Left == true) {
 
                 positiveXTwo_one = false;
                 positiveXTwo_two = false;
@@ -1079,7 +1079,7 @@ public class Board extends JPanel implements ActionListener {
                     paddleTwoX -= PADDLE_SPEED;
                     paddleTwoOppX -= PADDLE_SPEED;
                 }
-            } else if ((paddle0.Right == true) && (paddle0.playerIndex == 1)) {
+            } else if ((paddle0.Right == true)) {
 
                 positiveXTwo_one = true;
                 positiveXTwo_two = true;
