@@ -22,11 +22,11 @@ public class PhysicsCollision {
 
     public PhysicsCollision(int pane_x, int pane_y, double PADDLE_SPEED, int PADDLE_WIDTH, int PADDLE_HEIGHT, int BALL_HEIGHT, int BALL_WIDTH) {
 
-//        if (pane_x==pane_y) {
-//            this.pane_length = pane_x;
-//        } else {
-//            System.out.println("dimensions are different");
-//        }
+        if (pane_x==pane_y) {
+            this.pane_length = pane_x;
+        } else {
+            System.out.println("dimensions are different"+(pane_x-pane_y));
+        }
 
         this.PADDLE_WIDTH = PADDLE_WIDTH;
         this.PADDLE_HEIGHT = PADDLE_HEIGHT;
