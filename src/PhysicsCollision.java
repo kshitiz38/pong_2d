@@ -11,8 +11,8 @@ public class PhysicsCollision {
     int pane_length;
 
     double PADDLE_SPEED;
-    double aRestitution = 0.003;
-    double eRestitution = 0.003;
+    double aRestitution = 0.0015;
+    double eRestitution = 0.0015;
 
     double deltaSPEEDPERPENDICULAR = 0;
     double deltaSPEEDPARALLEL = 0;
@@ -61,7 +61,7 @@ public class PhysicsCollision {
     }
 
     public boolean detectCollisionWithWallAndUpdateParameters(double ballPositionPerpendicular) {
-        if (ballPositionPerpendicular + BALL_HEIGHT > pane_length) {
+        if (ballPositionPerpendicular < 0) {
 
             deltaVELOCITYPERPENDICULAR = -1;
 
