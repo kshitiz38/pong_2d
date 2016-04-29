@@ -258,7 +258,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
             sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
         }
         else {
-            sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+            sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
         }
 //        sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
         //not synchronizing the ball first time it enters space
