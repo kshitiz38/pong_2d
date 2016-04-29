@@ -35,23 +35,29 @@ public class Board extends JPanel implements ActionListener {
     private int PADDLE_WIDTH = 8;
     private int PADDLE_HEIGHT = 60;
     private double PADDLE_SPEED = 2;
-    private double PADDLE_SPEED_AI = 3;
+    private double PADDLE_SPEED_AI = 2;
 
     //game state variables
     private int server = 0; //0 = left, 1 = right
     private String message = "";
+
     private int player_1_score = 0;
     private int player_2_score = 0;
     private int player_3_score = 0;
     private int player_4_score = 0;
+
     private int pane_x; //the playable game area is smaller than the window
     private int pane_y;
+
     private boolean pause = true; //start paused for instruction screen
+
     private Rectangle2D paddleOne_one;
     private Rectangle2D paddleTwo_one;
     private Rectangle2D paddleOne_two;
     private Rectangle2D paddleTwo_two;
+
     private Timer timer;
+
     private double paddleOneY;
     private double paddleTwoX;
     private double paddleOneOppY;
@@ -80,6 +86,8 @@ public class Board extends JPanel implements ActionListener {
     double aRestitution = 0.0009; //resitution
 
     private String gameMode;
+    private String difficulty;
+    private int numberOfBalls;
 
     private UDP UDPObject;
 
@@ -182,11 +190,22 @@ public class Board extends JPanel implements ActionListener {
         return rdmY;
     }
 
-    public Board(String mode, UDP UDPObject) {
+    public Board(String mode, UDP UDPObject, String difficulty, int numberOfBalls) {
         paddle0 = new Paddles();
         paddle1 = new Paddles();
         paddle2 = new Paddles();
         paddle3 = new Paddles();
+
+        this.difficulty = difficulty;
+        this.numberOfBalls = numberOfBalls;
+
+        if (difficulty.equals("Easy")) {
+            PADDLE_SPEED_AI = 0.8;
+        } else if (difficulty.equals("Medium")) {
+            PADDLE_SPEED_AI = 1.2;
+        } else {
+            PADDLE_SPEED_AI = 2.0;
+        }
 
         addKeyListener(new TAdapter());
         setFocusable(true);
@@ -233,6 +252,22 @@ public class Board extends JPanel implements ActionListener {
         }
         System.out.println("MyIndex : " + playerIndex);
 
+//        if((numberOfPlayers==2) || (mode.equals("2Player"))){
+//            paddle0a = paddle0;
+//            paddle2a = paddle0;
+//            paddle1a = paddle1;
+//            paddle3a = paddle1;
+//        }
+//        if(numberOfPlayers==3){
+//            paddle0a = paddle0;
+//            paddle1a = paddle1;
+//            paddle2a = paddle0;
+//            paddle3a = paddle3;
+//
+//        }
+
+        System.out.println("MyIndex " + playerIndex);
+//
 //        if((numberOfPlayers==2) || (mode.equals("2Player"))){
 //            paddle0a = paddle0;
 //            paddle2a = paddle0;
@@ -621,7 +656,7 @@ public class Board extends JPanel implements ActionListener {
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))) {
 
-                    System.out.println("Paddle collide");
+//                    System.out.println("Paddle collide");
                     UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_2_score);
 
                 } else {
@@ -659,7 +694,7 @@ public class Board extends JPanel implements ActionListener {
             ball_vel_y *= -1;
             ball_y = pane_y - BALL_HEIGHT - PADDLE_WIDTH;
             BALL_SPEEDY *= (1 + eRestitution * Math.abs(paddleTwoOppX + PADDLE_HEIGHT / 2 - ball_x));
-            System.out.println("Paddle collide 2");
+//            System.out.println("Paddle collide 2");
             if (TwoTwoStop) {
 
             } else if (positiveXTwo_two == positiveBallX) {

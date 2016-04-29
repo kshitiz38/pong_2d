@@ -178,6 +178,21 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         }
                         sendACK(incoming,socket);
                         break;
+                    case "Disc" :
+                        String ip = jsonObject.getString("ip");
+                        System.out.println(ip+": disconnected");
+                        ArrayList<Machine> arrayList = new ArrayList<>();
+                        for (Machine machine : playerlist) {
+                            if(machine.getIp().equals(ip))
+                                arrayList.add(null);
+                            else{
+                                arrayList.add(machine);
+                            }
+                        }
+                        synchronized (this) {
+                            setPlayerlist(arrayList);
+                        }
+                        sendACK(incoming,socket);
                     case "Wall_Hit":
                         break;
                     case "Paddle_Hit":
@@ -810,7 +825,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                             continueSending = false; // a packet has been received : stop sending
                         } catch (SocketTimeoutException e) {
                             // no response received after 1 second. continue sending
-                            if (resends > 1) {
+                            if (resends > 2) {
                                 // send message back to the acksocket to unblock it
 
 
@@ -856,7 +871,23 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         //current machine detected
                         System.out.println(machine.getIp() + " : disconnected");
                         //perform actions such as update playerlist
-
+                        ArrayList<Machine> newarraylist = new ArrayList<>();
+                        for (Machine machine1 : playerlist) {
+                            if(machine1.equals(machine))
+                                newarraylist.add(null);
+                            else {
+                                newarraylist.add(machine1);
+                            }
+                        }
+                        synchronized (this) {
+                            this.setPlayerlist(newarraylist);
+                        }
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("MessageType","Disc");
+                        jsonObject.put("ip", machine.getIp());
+                        String disc = jsonObject.toString();
+                        byte[] bytes12 = disc.getBytes();
+                        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes12);
                     } else {
                         if (msg_type_ack.equals("ACK")){
 
