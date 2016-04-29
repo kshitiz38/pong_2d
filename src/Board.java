@@ -300,10 +300,10 @@ public class Board extends JPanel implements ActionListener {
             g2d.drawString(Integer.toString(player_2_score), pane_x / 2 + 60, pane_y / 2);
         }
         else if (gameMode.equals("Multiplayer")) {
-            g2d.drawString(Integer.toString(player_1_score), pane_x / 2 - 60, pane_y / 2);
-            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 , pane_y / 2 + 60);
-            g2d.drawString(Integer.toString(player_3_score), pane_x / 2 + 60, pane_y / 2);
-            g2d.drawString(Integer.toString(player_4_score), pane_x / 2 , pane_y / 2 - 60);
+            g2d.drawString(Integer.toString(player_1_score), pane_x / 2, pane_y / 2 + 60);
+            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 - 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_3_score), pane_x / 2, pane_y / 2 - 60);
+            g2d.drawString(Integer.toString(player_4_score), pane_x / 2 + 60, pane_y / 2);
         }
 
 
@@ -716,17 +716,21 @@ public class Board extends JPanel implements ActionListener {
             ball_x += ball_vel_x * BALL_SPEEDX;
             ball_y += ball_vel_y * BALL_SPEEDY;
 
-            if (gameMode.equals("Single")) {
-                player_2_score++;
-                if (player_2_score >= MAX_SCORE) {
-                    //Do Checks
-                }
-            } else {
-                player_1_score++;
-                if (player_1_score >= MAX_SCORE) {
-//                    resetBall("Player 2 Wins!");
-//                    resetScore();
-                }
+//            if (gameMode.equals("Single")) {
+//                player_2_score++;
+//                if (player_2_score >= MAX_SCORE) {
+//                    //Do Checks
+//                }
+//            } else {
+//                player_1_score++;
+//                if (player_1_score >= MAX_SCORE) {
+////                    resetBall("Player 2 Wins!");
+////                    resetScore();
+//                }
+//            }
+            player_2_score++;
+            if (player_2_score >= MAX_SCORE) {
+                //Do Checks
             }
 
             if (gameMode.equals("Multiplayer")) {
@@ -734,7 +738,7 @@ public class Board extends JPanel implements ActionListener {
 
 //                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
 //                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
-                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1, player_1_score);
+                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1, player_2_score);
 
                 } else {
 
@@ -747,149 +751,6 @@ public class Board extends JPanel implements ActionListener {
                         }
                         score_and_balls = UDPObject.getPlayerScoreAndBall();
                     }
-//                    if(score_and_balls == null){
-//                        try {
-//                            Thread.sleep(500);
-//                        } catch (InterruptedException e1) {
-//                            e1.printStackTrace();
-//                        }
-//                        score_and_balls = UDPObject.getPlayerScoreAndBall();
-//                    }
-
-                    if (score_and_balls != null) {
-                        ball_x = score_and_balls.getDouble("b_x");
-                        ball_y = score_and_balls.getDouble("b_y");
-                        BALL_SPEEDX = score_and_balls.getDouble("B_X");
-                        BALL_SPEEDY = score_and_balls.getDouble("B_Y");
-                        ball_vel_x = score_and_balls.getDouble("v_x");
-                        ball_vel_y = score_and_balls.getDouble("v_y");
-                        player_1_score = score_and_balls.getInt("p_score");
-                        UDPObject.resetBallAndScore();
-//                        UDPObject.resetBallPosition();
-//                        UDPObject.resetScoreEvent();
-                    }
-                }
-            }
-        }
-
-
-            // right wall ***********************************************************************************************
-            //************************************************************************************************************
-        else if (ball_x + BALL_HEIGHT > pane_x) {
-            //hit right wall
-            ball_vel_x *= -1;
-
-            ball_x = pane_x - PADDLE_WIDTH - BALL_HEIGHT;
-
-            ball_x += ball_vel_x * BALL_SPEEDX;
-            ball_y += ball_vel_y * BALL_SPEEDY;
-
-            if (gameMode.equals("Single")) {
-                player_4_score++;
-                if (player_4_score >= MAX_SCORE) {
-                    //Do Checks
-                }
-            } else {
-                player_3_score++;
-                if (player_3_score >= MAX_SCORE) {
-//                    resetBall("Player 2 Wins!");
-//                    resetScore();
-                }
-            }
-
-            if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 3 || ((playerIndex == 1)&&(numberOfPlayers==2))||((playerIndex == 1)&&(numberOfPlayers==3))) {
-
-
-//                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
-//                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
-                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1, player_3_score);
-
-
-                } else {
-                    JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
-                    while(score_and_balls == null){
-                        try {
-                            Thread.sleep(threadtimeout);
-                        } catch (InterruptedException e1) {
-                            e1.printStackTrace();
-                        }
-                        score_and_balls = UDPObject.getPlayerScoreAndBall();
-                    }
-
-//                    if(score_and_balls == null){
-//                        try {
-//                            Thread.sleep(500);
-//                        } catch (InterruptedException e1) {
-//                            e1.printStackTrace();
-//                        }
-//                        score_and_balls = UDPObject.getPlayerScoreAndBall();
-//                    }
-
-
-
-                    if (score_and_balls != null) {
-                        ball_x = score_and_balls.getDouble("b_x");
-                        ball_y = score_and_balls.getDouble("b_y");
-                        BALL_SPEEDX = score_and_balls.getDouble("B_X");
-                        BALL_SPEEDY = score_and_balls.getDouble("B_Y");
-                        ball_vel_x = score_and_balls.getDouble("v_x");
-                        ball_vel_y = score_and_balls.getDouble("v_y");
-                        player_3_score = score_and_balls.getInt("p_score");
-                        UDPObject.resetBallAndScore();
-//                        UDPObject.resetBallPosition();
-//                        UDPObject.resetScoreEvent();
-                    }
-                }
-            }
-        }
-
-
-        //hit top wall *******************************************************************************************************
-        //*******************************************************************************************************************
-        else if (ball_y < 0) {
-
-            ball_vel_y *= -1;
-
-            ball_y = PADDLE_HEIGHT;
-
-            ball_x += ball_vel_x * BALL_SPEEDX;
-            ball_y += ball_vel_y * BALL_SPEEDY;
-            if (gameMode.equals("Single")) {
-                player_3_score++;
-                if (player_3_score >= MAX_SCORE) {
-                    //DO Checks
-                }
-            } else {
-                player_2_score++;
-                if (player_2_score >= MAX_SCORE) {
-//                    resetBall("Player 1 Wins!");
-//                    resetScore();
-                }
-            }
-
-
-            if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))) {
-
-
-//                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
-//                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
-                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_2_score);
-
-
-                } else {
-
-                    JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
-                    while(score_and_balls == null){
-                        try {
-                            Thread.sleep(threadtimeout);
-                        } catch (InterruptedException e1) {
-                            e1.printStackTrace();
-                        }
-                        score_and_balls = UDPObject.getPlayerScoreAndBall();
-                    }
-
 //                    if(score_and_balls == null){
 //                        try {
 //                            Thread.sleep(500);
@@ -916,6 +777,173 @@ public class Board extends JPanel implements ActionListener {
         }
 
 
+            // right wall ***********************************************************************************************
+            //************************************************************************************************************
+        else if (ball_x + BALL_HEIGHT > pane_x) {
+            //hit right wall
+            ball_vel_x *= -1;
+
+            ball_x = pane_x - PADDLE_WIDTH - BALL_HEIGHT;
+
+            ball_x += ball_vel_x * BALL_SPEEDX;
+            ball_y += ball_vel_y * BALL_SPEEDY;
+
+//            if (gameMode.equals("Single")) {
+//                player_4_score++;
+//                if (player_4_score >= MAX_SCORE) {
+//                    //Do Checks
+//                }
+//            } else {
+//                player_3_score++;
+//                if (player_3_score >= MAX_SCORE) {
+////                    resetBall("Player 2 Wins!");
+////                    resetScore();
+//                }
+//            }
+            player_4_score++;
+            if(gameMode.equals("2Player")|| (numberOfPlayers==2)){
+                player_2_score++;
+                if (player_2_score >= MAX_SCORE) {
+                    //Do Checks
+                }
+            }
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 3 || ((playerIndex == 1)&&(numberOfPlayers==2))||((playerIndex == 1)&&(numberOfPlayers==3))) {
+
+
+//                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+//                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1, player_4_score);
+
+
+                } else {
+                    JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    while(score_and_balls == null){
+                        try {
+                            Thread.sleep(threadtimeout);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    }
+
+//                    if(score_and_balls == null){
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e1) {
+//                            e1.printStackTrace();
+//                        }
+//                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+//                    }
+
+
+
+                    if (score_and_balls != null) {
+                        ball_x = score_and_balls.getDouble("b_x");
+                        ball_y = score_and_balls.getDouble("b_y");
+                        BALL_SPEEDX = score_and_balls.getDouble("B_X");
+                        BALL_SPEEDY = score_and_balls.getDouble("B_Y");
+                        ball_vel_x = score_and_balls.getDouble("v_x");
+                        ball_vel_y = score_and_balls.getDouble("v_y");
+                        if(numberOfPlayers==2) {
+                            player_2_score++;
+                        }
+                        else{
+                            player_4_score = score_and_balls.getInt("p_score");
+                        }
+                        UDPObject.resetBallAndScore();
+//                        UDPObject.resetBallPosition();
+//                        UDPObject.resetScoreEvent();
+                    }
+                }
+            }
+        }
+
+
+        //hit top wall *******************************************************************************************************
+        //*******************************************************************************************************************
+        else if (ball_y < 0) {
+
+            ball_vel_y *= -1;
+
+            ball_y = PADDLE_WIDTH;
+
+            ball_x += ball_vel_x * BALL_SPEEDX;
+            ball_y += ball_vel_y * BALL_SPEEDY;
+//            if (gameMode.equals("Single")) {
+//                player_3_score++;
+//                if (player_3_score >= MAX_SCORE) {
+//                    //DO Checks
+//                }
+//            } else {
+//                player_2_score++;
+//                if (player_2_score >= MAX_SCORE) {
+////                    resetBall("Player 1 Wins!");
+////                    resetScore();
+//                }
+//            }
+            player_3_score++;
+            if(gameMode.equals("2Player")|| (numberOfPlayers==2)){
+                player_1_score++;
+                if (player_1_score >= MAX_SCORE) {
+                    //Do Checks
+                }
+            }
+
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))) {
+
+
+//                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
+//                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
+                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_3_score);
+
+
+                } else {
+
+                    JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    while(score_and_balls == null){
+                        try {
+                            Thread.sleep(threadtimeout);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+                    }
+
+//                    if(score_and_balls == null){
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e1) {
+//                            e1.printStackTrace();
+//                        }
+//                        score_and_balls = UDPObject.getPlayerScoreAndBall();
+//                    }
+
+                    if (score_and_balls != null) {
+                        ball_x = score_and_balls.getDouble("b_x");
+                        ball_y = score_and_balls.getDouble("b_y");
+                        BALL_SPEEDX = score_and_balls.getDouble("B_X");
+                        BALL_SPEEDY = score_and_balls.getDouble("B_Y");
+                        ball_vel_x = score_and_balls.getDouble("v_x");
+                        ball_vel_y = score_and_balls.getDouble("v_y");
+                        if(numberOfPlayers==2) {
+                            player_1_score++;
+                        }
+                        else{
+                            player_3_score = score_and_balls.getInt("p_score");
+                        }
+                        UDPObject.resetBallAndScore();
+//                        UDPObject.resetBallPosition();
+//                        UDPObject.resetScoreEvent();
+                    }
+                }
+            }
+        }
+
+
         //hit bottom wall ***********************************************************************************************
         //*****************************************************************************************************************
 
@@ -928,17 +956,22 @@ public class Board extends JPanel implements ActionListener {
             ball_x += ball_vel_x * BALL_SPEEDX;
             ball_y += ball_vel_y * BALL_SPEEDY;
 
-            if (gameMode.equals("Single")) {
-                player_1_score++;
-                if (player_1_score >= MAX_SCORE) {
-                    //Do Checks
-                }
-            } else {
-                player_4_score++;
-                if (player_4_score >= MAX_SCORE) {
-//                    resetBall("Player 1 Wins!");
-//                    resetScore();
-                }
+//            if (gameMode.equals("Single")) {
+//                player_1_score++;
+//                if (player_1_score >= MAX_SCORE) {
+//                    //Do Checks
+//                }
+//            } else {
+//                player_4_score++;
+//                if (player_4_score >= MAX_SCORE) {
+////                    resetBall("Player 1 Wins!");
+////                    resetScore();
+//                }
+//            }
+
+            player_1_score++;
+            if (player_1_score >= MAX_SCORE) {
+                //Do Checks
             }
 
             if (gameMode.equals("Multiplayer")) {
@@ -946,7 +979,7 @@ public class Board extends JPanel implements ActionListener {
 
 //                    UDPObject.sendBallInfo(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1);
 //                    UDPObject.sendPlayerScore(player_1_score, player_2_score, player_3_score, player_4_score);
-                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_4_score);
+                    UDPObject.sendBallAndScore(ball_x, ball_y, BALL_SPEEDX, BALL_SPEEDY, ball_vel_x, ball_vel_y, 1,player_1_score);
 
 
 
@@ -980,7 +1013,7 @@ public class Board extends JPanel implements ActionListener {
                         BALL_SPEEDY = score_and_balls.getDouble("B_Y");
                         ball_vel_x = score_and_balls.getDouble("v_x");
                         ball_vel_y = score_and_balls.getDouble("v_y");
-                        player_4_score = score_and_balls.getInt("p_score");
+                        player_1_score = score_and_balls.getInt("p_score");
                         UDPObject.resetBallAndScore();
 //                        UDPObject.resetBallPosition();
 //                        UDPObject.resetScoreEvent();
