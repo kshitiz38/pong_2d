@@ -11,8 +11,8 @@ public class PhysicsCollision {
     int pane_length;
 
     double PADDLE_SPEED;
-    double aRestitution = 0.0015;
-    double eRestitution = 0.0015;
+    double aRestitution = 0.002;
+    double eRestitution = 0.002;
 
     double deltaSPEEDPERPENDICULAR = 0;
     double deltaSPEEDPARALLEL = 0;

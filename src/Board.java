@@ -22,7 +22,7 @@ public class Board extends JPanel implements ActionListener {
 
     //Game constants
     public int threadtimeout = 3;
-    public int frametimer = 5;
+    public int frametimer = 4;
     public int WINDOW_X = 650;
     public int WINDOW_Y = 650;
     private int MAX_SCORE = 5;
@@ -93,6 +93,7 @@ public class Board extends JPanel implements ActionListener {
     public boolean Esc = false;
     public boolean Space = false;
 
+    private ArrayList<Machine> playersList;
 
     //hand off key presses to the Paddles class.
     private Paddles paddle0;
@@ -188,11 +189,11 @@ public class Board extends JPanel implements ActionListener {
         this.UDPObject = UDPObject;
 
         if (difficulty.equals("Easy")) {
-            PADDLE_SPEED_AI = 0.8;
+            PADDLE_SPEED_AI = 1.5;
         } else if (difficulty.equals("Medium")) {
-            PADDLE_SPEED_AI = 1.2;
+            PADDLE_SPEED_AI = 2;
         } else {
-            PADDLE_SPEED_AI = 2.0;
+            PADDLE_SPEED_AI = 2.5;
         }
 
         ball1 = new Ball(1, BALL_HEIGHT, BALL_WIDTH, true, true);
@@ -205,7 +206,7 @@ public class Board extends JPanel implements ActionListener {
 
 
         if (UDPObject != null) {
-            ArrayList<Machine> playersList = UDPObject.getPlayerlist();
+            playersList = UDPObject.getPlayerlist();
             numberOfPlayers = playersList.size();
             try {
                 String ipMy = InetAddress.getLocalHost().getHostAddress();
@@ -281,6 +282,7 @@ public class Board extends JPanel implements ActionListener {
         setDoubleBuffered(true);
         timer = new Timer(frametimer, this);
         timer.start();
+
     }
 
     public void Update_Dimensions() {
@@ -502,6 +504,25 @@ public class Board extends JPanel implements ActionListener {
         //apply input from key
         InputApply(gameMode);
 
+//        if (gameMode.equals("Multiplayer")) {
+//
+//            for (int i = 0; i<playersList.size(); i++){
+//                if(playersList.get(i)==null) {
+//                    if (i==0) {
+//                        paddleAI_TwoTwo();
+//                    } else if (i==1) {
+//                        paddleAI_OneOne();
+//                    } else if (i==2) {
+//                        paddleAI_TwoOne();
+//                    } else if (i==3) {
+//                        paddleAI_OneOne();
+//                    }
+//                }
+//            }
+//        }
+
+
+
 
         //collision detection
         /*	The math here is generous to the players.
@@ -553,6 +574,287 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
+    public void paddleAI_OneOne() {
+
+        //paddleOne_one AI
+        if (ball2==null) {
+            if (paddleOneY + PADDLE_HEIGHT / 2 > ball1.ball_y) {
+                if (paddleOneY > 0) {
+                    paddleOneY -= PADDLE_SPEED_AI;
+                }
+                positiveYOne_one = false;
+                OneOneStop = false;
+            } else if (paddleOneY + PADDLE_HEIGHT / 2 == ball1.ball_y) {
+                OneOneStop = true;
+            } else {
+                if (paddleOneY < pane_y - PADDLE_HEIGHT) {
+                    paddleOneY += PADDLE_SPEED_AI;
+                }
+                positiveYOne_one = true;
+                OneOneStop = false;
+            }
+        }
+        else {
+
+            double time1, time2;
+            if (ball1.getBallPositiveX()) {
+                time1 = (2*pane_x - ball1.getBallPositionX() - BALL_HEIGHT/2)/ball1.getBallSpeedX();
+            } else {
+                time1 = (ball1.getBallPositionX() + BALL_HEIGHT/2)/ball1.getBallSpeedX();
+            }
+            if (ball2.getBallPositiveX()) {
+                time2 = (2*pane_x - ball2.getBallPositionX() - BALL_HEIGHT/2)/ball2.getBallSpeedX();
+            } else {
+                time2 = (ball2.getBallPositionX() + BALL_HEIGHT/2)/ball2.getBallSpeedX();
+            }
+
+            if (time1 < time2) {
+                if (paddleOneY + PADDLE_HEIGHT / 2 > ball1.ball_y) {
+                    if (paddleOneY > 0) {
+                        paddleOneY -= PADDLE_SPEED_AI;
+                    }
+                    positiveYOne_one = false;
+                    OneOneStop = false;
+                } else if (paddleOneY + PADDLE_HEIGHT / 2 == ball1.ball_y) {
+                    OneOneStop = true;
+                } else {
+                    if (paddleOneY < pane_y - PADDLE_HEIGHT) {
+                        paddleOneY += PADDLE_SPEED_AI;
+                    }
+                    positiveYOne_one = true;
+                    OneOneStop = false;
+                }
+            } else {
+                if (paddleOneY + PADDLE_HEIGHT / 2 > ball2.ball_y) {
+                    if (paddleOneY > 0) {
+                        paddleOneY -= PADDLE_SPEED_AI;
+                    }
+                    positiveYOne_one = false;
+                    OneOneStop = false;
+                } else if (paddleOneY + PADDLE_HEIGHT / 2 == ball2.ball_y) {
+                    OneOneStop = true;
+                } else {
+                    if (paddleOneY < pane_y - PADDLE_HEIGHT) {
+                        paddleOneY += PADDLE_SPEED_AI;
+                    }
+                    positiveYOne_one = true;
+                    OneOneStop = false;
+                }
+            }
+        }
+
+
+    }
+
+    public void paddleAI_OneTwo() {
+
+        //paddleOne_two AI
+        if (ball2 == null) {
+            if (paddleOneOppY + PADDLE_HEIGHT / 2 > ball1.ball_y) {
+                if (paddleOneOppY > 0) {
+                    paddleOneOppY -= PADDLE_SPEED_AI;
+                }
+                positiveYOne_two = false;
+                OneTwoStop = false;
+            } else if (paddleOneOppY + PADDLE_HEIGHT / 2 == ball1.ball_y) {
+                OneTwoStop = true;
+            } else {
+                if (paddleOneOppY < pane_y - PADDLE_HEIGHT) {
+                    paddleOneOppY += PADDLE_SPEED_AI;
+                }
+                positiveYOne_two = true;
+                OneTwoStop = false;
+            }
+        } else {
+
+            double time1, time2;
+            if (!ball1.getBallPositiveX()) {
+                time1 = (pane_x + ball1.getBallPositionX() + BALL_HEIGHT/2)/ball1.getBallSpeedX();
+            } else {
+                time1 = (pane_x - ball1.getBallPositionX() - BALL_HEIGHT/2)/ball1.getBallSpeedX();
+            }
+            if (!ball2.getBallPositiveX()) {
+                time2 = (pane_x + ball2.getBallPositionX() + BALL_HEIGHT/2)/ball2.getBallSpeedX();
+            } else {
+                time2 = (pane_x - ball2.getBallPositionX() - BALL_HEIGHT/2)/ball2.getBallSpeedX();
+            }
+
+            if (time1 < time2) {
+                if (paddleOneOppY + PADDLE_HEIGHT / 2 > ball1.ball_y) {
+                    if (paddleOneOppY > 0) {
+                        paddleOneOppY -= PADDLE_SPEED_AI;
+                    }
+                    positiveYOne_two = false;
+                    OneTwoStop = false;
+                } else if (paddleOneOppY + PADDLE_HEIGHT / 2 == ball1.ball_y) {
+                    OneTwoStop = true;
+                } else {
+                    if (paddleOneOppY < pane_y - PADDLE_HEIGHT) {
+                        paddleOneOppY += PADDLE_SPEED_AI;
+                    }
+                    positiveYOne_two = true;
+                    OneTwoStop = false;
+                }
+            } else {
+                if (paddleOneOppY + PADDLE_HEIGHT / 2 > ball2.ball_y) {
+                    if (paddleOneOppY > 0) {
+                        paddleOneOppY -= PADDLE_SPEED_AI;
+                    }
+                    positiveYOne_two = false;
+                    OneTwoStop = false;
+                } else if (paddleOneOppY + PADDLE_HEIGHT / 2 == ball2.ball_y) {
+                    OneTwoStop = true;
+                } else {
+                    if (paddleOneOppY < pane_y - PADDLE_HEIGHT) {
+                        paddleOneOppY += PADDLE_SPEED_AI;
+                    }
+                    positiveYOne_two = true;
+                    OneTwoStop = false;
+                }
+            }
+        }
+
+    }
+
+    public void paddleAI_TwoOne() {
+
+        //paddleTwo_one AI
+        if (ball2 == null) {
+            if (paddleTwoX + PADDLE_HEIGHT / 2 > ball1.ball_x) {
+                if (paddleTwoX > 0) {
+                    paddleTwoX -= PADDLE_SPEED_AI;
+                }
+                positiveXTwo_one = false;
+                TwoOneStop = false;
+            } else if (paddleTwoX + PADDLE_HEIGHT / 2 == ball1.ball_x) {
+                TwoOneStop = true;
+            } else {
+                if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
+                    paddleTwoX += PADDLE_SPEED_AI;
+                }
+                positiveXTwo_one = true;
+                TwoOneStop = false;
+            }
+
+        } else {
+
+            double time1, time2;
+            if (ball1.getBallPositiveY()) {
+                time1 = (2*pane_y - ball1.getBallPositionY() - BALL_HEIGHT/2)/ball1.getBallSpeedY();
+            } else {
+                time1 = (ball1.getBallPositionY() + BALL_HEIGHT/2)/ball1.getBallSpeedY();
+            }
+            if (ball2.getBallPositiveY()) {
+                time2 = (2*pane_y - ball2.getBallPositionY() - BALL_HEIGHT/2)/ball2.getBallSpeedY();
+            } else {
+                time2 = (ball2.getBallPositionY() + BALL_HEIGHT/2)/ball2.getBallSpeedY();
+            }
+
+            if (time1 < time2) {
+                if (paddleTwoX + PADDLE_HEIGHT / 2 > ball1.ball_x) {
+                    if (paddleTwoX > 0) {
+                        paddleTwoX -= PADDLE_SPEED_AI;
+                    }
+                    positiveXTwo_one = false;
+                    TwoOneStop = false;
+                } else if (paddleTwoX + PADDLE_HEIGHT / 2 == ball1.ball_x) {
+                    TwoOneStop = true;
+                } else {
+                    if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
+                        paddleTwoX += PADDLE_SPEED_AI;
+                    }
+                    positiveXTwo_one = true;
+                    TwoOneStop = false;
+                }
+            } else {
+                if (paddleTwoX + PADDLE_HEIGHT / 2 > ball2.ball_x) {
+                    if (paddleTwoX > 0) {
+                        paddleTwoX -= PADDLE_SPEED_AI;
+                    }
+                    positiveXTwo_one = false;
+                    TwoOneStop = false;
+                } else if (paddleTwoX + PADDLE_HEIGHT / 2 == ball2.ball_x) {
+                    TwoOneStop = true;
+                } else {
+                    if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
+                        paddleTwoX += PADDLE_SPEED_AI;
+                    }
+                    positiveXTwo_one = true;
+                    TwoOneStop = false;
+                }
+            }
+
+        }
+    }
+
+    public void paddleAI_TwoTwo() {
+
+        //paddleTwo_Two AI
+        if(ball2 == null) {
+            if (paddleTwoOppX + PADDLE_HEIGHT / 2 > ball1.ball_x) {
+                if (paddleTwoOppX > 0) {
+                    paddleTwoX -= PADDLE_SPEED_AI;
+                }
+                positiveXTwo_two = false;
+                TwoTwoStop = false;
+            } else if (paddleTwoOppX + PADDLE_HEIGHT / 2 == ball1.ball_x) {
+                TwoTwoStop = true;
+            } else {
+                if (paddleTwoOppX < pane_x - PADDLE_HEIGHT) {
+                    paddleTwoOppX += PADDLE_SPEED_AI;
+                }
+                positiveXTwo_two = true;
+                TwoTwoStop = false;
+            }
+        } else {
+
+            double time1, time2;
+            if (!ball1.getBallPositiveY()) {
+                time1 = (pane_y + ball1.getBallPositionY() + BALL_HEIGHT/2)/ball1.getBallSpeedY();
+            } else {
+                time1 = (pane_y - ball1.getBallPositionY() + BALL_HEIGHT/2)/ball1.getBallSpeedY();
+            }
+            if (!ball2.getBallPositiveY()) {
+                time2 = (pane_y + ball2.getBallPositionY() + BALL_HEIGHT/2)/ball2.getBallSpeedY();
+            } else {
+                time2 = (pane_x - ball2.getBallPositionY() + BALL_HEIGHT/2)/ball2.getBallSpeedY();
+            }
+
+            if (time1 < time2) {
+                if (paddleTwoOppX + PADDLE_HEIGHT / 2 > ball1.ball_x) {
+                    if (paddleTwoOppX > 0) {
+                        paddleTwoX -= PADDLE_SPEED_AI;
+                    }
+                    positiveXTwo_two = false;
+                    TwoTwoStop = false;
+                } else if (paddleTwoOppX + PADDLE_HEIGHT / 2 == ball1.ball_x) {
+                    TwoTwoStop = true;
+                } else {
+                    if (paddleTwoOppX < pane_x - PADDLE_HEIGHT) {
+                        paddleTwoOppX += PADDLE_SPEED_AI;
+                    }
+                    positiveXTwo_two = true;
+                    TwoTwoStop = false;
+                }
+            } else {
+                if (paddleTwoOppX + PADDLE_HEIGHT / 2 > ball2.ball_x) {
+                    if (paddleTwoOppX > 0) {
+                        paddleTwoX -= PADDLE_SPEED_AI;
+                    }
+                    positiveXTwo_two = false;
+                    TwoTwoStop = false;
+                } else if (paddleTwoOppX + PADDLE_HEIGHT / 2 == ball2.ball_x) {
+                    TwoTwoStop = true;
+                } else {
+                    if (paddleTwoOppX < pane_x - PADDLE_HEIGHT) {
+                        paddleTwoOppX += PADDLE_SPEED_AI;
+                    }
+                    positiveXTwo_two = true;
+                    TwoTwoStop = false;
+                }
+            }
+        }
+    }
 
     public void InputApply(String mode) {
         //single player game mode
@@ -577,117 +879,13 @@ public class Board extends JPanel implements ActionListener {
                 TwoTwoStop = true;
             }
 
+            paddleAI_OneOne();
+            paddleAI_OneTwo();
+            paddleAI_TwoOne();
 
-            //paddleOne_one AI
-            if (paddleOneY + PADDLE_HEIGHT / 2 > ball1.ball_y) {
-                if (paddleOneY > 0) {
-                    paddleOneY -= PADDLE_SPEED_AI;
-                }
-                positiveYOne_one = false;
-                OneOneStop = false;
-            } else if (paddleOneY + PADDLE_HEIGHT / 2 == ball1.ball_y) {
-                OneOneStop = true;
-            } else {
-                if (paddleOneY < pane_y - PADDLE_HEIGHT) {
-                    paddleOneY += PADDLE_SPEED_AI;
-                }
-                positiveYOne_one = true;
-                OneOneStop = false;
-            }
-
-            //paddleOne_two AI
-            if (paddleOneOppY + PADDLE_HEIGHT / 2 > ball1.ball_y) {
-                if (paddleOneOppY > 0) {
-                    paddleOneOppY -= PADDLE_SPEED_AI;
-                }
-                positiveYOne_two = false;
-                OneTwoStop = false;
-            } else if (paddleOneOppY + PADDLE_HEIGHT / 2 == ball1.ball_y) {
-                OneTwoStop = true;
-            } else {
-                if (paddleOneOppY < pane_y - PADDLE_HEIGHT) {
-                    paddleOneOppY += PADDLE_SPEED_AI;
-                }
-                positiveYOne_two = true;
-                OneTwoStop = false;
-            }
-
-            //paddleTwo_one AI
-            if (paddleTwoX + PADDLE_HEIGHT / 2 > ball1.ball_x) {
-                if (paddleTwoX > 0) {
-                    paddleTwoX -= PADDLE_SPEED_AI;
-                }
-                positiveXTwo_one = false;
-                TwoOneStop = false;
-            } else if (paddleTwoX + PADDLE_HEIGHT / 2 == ball1.ball_x) {
-                TwoOneStop = true;
-            } else {
-                if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
-                    paddleTwoX += PADDLE_SPEED_AI;
-                }
-                positiveXTwo_one = true;
-                TwoOneStop = false;
-            }
         }
         //game mode two player
         else {
-//            if ((paddle1.S == true)) {
-//
-//                positiveYOne_one = true;
-//                positiveYOne_two = true;
-//                OneOneStop = false;
-//                OneTwoStop = false;
-//
-//                if (paddleOneY < pane_y - PADDLE_HEIGHT) {
-//                    paddleOneY += PADDLE_SPEED;
-//                    paddleOneOppY += PADDLE_SPEED;
-//                }
-//            } else if ((paddle1.W == true)) {
-//
-//                positiveYOne_one = false;
-//                positiveYOne_two = false;
-//                OneOneStop = false;
-//                OneTwoStop = false;
-//
-//                if (paddleOneY > 0) {
-//                    paddleOneY -= PADDLE_SPEED;
-//                    paddleOneOppY -= PADDLE_SPEED;
-//                }
-//            } else {
-//                OneOneStop = true;
-//                OneTwoStop = true;
-//            }
-//
-//            if (paddle0.Left == true) {
-//
-//                positiveXTwo_one = false;
-//                positiveXTwo_two = false;
-//                TwoOneStop = false;
-//                TwoTwoStop = false;
-//
-//                if (paddleTwoX > 0) {
-//                    paddleTwoX -= PADDLE_SPEED;
-//                    paddleTwoOppX -= PADDLE_SPEED;
-//                }
-//            } else if ((paddle0.Right == true)) {
-//
-//                positiveXTwo_one = true;
-//                positiveXTwo_two = true;
-//                TwoOneStop = false;
-//                TwoTwoStop = false;
-//
-//                if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
-//                    paddleTwoX += PADDLE_SPEED;
-//                    paddleTwoOppX += PADDLE_SPEED;
-//                }
-//            } else {
-//                TwoOneStop = true;
-//                TwoTwoStop = true;
-//            }
-
-
-//            // 4 players
-//        if(numberOfPlayers == 4){
 
             //Player 1
             if ((paddle1a.S == true)) {
@@ -858,7 +1056,7 @@ public class Board extends JPanel implements ActionListener {
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 1) {
 //                    System.out.println("Paddle Collide");
-                    UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_1_score);
+                    UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_2_score);
 
                 } else {
 
@@ -880,7 +1078,7 @@ public class Board extends JPanel implements ActionListener {
                         SpeedY = ballPosition.getDouble("B_Y");
                         deltaVelocityX = ballPosition.getDouble("v_x");
                         deltaVelocityY = ballPosition.getDouble("v_y");
-                        player_1_score = ballPosition.getInt("p_score");
+                        player_2_score = ballPosition.getInt("p_score");
                         UDPObject.resetBallAndScore();
 
                         ball.updateBallPositions(BallX, BallY);
@@ -904,6 +1102,53 @@ public class Board extends JPanel implements ActionListener {
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 3 || ((playerIndex == 1) && (numberOfPlayers == 2)) || ((playerIndex == 1) && (numberOfPlayers == 3))) {
+
+                    UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_4_score);
+
+                } else {
+
+                    JSONObject ballPosition = UDPObject.getPlayerScoreAndBall();
+                    while (ballPosition == null) {
+                        try {
+                            Thread.sleep(threadtimeout);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                        ballPosition = UDPObject.getPlayerScoreAndBall();
+                    }
+
+                    if (ballPosition != null) {
+                        BallX = ballPosition.getDouble("b_x");
+                        BallY = ballPosition.getDouble("b_y");
+                        SpeedX = ballPosition.getDouble("B_X");
+                        SpeedY = ballPosition.getDouble("B_Y");
+                        deltaVelocityX = ballPosition.getDouble("v_x");
+                        deltaVelocityY = ballPosition.getDouble("v_y");
+                        player_4_score = ballPosition.getInt("p_score");
+                        UDPObject.resetBallAndScore();
+
+                        ball.updateBallPositions(BallX, BallY);
+                    }
+                }
+            }
+
+        }
+        // paddle two_one ********************************************************************************************************************
+
+        else if (physics.detectCollisionWithPaddleAndUpdateParameters(BallOldY, BallOldX, paddleTwoX, TwoOneStop, positiveXTwo_one, positiveBallX)) {
+
+            deltaSpeedX = physics.getDeltaSPEEDPARRALEL();
+            deltaSpeedY = physics.getDeltaSPEEDPERPENDICULAR();
+            deltaVelocityX = physics.getDeltaVELOCITYPARALLEL();
+            deltaVelocityY = physics.getDeltaVELOCITYPERPENDICULAR();
+
+            SpeedY = ball.getBallSpeedX() * (1 + deltaSpeedY);
+            SpeedX = ball.getBallSpeedY() + deltaSpeedX;
+
+            ball.updateBallPositions(BallOldX, PADDLE_WIDTH);
+
+            if (gameMode.equals("Multiplayer")) {
+                if (playerIndex == 2 || ((playerIndex == 0) && (numberOfPlayers == 2))) {
 
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_3_score);
 
@@ -935,53 +1180,6 @@ public class Board extends JPanel implements ActionListener {
             }
 
         }
-        // paddle two_one ********************************************************************************************************************
-
-        else if (physics.detectCollisionWithPaddleAndUpdateParameters(BallOldY, BallOldX, paddleTwoX, TwoOneStop, positiveXTwo_one, positiveBallX)) {
-
-            deltaSpeedX = physics.getDeltaSPEEDPARRALEL();
-            deltaSpeedY = physics.getDeltaSPEEDPERPENDICULAR();
-            deltaVelocityX = physics.getDeltaVELOCITYPARALLEL();
-            deltaVelocityY = physics.getDeltaVELOCITYPERPENDICULAR();
-
-            SpeedY = ball.getBallSpeedX() * (1 + deltaSpeedY);
-            SpeedX = ball.getBallSpeedY() + deltaSpeedX;
-
-            ball.updateBallPositions(BallOldX, PADDLE_WIDTH);
-
-            if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 2 || ((playerIndex == 0) && (numberOfPlayers == 2))) {
-
-                    UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_2_score);
-
-                } else {
-
-                    JSONObject ballPosition = UDPObject.getPlayerScoreAndBall();
-                    while (ballPosition == null) {
-                        try {
-                            Thread.sleep(threadtimeout);
-                        } catch (InterruptedException e1) {
-                            e1.printStackTrace();
-                        }
-                        ballPosition = UDPObject.getPlayerScoreAndBall();
-                    }
-
-                    if (ballPosition != null) {
-                        BallX = ballPosition.getDouble("b_x");
-                        BallY = ballPosition.getDouble("b_y");
-                        SpeedX = ballPosition.getDouble("B_X");
-                        SpeedY = ballPosition.getDouble("B_Y");
-                        deltaVelocityX = ballPosition.getDouble("v_x");
-                        deltaVelocityY = ballPosition.getDouble("v_y");
-                        player_2_score = ballPosition.getInt("p_score");
-                        UDPObject.resetBallAndScore();
-
-                        ball.updateBallPositions(BallX, BallY);
-                    }
-                }
-            }
-
-        }
         // paddle two_two ********************************************************************************************************************
 
         else if (physics.detectCollisionWithPaddleAndUpdateParameters(0 - BallOldY + pane_y - BALL_HEIGHT, BallOldX, paddleTwoOppX, TwoTwoStop, positiveXTwo_two, positiveBallX)) {
@@ -999,7 +1197,7 @@ public class Board extends JPanel implements ActionListener {
             if (gameMode.equals("Multiplayer")) {
 
                 if (playerIndex == 0) {
-                    UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_4_score);
+                    UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_1_score);
                 } else {
 
                     JSONObject ballPosition = UDPObject.getPlayerScoreAndBall();
@@ -1019,7 +1217,7 @@ public class Board extends JPanel implements ActionListener {
                         SpeedY = ballPosition.getDouble("B_Y");
                         deltaVelocityX = ballPosition.getDouble("v_x");
                         deltaVelocityY = ballPosition.getDouble("v_y");
-                        player_4_score = ballPosition.getInt("p_score");
+                        player_1_score = ballPosition.getInt("p_score");
                         UDPObject.resetBallAndScore();
 
                         ball.updateBallPositions(BallX, BallY);
@@ -1249,4 +1447,5 @@ public class Board extends JPanel implements ActionListener {
 
 
     }
+
 }
