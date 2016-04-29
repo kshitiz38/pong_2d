@@ -192,6 +192,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         synchronized (this) {
                             setPlayerlist(arrayList);
                         }
+                        sendACK(incoming,socket);
                     case "Wall_Hit":
                         break;
                     case "Paddle_Hit":
