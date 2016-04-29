@@ -4,10 +4,7 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -205,7 +202,8 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         synchronized (this) {
                             key_event = jsonObject;
                         }
-//                        sendACK(incoming,socket);
+                        if(jsonObject.getInt("key_event_code")==KeyEvent.VK_SPACE)
+                        sendACK(incoming,socket);
                         break;
                     case "Start":
 //                        System.out.println("Start");
@@ -256,8 +254,13 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         jsonObject.put("playerIndex", playerIndex);
         String jsonString = jsonObject.toString();
         byte[] bytes = jsonString.getBytes();
-//        sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
-        sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
+        if(event_code== KeyEvent.VK_SPACE){
+            sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+        }
+        else {
+            sendMessageToAllExcludingMeWithAcknowledgeMsg(bytes);
+        }
+//        sendMessageToAllExcludingMeWithoutAcknowledgeMsg(bytes);
         //not synchronizing the ball first time it enters space
     }
 
