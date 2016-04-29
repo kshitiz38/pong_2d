@@ -32,8 +32,8 @@ import javax.swing.border.LineBorder;
 public class GameMenuOne extends JFrame {
 
     JPanel current;
-    public String difficulty;
-    public int numberOfBalls;
+    public String difficulty = "Easy";
+    public int numberOfBalls = 1;
 
     public int port_Lobby = 9504;//default port number
 
