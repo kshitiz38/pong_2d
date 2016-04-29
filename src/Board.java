@@ -45,6 +45,8 @@ public class Board extends JPanel implements ActionListener {
     private int player_2_score = 0;
     private int player_3_score = 0;
     private int player_4_score = 0;
+    private int player_1_3_score = 0;
+    private int player_2_4_score = 0;
 
     private int pane_x; //the playable game area is smaller than the window
     private int pane_y;
@@ -73,6 +75,11 @@ public class Board extends JPanel implements ActionListener {
     private boolean TwoOneStop = true;
     private boolean TwoTwoStop = true;
 
+    private int OneOnePlaying=1;
+    private int OneTwoPlaying=1;
+    private int TwoOnePlaying=1;
+    private int TwoTwoPlaying=1;
+
     private double ball_x;
     private double ball_y;
 
@@ -88,6 +95,7 @@ public class Board extends JPanel implements ActionListener {
     private String gameMode;
     private String difficulty;
     private int numberOfBalls;
+    private String winMsg;
 
     private UDP UDPObject;
 
@@ -325,20 +333,26 @@ public class Board extends JPanel implements ActionListener {
 
 
         if (gameMode.equals("Single")) {
-            g2d.drawString(Integer.toString(player_1_score), pane_x / 2, pane_y / 2 + 60);
-            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 - 60, pane_y / 2);
-            g2d.drawString(Integer.toString(player_3_score), pane_x / 2, pane_y / 2 - 60);
-            g2d.drawString(Integer.toString(player_4_score), pane_x / 2 + 60, pane_y / 2);
+            if(TwoTwoPlaying==1)g2d.drawString(Integer.toString(player_1_score), pane_x / 2, pane_y / 2 + 60);
+            if(OneOnePlaying==1)g2d.drawString(Integer.toString(player_2_score), pane_x / 2 - 60, pane_y / 2);
+            if(TwoOnePlaying==1)g2d.drawString(Integer.toString(player_3_score), pane_x / 2, pane_y / 2 - 60);
+            if(OneTwoPlaying==1)g2d.drawString(Integer.toString(player_4_score), pane_x / 2 + 60, pane_y / 2);
         }
         else if ((numberOfPlayers==2) || (gameMode.equals("2Player"))){
-            g2d.drawString(Integer.toString(player_1_score), pane_x / 2 - 60, pane_y / 2);
-            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 + 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_1_3_score), pane_x / 2 - 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_2_4_score), pane_x / 2 + 60, pane_y / 2);
         }
         else if (gameMode.equals("Multiplayer")) {
             g2d.drawString(Integer.toString(player_1_score), pane_x / 2, pane_y / 2 + 60);
             g2d.drawString(Integer.toString(player_2_score), pane_x / 2 - 60, pane_y / 2);
             g2d.drawString(Integer.toString(player_3_score), pane_x / 2, pane_y / 2 - 60);
             g2d.drawString(Integer.toString(player_4_score), pane_x / 2 + 60, pane_y / 2);
+        }
+
+        if (winMsg!=null) {
+            g2d.drawString("   "+winMsg, pane_x / 2 - (140 + message.length() * 4), 220);
+            Space = true;
+            winMsg = null;
         }
 
 
@@ -354,14 +368,22 @@ public class Board extends JPanel implements ActionListener {
         paddleTwo_two = new Rectangle2D.Double(paddleTwoOppX, pane_y - PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_WIDTH);
 
         g2d.setColor(Color.WHITE);
-        g2d.fill(paddleOne_one);
-        g2d.draw(paddleOne_one);
-        g2d.fill(paddleTwo_two);
-        g2d.draw(paddleTwo_two);
-        g2d.fill(paddleOne_two);
-        g2d.draw(paddleOne_two);
-        g2d.fill(paddleTwo_one);
-        g2d.draw(paddleTwo_one);
+        if(OneOnePlaying==1){
+            g2d.fill(paddleOne_one);
+            g2d.draw(paddleOne_one);
+        }
+        if(OneTwoPlaying==1){
+            g2d.fill(paddleOne_two);
+            g2d.draw(paddleOne_two);
+        }
+        if(TwoOnePlaying==1){
+            g2d.fill(paddleTwo_one);
+            g2d.draw(paddleTwo_one);
+        }
+        if(TwoTwoPlaying==1){
+            g2d.fill(paddleTwo_two);
+            g2d.draw(paddleTwo_two);
+        }
         //update ball location
         Ellipse2D.Double ball = new Ellipse2D.Double(ball_x, ball_y, BALL_WIDTH, BALL_HEIGHT);
         g2d.fill(ball);
@@ -764,9 +786,9 @@ public class Board extends JPanel implements ActionListener {
 //                }
 //            }
             player_2_score++;
-            if (player_2_score >= MAX_SCORE) {
-                //Do Checks
-            }
+//            if (player_2_score >= MAX_SCORE) {
+//                //Do Checks
+//            }
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 1) {
@@ -836,12 +858,12 @@ public class Board extends JPanel implements ActionListener {
 //                }
 //            }
             player_4_score++;
-            if(gameMode.equals("2Player")|| (numberOfPlayers==2)){
-                player_2_score++;
-                if (player_2_score >= MAX_SCORE) {
-                    //Do Checks
-                }
-            }
+//            if(gameMode.equals("2Player")|| (numberOfPlayers==2)){
+//                player_2_score++;
+//                if (player_2_score >= MAX_SCORE) {
+//                    //Do Checks
+//                }
+//            }
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 3 || ((playerIndex == 1)&&(numberOfPlayers==2))||((playerIndex == 1)&&(numberOfPlayers==3))) {
@@ -881,12 +903,7 @@ public class Board extends JPanel implements ActionListener {
                         BALL_SPEEDY = score_and_balls.getDouble("B_Y");
                         ball_vel_x = score_and_balls.getDouble("v_x");
                         ball_vel_y = score_and_balls.getDouble("v_y");
-                        if(numberOfPlayers==2) {
-                            player_2_score++;
-                        }
-                        else{
-                            player_4_score = score_and_balls.getInt("p_score");
-                        }
+                        player_4_score = score_and_balls.getInt("p_score");
                         UDPObject.resetBallAndScore();
 //                        UDPObject.resetBallPosition();
 //                        UDPObject.resetScoreEvent();
@@ -919,12 +936,12 @@ public class Board extends JPanel implements ActionListener {
 //                }
 //            }
             player_3_score++;
-            if(gameMode.equals("2Player")|| (numberOfPlayers==2)){
-                player_1_score++;
-                if (player_1_score >= MAX_SCORE) {
-                    //Do Checks
-                }
-            }
+//            if(gameMode.equals("2Player")|| (numberOfPlayers==2)){
+//                player_1_score++;
+//                if (player_1_score >= MAX_SCORE) {
+//                    //Do Checks
+//                }
+//            }
 
 
             if (gameMode.equals("Multiplayer")) {
@@ -964,12 +981,7 @@ public class Board extends JPanel implements ActionListener {
                         BALL_SPEEDY = score_and_balls.getDouble("B_Y");
                         ball_vel_x = score_and_balls.getDouble("v_x");
                         ball_vel_y = score_and_balls.getDouble("v_y");
-                        if(numberOfPlayers==2) {
-                            player_1_score++;
-                        }
-                        else{
-                            player_3_score = score_and_balls.getInt("p_score");
-                        }
+                        player_3_score = score_and_balls.getInt("p_score");
                         UDPObject.resetBallAndScore();
 //                        UDPObject.resetBallPosition();
 //                        UDPObject.resetScoreEvent();
@@ -1005,9 +1017,9 @@ public class Board extends JPanel implements ActionListener {
 //            }
 
             player_1_score++;
-            if (player_1_score >= MAX_SCORE) {
-                //Do Checks
-            }
+//            if (player_1_score >= MAX_SCORE) {
+//                //Do Checks
+//            }
 
             if (gameMode.equals("Multiplayer")) {
                 if (playerIndex == 0) {
@@ -1100,6 +1112,38 @@ public class Board extends JPanel implements ActionListener {
 //                }
 //            }
 //        }
+        player_1_3_score = player_1_score+player_3_score;
+        player_2_4_score = player_2_score+player_4_score;
+        if((numberOfPlayers==2) || (gameMode.equals("2Player"))){
+            if(player_1_3_score>=2*MAX_SCORE){
+                winMsg="Player 2 wins";
+                resetScore();
+            }
+            else if(player_2_4_score>=2*MAX_SCORE){
+                winMsg="Player 1 wins";
+                resetScore();
+            }
+        }
+        else{
+            if(player_1_score>=MAX_SCORE){
+                TwoTwoPlaying=0;
+            }
+            if(player_2_score>=MAX_SCORE){
+                OneOnePlaying=0;
+            }
+            if(player_3_score>=MAX_SCORE){
+                TwoOnePlaying=0;
+            }
+            if(player_4_score>=MAX_SCORE){
+                OneTwoPlaying=0;
+            }
+            if((OneOnePlaying+OneTwoPlaying+TwoOnePlaying+TwoTwoPlaying)==1){
+                if(OneOnePlaying==1){winMsg="Player 2 wins";}
+                else if(OneTwoPlaying==1){winMsg="Player 4 wins";}
+                else if(TwoOnePlaying==1){winMsg="Player 3 wins";}
+                else if(TwoTwoPlaying==1){winMsg="Player 1 wins";}
+            }
+        }
         repaint();
 
 
