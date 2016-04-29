@@ -300,7 +300,7 @@ public class GameMenuOne extends JFrame {
             for (int i=0; i<2; i++) {
                 balls.addItem(ballNumber[i]);
             }
-            balls.setSelectedItem(numberOfBalls);
+            balls.setSelectedItem(Integer.toString(numberOfBalls));
             balls.setSize(100,40);
             balls.addActionListener(new ActionListener() {
                 @Override

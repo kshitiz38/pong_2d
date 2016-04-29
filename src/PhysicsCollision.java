@@ -11,8 +11,8 @@ public class PhysicsCollision {
     int pane_length;
 
     double PADDLE_SPEED;
-    double aRestitution = 0.003;
-    double eRestitution = 0.003;
+    double aRestitution = 0.0015;
+    double eRestitution = 0.0015;
 
     double deltaSPEEDPERPENDICULAR = 0;
     double deltaSPEEDPARALLEL = 0;
@@ -22,11 +22,11 @@ public class PhysicsCollision {
 
     public PhysicsCollision(int pane_x, int pane_y, double PADDLE_SPEED, int PADDLE_WIDTH, int PADDLE_HEIGHT, int BALL_HEIGHT, int BALL_WIDTH) {
 
-        if (pane_x==pane_y) {
-            this.pane_length = pane_x;
-        } else {
-            System.out.println("dimensions are different");
-        }
+//        if (pane_x==pane_y) {
+//            this.pane_length = pane_x;
+//        } else {
+//            System.out.println("dimensions are different");
+//        }
 
         this.PADDLE_WIDTH = PADDLE_WIDTH;
         this.PADDLE_HEIGHT = PADDLE_HEIGHT;
@@ -61,7 +61,7 @@ public class PhysicsCollision {
     }
 
     public boolean detectCollisionWithWallAndUpdateParameters(double ballPositionPerpendicular) {
-        if (ballPositionPerpendicular + BALL_HEIGHT > pane_length) {
+        if (ballPositionPerpendicular < 0) {
 
             deltaVELOCITYPERPENDICULAR = -1;
 

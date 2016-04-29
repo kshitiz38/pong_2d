@@ -20,10 +20,16 @@ public class Ball {
     double ball_x;
     double ball_y;
 
-    public Ball(int id, int BALL_HEIGHT, int BALL_WIDTH) {
+    boolean ballPositiveX;
+    boolean ballPositiveY;
+
+    public Ball(int id, int BALL_HEIGHT, int BALL_WIDTH, boolean ballPositiveX, boolean ballPositiveY) {
         this.id = id;
         this.BALL_HEIGHT = BALL_HEIGHT;
         this.BALL_WIDTH = BALL_WIDTH;
+
+        this.ballPositiveX = ballPositiveX;
+        this.ballPositiveY = ballPositiveY;
     }
 
     public void drawBall(Graphics2D g2d) {
@@ -47,6 +53,11 @@ public class Ball {
         this.ball_velocity_y = ball_velocity_y;
     }
 
+    public void updateBallPositiveBooleans(boolean ballPositiveX, boolean ballPositiveY) {
+        this.ballPositiveX = ballPositiveX;
+        this.ballPositiveY = ballPositiveY;
+    }
+
     public double getBallSpeedX(){
         return BALL_SPEEDX;
     }
@@ -58,5 +69,15 @@ public class Ball {
     }
     public double getBallVelocityY(){
         return ball_velocity_y;
+    }
+    public double getBallPositionX(){
+        return ball_x;
+    }
+    public double getBallPositionY(){
+        return ball_y;
+    }
+    public boolean getBallPositiveX(){return ballPositiveX;}
+    public boolean getBallPositiveY(){
+        return ballPositiveY;
     }
 }
