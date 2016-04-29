@@ -11,6 +11,7 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class UDP implements Runnable, WindowListener, ActionListener {
@@ -35,6 +36,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     public int ball_score_msg_id = 0;
     public int key_event_msg_id = 0;
 //    public int received_msg_id = 0;
+    public HashMap<String,Boolean> ackHashMap;
 
     public UDP(InetAddress inetAddress, int port) {
         this.inetAddress = inetAddress;
@@ -57,6 +59,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         } catch (SocketException e1) {
             e1.printStackTrace();
         }
+        ackHashMap = new HashMap<>();
     }
 
     public UDP(InetAddress inetAddress, int port, int port_lobby) {
@@ -169,7 +172,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         int msg_id_rec = jsonObject.getInt("mes_id");
                         if(msg_id_rec<=ball_score_msg_id)
                             break;
-                        System.out.println("new message");
+//                        System.out.println("new message");
                         synchronized (this) {
                             ball_score_msg_id = msg_id_rec;
                         }
@@ -205,7 +208,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
 //                        sendACK(incoming,socket);
                         break;
                     case "Start":
-                        System.out.println("Start");
+//                        System.out.println("Start");
                         if (started) {
                             break;
                         }
@@ -218,7 +221,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                     case "lobbyResp":
                         textArea.setText("");
                         playerlist = new ArrayList<>();
-                        System.out.println(jsonObject.getInt("numPlayers"));
+//                        System.out.println(jsonObject.getInt("numPlayers"));
                         for (int i = 0; i < jsonObject.getInt("numPlayers"); i++) {
                             String ip_port = jsonObject.getString("Player" + i);
                             textArea.append(ip_port + "\n");
@@ -506,7 +509,7 @@ public class UDP implements Runnable, WindowListener, ActionListener {
     }
 
     public void sendToPlayers(byte[] bytes) { //method to send json object to all excluding itself
-        System.out.println(playerlist.size());
+//        System.out.println(playerlist.size());
         for (Machine machine : playerlist) {
             try {
                 if (!(machine.getIp().equals(InetAddress.getLocalHost().getHostAddress()))) {
@@ -850,9 +853,12 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                         //current machine detected
                         System.out.println(machine.getIp() + " : disconnected");
                         //perform actions such as update playerlist
+
                     } else {
-                        if (msg_type_ack.equals("ACK"))
-                            System.out.println("Ack received from : " + ackPacket.getAddress().getHostAddress());
+                        if (msg_type_ack.equals("ACK")){
+
+                        }
+//                            System.out.println("Ack received from : " + ackPacket.getAddress().getHostAddress());
                         else
                             System.out.println("Unknown message type for Ack");
                     }
@@ -875,6 +881,13 @@ public class UDP implements Runnable, WindowListener, ActionListener {
         }
     }
 
+    public boolean ORHashmap(ArrayList<Machine> arrayList){
+        boolean result = false;
+        for (Machine machine : arrayList) {
+            result = result||(ackHashMap.get(machine.getIp()));
+        }
+        return result;
+    }
 
 
 }

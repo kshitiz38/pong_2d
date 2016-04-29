@@ -231,6 +231,21 @@ public class Board extends JPanel implements ActionListener {
             paddle3a = paddle3;
 
         }
+        System.out.println("MyIndex : " + playerIndex);
+
+//        if((numberOfPlayers==2) || (mode.equals("2Player"))){
+//            paddle0a = paddle0;
+//            paddle2a = paddle0;
+//            paddle1a = paddle1;
+//            paddle3a = paddle1;
+//        }
+//        if(numberOfPlayers==3){
+//            paddle0a = paddle0;
+//            paddle1a = paddle1;
+//            paddle2a = paddle0;
+//            paddle3a = paddle3;
+//
+//        }
 
         System.out.println("MyIndex " + playerIndex);
 //
