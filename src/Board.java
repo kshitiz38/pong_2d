@@ -105,15 +105,17 @@ public class Board extends JPanel implements ActionListener {
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_SPACE){Space = false;}
-            else if(e.getKeyCode() == KeyEvent.VK_ESCAPE){Esc = false;}
-            else {
-                if(!gameMode.equals("Multiplayer")){
+            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                Space = false;
+            } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                Esc = false;
+            } else {
+                if (!gameMode.equals("Multiplayer")) {
                     paddle0.keyReleased(e.getKeyCode());
                     paddle1.keyReleased(e.getKeyCode());
                     paddle2.keyReleased(e.getKeyCode());
                     paddle3.keyReleased(e.getKeyCode());
-                }else {
+                } else {
                     if (playerIndex == 0) {
                         paddle0.keyReleased(e.getKeyCode());
                     }
@@ -128,20 +130,22 @@ public class Board extends JPanel implements ActionListener {
                     }
                 }
             }
-            if(UDPObject!=null)
+            if (UDPObject != null)
                 UDPObject.sendKeyEvent(e.getKeyCode(), "Released", playerIndex);
         }
 
         public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_SPACE){Space = true;}
-            else if(e.getKeyCode() == KeyEvent.VK_ESCAPE){Esc = true;}
-            else{
-                if(!gameMode.equals("Multiplayer")){
+            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                Space = true;
+            } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                Esc = true;
+            } else {
+                if (!gameMode.equals("Multiplayer")) {
                     paddle0.keyPressed(e.getKeyCode());
                     paddle1.keyPressed(e.getKeyCode());
                     paddle2.keyPressed(e.getKeyCode());
                     paddle3.keyPressed(e.getKeyCode());
-                }else {
+                } else {
                     if (playerIndex == 0) {
                         paddle0.keyPressed(e.getKeyCode());
                     }
@@ -156,7 +160,7 @@ public class Board extends JPanel implements ActionListener {
                     }
                 }
             }
-            if(UDPObject!=null)
+            if (UDPObject != null)
                 UDPObject.sendKeyEvent(e.getKeyCode(), "Pressed", playerIndex);
         }
     }
@@ -166,7 +170,6 @@ public class Board extends JPanel implements ActionListener {
         paddle1 = new Paddles();
         paddle2 = new Paddles();
         paddle3 = new Paddles();
-
 
 
         this.difficulty = difficulty;
@@ -187,22 +190,21 @@ public class Board extends JPanel implements ActionListener {
 
         ball1 = new Ball(1, BALL_HEIGHT, BALL_WIDTH, true, true);
 
-        if (gameMode.equals("Single") && this.numberOfBalls==2) {
+        if (gameMode.equals("Single") && this.numberOfBalls == 2) {
             ball2 = new Ball(2, BALL_HEIGHT, BALL_WIDTH, false, false);
         } else {
             ball2 = null;
         }
 
 
-        if (UDPObject!=null) {
+        if (UDPObject != null) {
             ArrayList<Machine> playersList = UDPObject.getPlayerlist();
             numberOfPlayers = playersList.size();
             try {
                 String ipMy = InetAddress.getLocalHost().getHostAddress();
 
-                for(int i=0; i<playersList.size(); i++)
-                {
-                    if (playersList.get(i).getIp().equals(ipMy)){
+                for (int i = 0; i < playersList.size(); i++) {
+                    if (playersList.get(i).getIp().equals(ipMy)) {
                         playerIndex = i;
                         break;
                     }
@@ -211,20 +213,20 @@ public class Board extends JPanel implements ActionListener {
                 e1.printStackTrace();
             }
         }
-        if((numberOfPlayers==2) || (mode.equals("2Player"))){
+        if ((numberOfPlayers == 2) || (mode.equals("2Player"))) {
             paddle0a = paddle0;
             paddle2a = paddle0;
             paddle1a = paddle1;
             paddle3a = paddle1;
         }
-        if(numberOfPlayers==3){
+        if (numberOfPlayers == 3) {
             paddle0a = paddle0;
             paddle1a = paddle1;
             paddle2a = paddle2;
             paddle3a = paddle1;
 
         }
-        if(numberOfPlayers==4){
+        if (numberOfPlayers == 4) {
             paddle0a = paddle0;
             paddle1a = paddle1;
             paddle2a = paddle2;
@@ -311,16 +313,14 @@ public class Board extends JPanel implements ActionListener {
             g2d.drawString(Integer.toString(player_2_score), pane_x / 2 - 60, pane_y / 2);
             g2d.drawString(Integer.toString(player_3_score), pane_x / 2, pane_y / 2 - 60);
             g2d.drawString(Integer.toString(player_4_score), pane_x / 2 + 60, pane_y / 2);
-        }
-        else if ((numberOfPlayers==2) || (gameMode.equals("2Player"))){
+        } else if ((numberOfPlayers == 2) || (gameMode.equals("2Player"))) {
             g2d.drawString(Integer.toString(player_1_score), pane_x / 2 - 60, pane_y / 2);
             g2d.drawString(Integer.toString(player_2_score), pane_x / 2 + 60, pane_y / 2);
-        }
-        else if (gameMode.equals("Multiplayer")) {
-            g2d.drawString(Integer.toString(player_1_score), pane_x / 2 - 60, pane_y / 2);
-            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 , pane_y / 2 + 60);
-            g2d.drawString(Integer.toString(player_3_score), pane_x / 2 + 60, pane_y / 2);
-            g2d.drawString(Integer.toString(player_4_score), pane_x / 2 , pane_y / 2 - 60);
+        } else if (gameMode.equals("Multiplayer")) {
+            g2d.drawString(Integer.toString(player_1_score), pane_x / 2, pane_y / 2 + 60);
+            g2d.drawString(Integer.toString(player_2_score), pane_x / 2 - 60, pane_y / 2);
+            g2d.drawString(Integer.toString(player_3_score), pane_x / 2, pane_y / 2 - 60);
+            g2d.drawString(Integer.toString(player_4_score), pane_x / 2 + 60, pane_y / 2);
         }
 
         paddleOne_one = new Rectangle2D.Double(0, paddleOneY, PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -354,14 +354,14 @@ public class Board extends JPanel implements ActionListener {
     private void resetBall(String msg) {
         message = msg;
 
-        ball1.updateBallPositions(pane_x/2-10, pane_y/2);
+        ball1.updateBallPositions(pane_x / 2 - 10, pane_y / 2);
         ball1.updateBallSpeed(1.2, 0.9);
-        ball1.updateBallVelocity(1,1);
+        ball1.updateBallVelocity(1, 1);
 
         if (ball2 != null) {
             ball2.updateBallPositions(pane_x / 2 + 10, pane_y / 2);
             ball2.updateBallSpeed(1.2, 0.9);
-            ball2.updateBallVelocity(-1,-1);
+            ball2.updateBallVelocity(-1, -1);
         }
 
     }
@@ -389,7 +389,7 @@ public class Board extends JPanel implements ActionListener {
             }
         }
         JSONObject key_event;
-        if(UDPObject!=null) {
+        if (UDPObject != null) {
             key_event = UDPObject.getKeyEvent();
             if (key_event == null) {
 //                System.out.println("null");
@@ -399,13 +399,16 @@ public class Board extends JPanel implements ActionListener {
                 int key_event_code = key_event.getInt("key_event_code");
                 int playerIndex_others = key_event.getInt("playerIndex");
                 //System.out.println("player index others" + playerIndex_others);
-                if(key_event_code==KeyEvent.VK_SPACE && event_type.equals("Pressed")){Space = true;}
-                else if(key_event_code==KeyEvent.VK_SPACE && event_type.equals("Released")){Space = false;}
-                else if(key_event_code==KeyEvent.VK_ESCAPE && event_type.equals("Pressed")){Esc = true;}
-                else if(key_event_code==KeyEvent.VK_ESCAPE && event_type.equals("Released")){Esc = false;}
-
-                else{
-                    if(event_type.equals("Released")) {
+                if (key_event_code == KeyEvent.VK_SPACE && event_type.equals("Pressed")) {
+                    Space = true;
+                } else if (key_event_code == KeyEvent.VK_SPACE && event_type.equals("Released")) {
+                    Space = false;
+                } else if (key_event_code == KeyEvent.VK_ESCAPE && event_type.equals("Pressed")) {
+                    Esc = true;
+                } else if (key_event_code == KeyEvent.VK_ESCAPE && event_type.equals("Released")) {
+                    Esc = false;
+                } else {
+                    if (event_type.equals("Released")) {
                         if (playerIndex_others == 0) {
                             paddle0.keyReleased(key_event_code);
                         }
@@ -418,7 +421,7 @@ public class Board extends JPanel implements ActionListener {
                         if (playerIndex_others == 3) {
                             paddle3.keyReleased(key_event_code);
                         }
-                    }else{
+                    } else {
                         if (playerIndex_others == 0) {
                             paddle0.keyPressed(key_event_code);
                         }
@@ -478,7 +481,7 @@ public class Board extends JPanel implements ActionListener {
 
         //collision detection
         /*	The math here is generous to the players.
-    		Hitting the side of the paddle still results in a bounce.
+            Hitting the side of the paddle still results in a bounce.
     	*/
         collisionBall(ball1);
 
@@ -783,7 +786,7 @@ public class Board extends JPanel implements ActionListener {
 
         //paddle one_one *****************************************************************************************************************
 
-        if (physics.detectCollisionWithPaddleAndUpdateParameters(BallOldX, BallOldY, paddleOneY, OneOneStop, positiveYOne_one,positiveBallY)) {
+        if (physics.detectCollisionWithPaddleAndUpdateParameters(BallOldX, BallOldY, paddleOneY, OneOneStop, positiveYOne_one, positiveBallY)) {
 
             deltaSpeedX = physics.getDeltaSPEEDPERPENDICULAR();
             deltaSpeedY = physics.getDeltaSPEEDPARRALEL();
@@ -830,20 +833,20 @@ public class Board extends JPanel implements ActionListener {
         }
         // paddle one_two ********************************************************************************************************************
 
-        else if (physics.detectCollisionWithPaddleAndUpdateParameters(0 - BallOldX + pane_x - BALL_HEIGHT, BallOldY, paddleOneOppY, OneTwoStop, positiveYOne_two, positiveBallY )) {
+        else if (physics.detectCollisionWithPaddleAndUpdateParameters(0 - BallOldX + pane_x - BALL_HEIGHT, BallOldY, paddleOneOppY, OneTwoStop, positiveYOne_two, positiveBallY)) {
 
             deltaSpeedX = physics.getDeltaSPEEDPERPENDICULAR();
             deltaSpeedY = physics.getDeltaSPEEDPARRALEL();
             deltaVelocityX = physics.getDeltaVELOCITYPERPENDICULAR();
             deltaVelocityY = physics.getDeltaVELOCITYPARALLEL();
 
-            SpeedX = ball.getBallSpeedX()*(1 + deltaSpeedX);
+            SpeedX = ball.getBallSpeedX() * (1 + deltaSpeedX);
             SpeedY = ball.getBallSpeedY() + deltaSpeedY;
 
             ball.updateBallPositions(pane_x - PADDLE_WIDTH - BALL_HEIGHT, BallOldY);
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 3 || ((playerIndex ==1)&&(numberOfPlayers==2))||((playerIndex ==1)&&(numberOfPlayers==3))) {
+                if (playerIndex == 3 || ((playerIndex == 1) && (numberOfPlayers == 2)) || ((playerIndex == 1) && (numberOfPlayers == 3))) {
 
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_3_score);
 
@@ -884,20 +887,20 @@ public class Board extends JPanel implements ActionListener {
             deltaVelocityX = physics.getDeltaVELOCITYPARALLEL();
             deltaVelocityY = physics.getDeltaVELOCITYPERPENDICULAR();
 
-            SpeedY = ball.getBallSpeedX()*(1 + deltaSpeedY);
+            SpeedY = ball.getBallSpeedX() * (1 + deltaSpeedY);
             SpeedX = ball.getBallSpeedY() + deltaSpeedX;
 
             ball.updateBallPositions(BallOldX, PADDLE_WIDTH);
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))) {
+                if (playerIndex == 2 || ((playerIndex == 0) && (numberOfPlayers == 2))) {
 
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_2_score);
 
                 } else {
 
                     JSONObject ballPosition = UDPObject.getPlayerScoreAndBall();
-                    while(ballPosition == null){
+                    while (ballPosition == null) {
                         try {
                             Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
@@ -933,7 +936,7 @@ public class Board extends JPanel implements ActionListener {
 
             ball.updateBallPositions(BallOldX, pane_y - PADDLE_WIDTH - BALL_HEIGHT);
 
-            SpeedY = ball.getBallSpeedX()*(1 + deltaSpeedY);
+            SpeedY = ball.getBallSpeedX() * (1 + deltaSpeedY);
             SpeedX = ball.getBallSpeedY() + deltaSpeedX;
 
             if (gameMode.equals("Multiplayer")) {
@@ -943,7 +946,7 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject ballPosition = UDPObject.getPlayerScoreAndBall();
-                    while(ballPosition == null){
+                    while (ballPosition == null) {
                         try {
                             Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
@@ -977,7 +980,7 @@ public class Board extends JPanel implements ActionListener {
             deltaVelocityX = physics.getDeltaVELOCITYPERPENDICULAR();
             deltaVelocityY = physics.getDeltaVELOCITYPARALLEL();
 
-            SpeedX = ball.getBallSpeedX()*(1 + deltaSpeedX);
+            SpeedX = ball.getBallSpeedX() * (1 + deltaSpeedX);
             SpeedY = ball.getBallSpeedY() + deltaSpeedY;
 
             ball.updateBallPositions(PADDLE_WIDTH, BallOldY);
@@ -990,7 +993,7 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
-                    while(score_and_balls == null){
+                    while (score_and_balls == null) {
                         try {
                             Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
@@ -1000,13 +1003,14 @@ public class Board extends JPanel implements ActionListener {
                     }
 
                     if (score_and_balls != null) {
+
                         BallX = score_and_balls.getDouble("b_x");
                         BallY = score_and_balls.getDouble("b_y");
                         SpeedX = score_and_balls.getDouble("B_X");
                         SpeedY = score_and_balls.getDouble("B_Y");
                         deltaVelocityX = score_and_balls.getDouble("v_x");
                         deltaVelocityY = score_and_balls.getDouble("v_y");
-                        player_1_score = score_and_balls.getInt("p_score");
+                        player_2_score = score_and_balls.getInt("p_score");
                         UDPObject.resetBallAndScore();
 
                         ball.updateBallPositions(BallX, BallY);
@@ -1023,20 +1027,20 @@ public class Board extends JPanel implements ActionListener {
             deltaVelocityX = physics.getDeltaVELOCITYPERPENDICULAR();
             deltaVelocityY = physics.getDeltaVELOCITYPARALLEL();
 
-            SpeedX = ball.getBallSpeedX()*(1 + deltaSpeedX);
+            SpeedX = ball.getBallSpeedX() * (1 + deltaSpeedX);
             SpeedY = ball.getBallSpeedY() + deltaSpeedY;
 
             ball.updateBallPositions(pane_x - PADDLE_WIDTH - BALL_HEIGHT, BallOldY);
 
+
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 3 || ((playerIndex == 1)&&(numberOfPlayers==2))||((playerIndex == 1)&&(numberOfPlayers==3))) {
+                if (playerIndex == 3 || ((playerIndex == 1) && (numberOfPlayers == 2)) || ((playerIndex == 1) && (numberOfPlayers == 3))) {
 
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_3_score);
 
-
                 } else {
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
-                    while(score_and_balls == null){
+                    while (score_and_balls == null) {
                         try {
                             Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
@@ -1047,6 +1051,7 @@ public class Board extends JPanel implements ActionListener {
 
 
                     if (score_and_balls != null) {
+
                         BallX = score_and_balls.getDouble("b_x");
                         BallY = score_and_balls.getDouble("b_y");
                         SpeedX = score_and_balls.getDouble("B_X");
@@ -1054,6 +1059,7 @@ public class Board extends JPanel implements ActionListener {
                         deltaVelocityX = score_and_balls.getDouble("v_x");
                         deltaVelocityY = score_and_balls.getDouble("v_y");
                         player_3_score = score_and_balls.getInt("p_score");
+
                         UDPObject.resetBallAndScore();
 
                         ball.updateBallPositions(BallX, BallY);
@@ -1070,20 +1076,20 @@ public class Board extends JPanel implements ActionListener {
             deltaVelocityX = physics.getDeltaVELOCITYPARALLEL();
             deltaVelocityY = physics.getDeltaVELOCITYPERPENDICULAR();
 
-            SpeedY = ball.getBallSpeedX()*(1 + deltaSpeedY);
+            SpeedY = ball.getBallSpeedX() * (1 + deltaSpeedY);
             SpeedX = ball.getBallSpeedY() + deltaSpeedX;
 
             ball.updateBallPositions(BallOldX, PADDLE_WIDTH);
 
             if (gameMode.equals("Multiplayer")) {
-                if (playerIndex == 2 || ((playerIndex == 0)&&(numberOfPlayers==2))) {
+                if (playerIndex == 2 || ((playerIndex == 0) && (numberOfPlayers == 2))) {
 
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_2_score);
 
                 } else {
 
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
-                    while(score_and_balls == null){
+                    while (score_and_balls == null) {
                         try {
                             Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
@@ -1093,6 +1099,7 @@ public class Board extends JPanel implements ActionListener {
                     }
 
                     if (score_and_balls != null) {
+
                         BallX = score_and_balls.getDouble("b_x");
                         BallY = score_and_balls.getDouble("b_y");
                         SpeedX = score_and_balls.getDouble("B_X");
@@ -1116,7 +1123,7 @@ public class Board extends JPanel implements ActionListener {
             deltaVelocityX = physics.getDeltaVELOCITYPARALLEL();
             deltaVelocityY = physics.getDeltaVELOCITYPERPENDICULAR();
 
-            SpeedY = ball.getBallSpeedX()*(1 + deltaSpeedY);
+            SpeedY = ball.getBallSpeedX() * (1 + deltaSpeedY);
             SpeedX = ball.getBallSpeedY() + deltaSpeedX;
 
             ball.updateBallPositions(BallOldX, pane_y - PADDLE_WIDTH - BALL_HEIGHT);
@@ -1129,7 +1136,7 @@ public class Board extends JPanel implements ActionListener {
                 } else {
 
                     JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
-                    while(score_and_balls == null){
+                    while (score_and_balls == null) {
                         try {
                             Thread.sleep(threadtimeout);
                         } catch (InterruptedException e1) {
@@ -1139,6 +1146,7 @@ public class Board extends JPanel implements ActionListener {
                     }
 
                     if (score_and_balls != null) {
+
                         BallX = score_and_balls.getDouble("b_x");
                         BallY = score_and_balls.getDouble("b_y");
                         SpeedX = score_and_balls.getDouble("B_X");
