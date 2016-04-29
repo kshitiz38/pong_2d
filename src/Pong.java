@@ -23,7 +23,7 @@ public class Pong extends JFrame {
 
 
         this.udp = udp;
-        Board board = new Board("Multiplayer",udp);
+        Board board = new Board("Multiplayer", udp, "Hard", 1);
         add(board);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,9 +42,9 @@ public class Pong extends JFrame {
 
     }
 
-    public Pong(String gameMode) {
+    public Pong(String gameMode, String difficulty, int balls) {
 
-        Board board = new Board(gameMode,udp);
+        Board board = new Board(gameMode, udp, difficulty, balls);
         add(board);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

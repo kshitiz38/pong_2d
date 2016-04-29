@@ -32,8 +32,8 @@ import javax.swing.border.LineBorder;
 public class GameMenuOne extends JFrame {
 
     JPanel current;
-    public String difficulty;
-    public int numberOfBalls;
+    public String difficulty = "Easy";
+    public int numberOfBalls = 1;
 
     public int port_Lobby = 9504;//default port number
 
@@ -199,7 +199,7 @@ public class GameMenuOne extends JFrame {
             label.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    new Pong("Single");
+                    new Pong("Single", difficulty, numberOfBalls);
                 }
             });
 
@@ -213,7 +213,7 @@ public class GameMenuOne extends JFrame {
             label1.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    new Pong("2Player");
+                    new Pong("2Player", difficulty, numberOfBalls);
                 }
             });
 
@@ -273,6 +273,7 @@ public class GameMenuOne extends JFrame {
             for (int i=0; i<3; i++) {
                 level.addItem(levels[i]);
             }
+            level.setSelectedItem(difficulty);
             level.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -299,6 +300,7 @@ public class GameMenuOne extends JFrame {
             for (int i=0; i<2; i++) {
                 balls.addItem(ballNumber[i]);
             }
+            balls.setSelectedItem(numberOfBalls);
             balls.setSize(100,40);
             balls.addActionListener(new ActionListener() {
                 @Override
