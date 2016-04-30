@@ -681,13 +681,24 @@ public class Board extends JPanel implements ActionListener {
         if (gameMode.equals("Single") || gameMode.equals("2Player")) {
             if (ball2 != null) {
                 collisionBall(ball2);
-            } else if (ball3 != null) {
+            }
+            if (ball3 != null) {
                 collisionBall(ball3);
             }
         }
 
         if (ball2 != null && (new PhysicsCollision(BALL_HEIGHT, BALL_WIDTH)).detectCollisionWithOtherBallAndUpdateParameters(ball1, ball2)) {
             ball1.updateBallPositions(ball1.getBallPositionX() + ball1.getBallSpeedX() * ball1.getBallVelocityX(), ball1.getBallPositionY() + ball1.getBallSpeedY() * ball1.getBallVelocityY());
+            ball2.updateBallPositions(ball2.getBallPositionX() + ball2.getBallSpeedX() * ball2.getBallVelocityX(), ball2.getBallPositionY() + ball2.getBallSpeedY() * ball2.getBallVelocityY());
+        }
+
+        if (ball3 != null && (new PhysicsCollision(BALL_HEIGHT, BALL_WIDTH)).detectCollisionWithOtherBallAndUpdateParameters(ball1, ball3)) {
+            ball1.updateBallPositions(ball1.getBallPositionX() + ball1.getBallSpeedX() * ball1.getBallVelocityX(), ball1.getBallPositionY() + ball1.getBallSpeedY() * ball1.getBallVelocityY());
+            ball3.updateBallPositions(ball3.getBallPositionX() + ball3.getBallSpeedX() * ball3.getBallVelocityX(), ball3.getBallPositionY() + ball3.getBallSpeedY() * ball3.getBallVelocityY());
+        }
+
+        if (ball2 != null && ball3 != null&& (new PhysicsCollision(BALL_HEIGHT, BALL_WIDTH)).detectCollisionWithOtherBallAndUpdateParameters(ball3, ball2)) {
+            ball1.updateBallPositions(ball3.getBallPositionX() + ball3.getBallSpeedX() * ball3.getBallVelocityX(), ball3.getBallPositionY() + ball3.getBallSpeedY() * ball3.getBallVelocityY());
             ball2.updateBallPositions(ball2.getBallPositionX() + ball2.getBallSpeedX() * ball2.getBallVelocityX(), ball2.getBallPositionY() + ball2.getBallSpeedY() * ball2.getBallVelocityY());
         }
 

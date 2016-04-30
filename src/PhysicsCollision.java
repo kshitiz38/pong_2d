@@ -34,7 +34,7 @@ public class PhysicsCollision {
         if (pane_x==pane_y) {
             this.pane_length = pane_x;
         } else {
-            System.out.println("dimensions are different"+(pane_x-pane_y));
+//            System.out.println("dimensions are different"+(pane_x-pane_y));
         }
 
         this.PADDLE_WIDTH = PADDLE_WIDTH;

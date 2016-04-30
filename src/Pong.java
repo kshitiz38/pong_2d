@@ -35,7 +35,8 @@ public class Pong extends JFrame {
         double height = screenSize.getHeight();
 
         if (width<=1400) setSize(board.WINDOW_X, board.WINDOW_Y+23);
-        else setSize(board.WINDOW_X, board.WINDOW_Y+29);
+        else if (width<= 2000)setSize(board.WINDOW_X, board.WINDOW_Y+29);
+        else setSize(board.WINDOW_X, board.WINDOW_Y+28);
 
         setLocationRelativeTo(null);
         setTitle("Pong Game 2D");
@@ -61,7 +62,8 @@ public class Pong extends JFrame {
         double height = screenSize.getHeight();
 
         if (width<=1400) setSize(board.WINDOW_X, board.WINDOW_Y+23);
-        else setSize(board.WINDOW_X, board.WINDOW_Y+29);
+        else if (width<= 2000)setSize(board.WINDOW_X, board.WINDOW_Y+29);
+        else setSize(board.WINDOW_X, board.WINDOW_Y+28);
 
         setLocationRelativeTo(null);
         setTitle("Pong Game 2D");
