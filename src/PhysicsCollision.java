@@ -20,6 +20,11 @@ public class PhysicsCollision {
     double deltaVELOCITYPERPENDICULAR = 1;
     double deltaVELOCITYPARALLEL = 1;
 
+    public PhysicsCollision(int BALL_HEIGHT, int BALL_WIDTH) {
+        this.BALL_HEIGHT = BALL_HEIGHT;
+        this.BALL_WIDTH = BALL_WIDTH;
+    }
+
     public PhysicsCollision(int pane_x, int pane_y, double PADDLE_SPEED, int PADDLE_WIDTH, int PADDLE_HEIGHT, int BALL_HEIGHT, int BALL_WIDTH) {
 
         if (pane_x==pane_y) {
@@ -64,6 +69,54 @@ public class PhysicsCollision {
         if (ballPositionPerpendicular < 0) {
 
             deltaVELOCITYPERPENDICULAR = -1;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean detectCollisionWithOtherBallAndUpdateParameters(Ball ball1, Ball ball2) {
+
+
+        if ( Math.sqrt(Math.pow(ball1.getBallPositionX() - ball2.getBallPositionX(),2) + Math.pow(ball1.getBallPositionY() - ball2.getBallPositionY(),2))<= BALL_HEIGHT) {
+
+            double ball1VX = ball1.getBallVelocityX();
+            double ball1VY = ball2.getBallVelocityY();
+            double ball2VX = ball2.getBallVelocityX();
+            double ball2VY = ball2.getBallVelocityY();
+
+            double ball1SX = ball1.getBallSpeedX();
+            double ball1SY = ball1.getBallSpeedY();
+            double ball2SX = ball2.getBallSpeedX();
+            double ball2SY = ball2.getBallSpeedY();
+
+            if(ball1VX * ball2VX * ball1VY * ball2VY==-1) {
+                if (ball1VX*ball2VX==-1) {
+                    ball1.updateBallVelocity(ball1VX*-1, ball1VY);
+                    ball2.updateBallVelocity(ball2VX*-1, ball2VY);
+                } else if (ball1VY*ball2VY==-1) {
+                    ball1.updateBallVelocity(ball1VX, ball1VY*-1);
+                    ball2.updateBallVelocity(ball2VX, ball2VY*-1);
+                }
+            } else if (ball1VX*ball2VX==-1 && ball1VY*ball2VY==-1) {
+                ball1.updateBallVelocity(ball1VX*-1, ball1VY*-1);
+                ball2.updateBallVelocity(ball2VX*-1, ball2VY*-1);
+            } else {
+                if (ball1SX > ball2SX && ball1SY > ball2SX) {
+                    ball1.updateBallSpeed(ball2SX,ball2SY);
+                    ball2.updateBallSpeed(ball1SX, ball1SY);
+                } else if (ball1SX > ball2SX && ball1SY < ball2SY ) {
+                    ball1.updateBallSpeed(ball2SX, ball1SY);
+                    ball2.updateBallSpeed(ball1SX, ball2SY);
+                } else if (ball1SX < ball2SX && ball1SY > ball2SY) {
+                    ball1.updateBallSpeed(ball1SX, ball2SY);
+                    ball2.updateBallSpeed(ball2SX, ball1SY);
+                } else if (ball1SX < ball1SY && ball1SY < ball2SY) {
+                    ball1.updateBallSpeed(ball2SX, ball2SY);
+                    ball2.updateBallSpeed(ball1SX, ball1SY);
+                }
+            }
 
             return true;
         }

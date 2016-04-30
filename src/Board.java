@@ -34,6 +34,7 @@ public class Board extends JPanel implements ActionListener {
     private int PADDLE_WIDTH = 8;
     private int PADDLE_HEIGHT = 60;
     private double PADDLE_SPEED = 2;
+    private double PADDLE_SPEED_ORIGINAL = 2;
     private double PADDLE_SPEED_AI = 2;
 
     private String message = "";
@@ -111,6 +112,10 @@ public class Board extends JPanel implements ActionListener {
     private boolean flag = false;
 
     private int numberOfPlayers;
+    private int iterationPower;
+    private Ball ball3;
+    private int timerSpecialPower = 0 ;
+
 
     public AttributedString getAttributeString(String string){
         Font font = new Font("Arial", Font.PLAIN, 40);
@@ -206,10 +211,10 @@ public class Board extends JPanel implements ActionListener {
             PADDLE_SPEED_AI = 2.5;
         }
 
-        ball1 = new Ball(1, BALL_HEIGHT, BALL_WIDTH, true, true);
+        ball1 = new Ball(1, BALL_HEIGHT, BALL_WIDTH, true, true, "ball");
 
         if (gameMode.equals("Single") && this.numberOfBalls == 2) {
-            ball2 = new Ball(2, BALL_HEIGHT, BALL_WIDTH, false, false);
+            ball2 = new Ball(2, BALL_HEIGHT, BALL_WIDTH, false, false, "ball");
         } else {
             ball2 = null;
         }
@@ -431,6 +436,27 @@ public class Board extends JPanel implements ActionListener {
             ball2.drawBall(g2d);
         }
 
+//        if (timerSpecialPower%6000==1000) {
+//            ball3 = new Ball(3,BALL_HEIGHT,BALL_WIDTH,false,false,"SpecialSpeed");
+//            ball3.updateBallPositions(pane_x/2, pane_y/2);
+//            ball3.updateBallSpeed(1.2, 0.9);
+//            ball3.updateBallVelocity(-1, -1);
+//        } else if (timerSpecialPower%6000==4000) {
+//            ball3 = new Ball(3,BALL_HEIGHT,BALL_WIDTH,false,false,"SpecialLife");
+//            ball3.updateBallPositions(pane_x/2, pane_y/2);
+//            ball3.updateBallSpeed(1.2, 0.9);
+//            ball3.updateBallVelocity(-1, -1);
+//        } else if(iterationPower==800) {
+//            PADDLE_SPEED = PADDLE_SPEED_ORIGINAL;
+////        }
+//
+//        if (ball3 != null) {
+//            ball3.drawBall(g2d);
+//        }
+//
+//        timerSpecialPower++;
+//        iterationPower++;
+
         //g2d.draw(ball);
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
@@ -603,13 +629,23 @@ public class Board extends JPanel implements ActionListener {
         //collision detection
         /*	The math here is generous to the players.
             Hitting the side of the paddle still results in a bounce.
-    	*/
+        */
+
+
         collisionBall(ball1);
 
         if (gameMode.equals("Single")) {
             if (ball2 != null) {
                 collisionBall(ball2);
             }
+//            else if (ball3 != null) {
+//                collisionBall(ball3);
+//            }
+        }
+
+        if (ball2!=null && (new PhysicsCollision(BALL_HEIGHT, BALL_WIDTH)).detectCollisionWithOtherBallAndUpdateParameters(ball1, ball2)){
+            ball1.updateBallPositions(ball1.getBallPositionX() + ball1.getBallSpeedX()*ball1.getBallVelocityX(), ball1.getBallPositionY() + ball1.getBallSpeedY()*ball1.getBallVelocityY());
+            ball2.updateBallPositions(ball2.getBallPositionX() + ball2.getBallSpeedX()*ball2.getBallVelocityX(), ball2.getBallPositionY() + ball2.getBallSpeedY()*ball2.getBallVelocityY());
         }
 
         player_1_3_score = player_1_score + player_3_score;
@@ -1327,6 +1363,23 @@ public class Board extends JPanel implements ActionListener {
             SpeedY = ball.getBallSpeedX() * (1 + deltaSpeedY);
             SpeedX = ball.getBallSpeedY() + deltaSpeedX;
 
+//            if (gameMode.equals("Single")) {
+//                if (ball.getType().equals("SpecialSpeed")) {
+//                    ball.updateBallPositions(999,999);
+//                    PADDLE_SPEED *= 2;
+//                    iterationPower = 0;
+//                    ball = null;
+//                    return;
+//                } else if (ball.getType().equals("SpecialLife")){
+//                    ball.updateBallPositions(999,999);
+//                    player_1_score--;
+//                    iterationPower = 0;
+//                    ball = null;
+//                    return;
+//                }
+//            }
+
+
             if (gameMode.equals("Multiplayer")) {
 
                 if (playerIndex == 0) {
@@ -1553,9 +1606,9 @@ public class Board extends JPanel implements ActionListener {
             }
 
         } else {
+
             deltaVelocityX = 1;
             deltaVelocityY = 1;
-
             SpeedX = ball.getBallSpeedX();
             SpeedY = ball.getBallSpeedY();
         }
