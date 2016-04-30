@@ -1,6 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
-
+/*
+This is the code used for making the lobby server GUI.
+ */
 public class GridBagLayoutDemo extends JWindow{
     final static boolean shouldFill = true;
     final static boolean shouldWeightX = true;

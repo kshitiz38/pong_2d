@@ -6,6 +6,9 @@ import java.awt.event.KeyEvent;
  * @author Nick
  *
  */
+/*
+Paddles class is for the instantiation of a single paddle used in the game and includes variou key listeners on it.
+ */
 public class Paddles {
     public int playerIndex;
     public boolean Left = false;

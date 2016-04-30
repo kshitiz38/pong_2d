@@ -20,14 +20,9 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author Kshitiz Sharma
+This is the class for the menu of the game and provides user with various options like Options for the game, Game mode for the game,
+Achievements of the user, etc.
+Options present the user with the option to change the number of balls and the difficulty level of AI.
  */
 public class GameMenuOne extends JFrame {
 

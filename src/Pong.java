@@ -12,7 +12,9 @@
 import javax.swing.JFrame;
 import java.awt.*;
 
-
+/*
+Pong class provides user with screen to play the game and brings up the game arena.
+ */
 public class Pong extends JFrame {
 
     //suppresses warning

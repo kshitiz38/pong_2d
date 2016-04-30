@@ -4,6 +4,10 @@ import java.awt.geom.Ellipse2D;
 /**
  * Created by Kshitiz Sharma on 28-Apr-16.
  */
+/*
+It is the class for making the Ball object and is used in Board.java
+ It provides the various parameters of the ball object.
+ */
 public class Ball {
 
     int BALL_HEIGHT;

@@ -9,6 +9,11 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+/*
+This is the class for networking which includes code for sending the data packets to all the players connected on the network.
+It also includes method for sending and receiving the acknowledgement messages to the user who sent the message.
+This is also the class for GUI for lobby server and is the main class for networking.
+ */
 
 
 public class UDP implements Runnable, WindowListener, ActionListener {

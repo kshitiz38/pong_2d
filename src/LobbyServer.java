@@ -5,7 +5,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
-
+/*
+Lobby server is the class for making the lobby in the starting of the game and gives us the player list of all the players in the game
+ It is updated at various times by the UDP.java
+ */
 public class LobbyServer {//implements Runnable {//Lobby server will be hosted on any one player and once game is started, it is not even needed
 //    private static final int Group_Port = 1235; //Lobby Port number
     private ArrayList<Machine> groupMembers = new ArrayList<>(); //list
