@@ -23,17 +23,26 @@ public class Ball {
     boolean ballPositiveX;
     boolean ballPositiveY;
 
-    public Ball(int id, int BALL_HEIGHT, int BALL_WIDTH, boolean ballPositiveX, boolean ballPositiveY) {
+    String type;
+
+    public Ball(int id, int BALL_HEIGHT, int BALL_WIDTH, boolean ballPositiveX, boolean ballPositiveY, String type) {
         this.id = id;
         this.BALL_HEIGHT = BALL_HEIGHT;
         this.BALL_WIDTH = BALL_WIDTH;
 
         this.ballPositiveX = ballPositiveX;
         this.ballPositiveY = ballPositiveY;
+
+        this.type = type;
     }
 
     public void drawBall(Graphics2D g2d) {
         Ellipse2D.Double ball = new Ellipse2D.Double(ball_x, ball_y, BALL_WIDTH, BALL_HEIGHT);
+        if (type.equals("SpecialSpeed")) {
+            g2d.setColor(Color.BLUE);
+        } else if (type.equals("SpecialLife")) {
+            g2d.setColor(Color.RED);
+        }
         g2d.fill(ball);
         g2d.draw(ball);
     }
@@ -80,4 +89,5 @@ public class Ball {
     public boolean getBallPositiveY(){
         return ballPositiveY;
     }
+    public String getType() {return type;}
 }
