@@ -446,7 +446,7 @@ public class Board extends JPanel implements ActionListener {
             ball2.drawBall(g2d);
         }
 
-        if (gameMode.equals("Single")) {
+        if (gameMode.equals("Single") || gameMode.equals("2Player")) {
             if (timerSpecialPower % 8000 == 1000) {
                 ball3 = new Ball(3, BALL_HEIGHT, BALL_WIDTH, false, false, "SpecialSpeed");
                 powerUsed = false;
@@ -678,7 +678,7 @@ public class Board extends JPanel implements ActionListener {
 
         collisionBall(ball1);
 
-        if (gameMode.equals("Single")) {
+        if (gameMode.equals("Single") || gameMode.equals("2Player")) {
             if (ball2 != null) {
                 collisionBall(ball2);
             } else if (ball3 != null) {
@@ -1410,7 +1410,7 @@ public class Board extends JPanel implements ActionListener {
             SpeedY = ball.getBallSpeedX() * (1 + deltaSpeedY);
             SpeedX = ball.getBallSpeedY() + deltaSpeedX;
 
-            if (gameMode.equals("Single")) {
+            if (gameMode.equals("Single") || gameMode.equals("2Player")) {
                 if (ball.getType().equals("SpecialSpeed")) {
                     ball.updateBallPositions(999, 999);
                     PADDLE_SPEED *= 2;
