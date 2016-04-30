@@ -413,6 +413,7 @@ public class Board extends JPanel implements ActionListener {
             g2d.drawString("   " + winMsg, pane_x / 2 - (140 + message.length() * 4), 220);
             Space = true;
             winMsg = null;
+            resetScore();
         }
 
         paddleOne_one = new Rectangle2D.Double(0, paddleOneY, PADDLE_WIDTH, PADDLE_HEIGHT);
@@ -715,15 +716,24 @@ public class Board extends JPanel implements ActionListener {
         } else {
             if (player_1_score >= MAX_SCORE) {
                 TwoTwoPlaying = 0;
+                TwoTwoStop = true;
+                paddleTwoOppX = -100;
             }
             if (player_2_score >= MAX_SCORE) {
                 OneOnePlaying = 0;
+                OneOneStop = true;
+                paddleOneY = -100;
+
             }
             if (player_3_score >= MAX_SCORE) {
                 TwoOnePlaying = 0;
+                TwoOneStop = true;
+                paddleTwoX = -100;
             }
             if (player_4_score >= MAX_SCORE) {
                 OneTwoPlaying = 0;
+                OneTwoStop = true;
+                paddleOneOppY = -100;
             }
             if ((OneOnePlaying + OneTwoPlaying + TwoOnePlaying + TwoTwoPlaying) == 1) {
                 if (OneOnePlaying == 1) {
@@ -744,6 +754,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public void paddleAI_One() {
+        paddleOneY=paddleOneOppY;
         if (paddleOneY + PADDLE_HEIGHT / 2 > ball1.ball_y) {
             if (paddleOneY > 0) {
                 paddleOneY -= PADDLE_SPEED_AI;
@@ -769,6 +780,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public void paddleAI_Two() {
+        paddleTwoX=paddleTwoOppX;
         if (paddleTwoX + PADDLE_HEIGHT / 2 > ball1.ball_x) {
             if (paddleTwoX > 0) {
                 paddleTwoX -= PADDLE_SPEED_AI;
