@@ -24,7 +24,7 @@ public class Board extends JPanel implements ActionListener {
 
     //Game constants
     public int threadtimeout = 3;
-    public int frametimer = 4;
+    public int frametimer = 5;
     public int WINDOW_X = 650;
     public int WINDOW_Y = 650;
     private int MAX_SCORE = 5;
@@ -241,7 +241,6 @@ public class Board extends JPanel implements ActionListener {
             paddle0a = paddle0;
             paddle1a = paddle1;
             paddle2a = paddle2;
-            paddle3a = paddle1;
 
         }
         if (numberOfPlayers == 4) {
@@ -561,26 +560,42 @@ public class Board extends JPanel implements ActionListener {
 
         }
 
+        if(numberOfPlayers==3)paddleAI_OneTwo();
+
+        //playersList=UDPObject.getPlayerlist();
+        if (gameMode.equals("Multiplayer")) {
+            if(numberOfPlayers==2){
+                if(playersList.get(0)==null){
+                    paddle0a = null;
+                    paddle2a = null;
+                    paddleAI_Two();
+                }else if(playersList.get(1)==null){
+                    paddle1a = null;
+                    paddle3a = null;
+                    paddleAI_One();
+                }
+            }
+            for (int i = 0; i<playersList.size(); i++){
+                if(playersList.get(i)==null) {
+                    if (i==0) {
+                        paddleAI_TwoTwo();
+                        paddle0a=null;
+                    } else if (i==1) {
+                        paddleAI_OneOne();
+                        paddle1a=null;
+                    } else if (i==2) {
+                        paddleAI_TwoOne();
+                        paddle2a=null;
+                    } else if (i==3) {
+                        paddleAI_OneOne();
+                        paddle3a=null;
+                    }
+                }
+            }
+        }
 
         //apply input from key
         InputApply(gameMode);
-
-//        if (gameMode.equals("Multiplayer")) {
-//
-//            for (int i = 0; i<playersList.size(); i++){
-//                if(playersList.get(i)==null) {
-//                    if (i==0) {
-//                        paddleAI_TwoTwo();
-//                    } else if (i==1) {
-//                        paddleAI_OneOne();
-//                    } else if (i==2) {
-//                        paddleAI_TwoOne();
-//                    } else if (i==3) {
-//                        paddleAI_OneOne();
-//                    }
-//                }
-//            }
-//        }
 
 
 
@@ -597,8 +612,8 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
-        player_1_3_score = player_1_score+player_3_score;
-        player_2_4_score = player_2_score+player_4_score;
+        player_1_3_score = player_1_score + player_3_score;
+        player_2_4_score = player_2_score + player_4_score;
         if((numberOfPlayers==2) || (gameMode.equals("2Player"))){
             if(player_1_3_score>=2*MAX_SCORE){
                 winMsg="Player 2 wins";
@@ -633,6 +648,56 @@ public class Board extends JPanel implements ActionListener {
         repaint();
 
 
+    }
+
+    public void paddleAI_One(){
+        if (paddleOneY + PADDLE_HEIGHT / 2 > ball1.ball_y) {
+            if (paddleOneY > 0) {
+                paddleOneY -= PADDLE_SPEED_AI;
+                paddleOneOppY -= PADDLE_SPEED_AI;
+            }
+            positiveYOne_one = false;
+            positiveYOne_two = false;
+            OneOneStop = false;
+            OneTwoStop = false;
+        } else if (paddleOneY + PADDLE_HEIGHT / 2 == ball1.ball_y) {
+            OneOneStop = true;
+            OneTwoStop = true;
+        } else {
+            if (paddleOneY < pane_y - PADDLE_HEIGHT) {
+                paddleOneY += PADDLE_SPEED_AI;
+                paddleOneOppY += PADDLE_SPEED_AI;
+            }
+            positiveYOne_one = true;
+            positiveYOne_two = true;
+            OneOneStop = false;
+            OneTwoStop = false;
+        }
+    }
+
+    public void paddleAI_Two(){
+        if (paddleTwoX + PADDLE_HEIGHT / 2 > ball1.ball_x) {
+            if (paddleTwoX > 0) {
+                paddleTwoX -= PADDLE_SPEED_AI;
+                paddleTwoOppX -= PADDLE_SPEED_AI;
+            }
+            positiveXTwo_one = false;
+            positiveXTwo_two = false;
+            TwoOneStop = false;
+            TwoTwoStop = false;
+        } else if (paddleTwoX + PADDLE_HEIGHT / 2 == ball1.ball_x) {
+            TwoOneStop = true;
+            TwoTwoStop = true;
+        } else {
+            if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
+                paddleTwoX += PADDLE_SPEED_AI;
+                paddleTwoOppX += PADDLE_SPEED_AI;
+            }
+            positiveXTwo_one = true;
+            positiveXTwo_two = true;
+            TwoOneStop = false;
+            TwoTwoStop = false;
+        }
     }
 
     public void paddleAI_OneOne() {
@@ -949,118 +1014,125 @@ public class Board extends JPanel implements ActionListener {
         else {
 
             //Player 1
-            if ((paddle1a.S == true)) {
+            if (paddle1a != null) {
+                if ((paddle1a.S == true)) {
 
-                positiveYOne_one = true;
-                //positiveYOne_two = true;
-                OneOneStop = false;
-                //OneTwoStop = false;
+                    positiveYOne_one = true;
+                    //positiveYOne_two = true;
+                    OneOneStop = false;
+                    //OneTwoStop = false;
 
-                if (paddleOneY < pane_y - PADDLE_HEIGHT) {
-                    paddleOneY += PADDLE_SPEED;
-                    //paddleOneOppY += PADDLE_SPEED;
+                    if (paddleOneY < pane_y - PADDLE_HEIGHT) {
+                        paddleOneY += PADDLE_SPEED;
+                        //paddleOneOppY += PADDLE_SPEED;
+                    }
+                } else if ((paddle1a.W == true)) {
+
+                    positiveYOne_one = false;
+                    //positiveYOne_two = false;
+                    OneOneStop = false;
+                    //OneTwoStop = false;
+
+                    if (paddleOneY > 0) {
+                        paddleOneY -= PADDLE_SPEED;
+                        //paddleOneOppY -= PADDLE_SPEED;
+                    }
+                } else {
+                    OneOneStop = true;
+                    //OneTwoStop = true;
                 }
-            } else if ((paddle1a.W == true)) {
-
-                positiveYOne_one = false;
-                //positiveYOne_two = false;
-                OneOneStop = false;
-                //OneTwoStop = false;
-
-                if (paddleOneY > 0) {
-                    paddleOneY -= PADDLE_SPEED;
-                    //paddleOneOppY -= PADDLE_SPEED;
-                }
-            } else {
-                OneOneStop = true;
-                //OneTwoStop = true;
             }
 
 
             //Player 0
-            if (paddle0a.Left == true) {
+            if (paddle0a != null) {
+                if (paddle0a.Left == true) {
 
-                //positiveXTwo_one = false;
-                positiveXTwo_two = false;
-                //TwoOneStop = false;
-                TwoTwoStop = false;
+                    //positiveXTwo_one = false;
+                    positiveXTwo_two = false;
+                    //TwoOneStop = false;
+                    TwoTwoStop = false;
 
-                if (paddleTwoOppX > 0) {
-                    //paddleTwoX -= PADDLE_SPEED;
-                    paddleTwoOppX -= PADDLE_SPEED;
+                    if (paddleTwoOppX > 0) {
+                        //paddleTwoX -= PADDLE_SPEED;
+                        paddleTwoOppX -= PADDLE_SPEED;
+                    }
+                } else if ((paddle0a.Right == true)) {
+
+                    //positiveXTwo_one = true;
+                    positiveXTwo_two = true;
+                    //TwoOneStop = false;
+                    TwoTwoStop = false;
+
+                    if (paddleTwoOppX < pane_x - PADDLE_HEIGHT) {
+                        //paddleTwoX += PADDLE_SPEED;
+                        paddleTwoOppX += PADDLE_SPEED;
+                    }
+                } else {
+                    //TwoOneStop = true;
+                    TwoTwoStop = true;
                 }
-            } else if ((paddle0a.Right == true)) {
-
-                //positiveXTwo_one = true;
-                positiveXTwo_two = true;
-                //TwoOneStop = false;
-                TwoTwoStop = false;
-
-                if (paddleTwoOppX < pane_x - PADDLE_HEIGHT) {
-                    //paddleTwoX += PADDLE_SPEED;
-                    paddleTwoOppX += PADDLE_SPEED;
-                }
-            } else {
-                //TwoOneStop = true;
-                TwoTwoStop = true;
             }
 
             //Player 2
+            if (paddle2a != null) {
+                if (paddle2a.Left == true) {
 
-            if (paddle2a.Left == true) {
+                    positiveXTwo_one = false;
+                    //positiveXTwo_two = false;
+                    TwoOneStop = false;
+                    //TwoTwoStop = false;
 
-                positiveXTwo_one = false;
-                //positiveXTwo_two = false;
-                TwoOneStop = false;
-                //TwoTwoStop = false;
+                    if (paddleTwoX > 0) {
+                        paddleTwoX -= PADDLE_SPEED;
+                        //paddleTwoOppX -= PADDLE_SPEED;
+                    }
+                } else if ((paddle2a.Right == true)) {
 
-                if (paddleTwoX > 0) {
-                    paddleTwoX -= PADDLE_SPEED;
-                    //paddleTwoOppX -= PADDLE_SPEED;
+                    positiveXTwo_one = true;
+                    //positiveXTwo_two = true;
+                    TwoOneStop = false;
+                    //TwoTwoStop = false;
+
+                    if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
+                        paddleTwoX += PADDLE_SPEED;
+                        //paddleTwoOppX += PADDLE_SPEED;
+                    }
+                } else {
+                    TwoOneStop = true;
+                    //TwoTwoStop = true;
                 }
-            } else if ((paddle2a.Right == true)) {
-
-                positiveXTwo_one = true;
-                //positiveXTwo_two = true;
-                TwoOneStop = false;
-                //TwoTwoStop = false;
-
-                if (paddleTwoX < pane_x - PADDLE_HEIGHT) {
-                    paddleTwoX += PADDLE_SPEED;
-                    //paddleTwoOppX += PADDLE_SPEED;
-                }
-            } else {
-                TwoOneStop = true;
-                //TwoTwoStop = true;
             }
 
+
             //Player 4
+            if (paddle3a != null) {
+                if ((paddle3a.S == true)) {
 
-            if ((paddle3a.S == true)) {
+                    //positiveYOne_one = true;
+                    positiveYOne_two = true;
+                    //OneOneStop = false;
+                    OneTwoStop = false;
 
-                //positiveYOne_one = true;
-                positiveYOne_two = true;
-                //OneOneStop = false;
-                OneTwoStop = false;
+                    if (paddleOneOppY < pane_y - PADDLE_HEIGHT) {
+                        //paddleOneY += PADDLE_SPEED;
+                        paddleOneOppY += PADDLE_SPEED;
+                    }
+                } else if ((paddle3a.W == true)) {
 
-                if (paddleOneOppY < pane_y - PADDLE_HEIGHT) {
-                    //paddleOneY += PADDLE_SPEED;
-                    paddleOneOppY += PADDLE_SPEED;
+                    //positiveYOne_one = false;
+                    positiveYOne_two = false;
+                    //OneOneStop = false;
+                    OneTwoStop = false;
+
+                    if (paddleOneOppY > 0) {
+                        //paddleOneY -= PADDLE_SPEED;
+                        paddleOneOppY -= PADDLE_SPEED;
+                    }
+                } else {
+                    //OneOneStop = true;
+                    OneTwoStop = true;
                 }
-            } else if ((paddle3a.W == true)) {
-
-                //positiveYOne_one = false;
-                positiveYOne_two = false;
-                //OneOneStop = false;
-                OneTwoStop = false;
-
-                if (paddleOneOppY > 0) {
-                    //paddleOneY -= PADDLE_SPEED;
-                    paddleOneOppY -= PADDLE_SPEED;
-                }
-            } else {
-                //OneOneStop = true;
-                OneTwoStop = true;
             }
         }
     }
