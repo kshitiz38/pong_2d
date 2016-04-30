@@ -195,6 +195,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                                     arrayList.add(machine);
                                 }
                             }
+                            else{
+                                arrayList.add(null);
+                            }
                         }
                         synchronized (this) {
                             setPlayerlist(arrayList);
@@ -890,6 +893,9 @@ public class UDP implements Runnable, WindowListener, ActionListener {
                                 else {
                                     newarraylist.add(machine1);
                                 }
+                            }
+                            else{
+                                newarraylist.add(null);
                             }
                         }
                         synchronized (this) {
