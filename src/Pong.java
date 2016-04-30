@@ -28,7 +28,12 @@ public class Pong extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        setSize(board.WINDOW_X, board.WINDOW_Y+23);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        double height = screenSize.getHeight();
+
+        if (width<=1400) setSize(board.WINDOW_X, board.WINDOW_Y+23);
+        else setSize(board.WINDOW_X, board.WINDOW_Y+29);
 
         setLocationRelativeTo(null);
         setTitle("Pong Game 2D");
