@@ -239,6 +239,11 @@ public class Board extends JPanel implements ActionListener {
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
             }
+            if(numberOfPlayers==2){
+                playersList.add(2,null);
+                playersList.add(3,null);
+            }
+            if(numberOfPlayers==3){playersList.add(3, null);}
         }
         if ((numberOfPlayers == 2) || (mode.equals("2Player"))) {
             paddle0a = paddle0;
@@ -587,34 +592,45 @@ public class Board extends JPanel implements ActionListener {
         }
 
         if(numberOfPlayers==3)paddleAI_OneTwo();
-        if(UDPObject!=null)
-        playersList=UDPObject.getPlayerlist();
-        if (gameMode.equals("Multiplayer")) {
-            if(numberOfPlayers==2){
-                if(playersList.get(0)==null){
-                    paddle0a = null;
-                    paddle2a = null;
-                    paddleAI_Two();
-                }else if(playersList.get(1)==null){
-                    paddle1a = null;
-                    paddle3a = null;
-                    paddleAI_One();
-                }
+
+        if(gameMode.equals("Multiplayer")) {
+            playersList = UDPObject.getPlayerlist();
+            if (numberOfPlayers == 2) {
+                playersList.add(2, null);
+                playersList.add(3, null);
             }
-            for (int i = 0; i<playersList.size(); i++){
-                if(playersList.get(i)==null) {
-                    if (i==0) {
-                        paddleAI_TwoTwo();
-                        paddle0a=null;
-                    } else if (i==1) {
-                        paddleAI_OneOne();
-                        paddle1a=null;
-                    } else if (i==2) {
-                        paddleAI_TwoOne();
-                        paddle2a=null;
-                    } else if (i==3) {
-                        paddleAI_OneOne();
-                        paddle3a=null;
+            if (numberOfPlayers == 3) {
+                playersList.add(3, null);
+
+            }
+
+            if (gameMode.equals("Multiplayer")) {
+                if (numberOfPlayers == 2) {
+                    if (playersList.get(0) == null) {
+                        paddle0a = null;
+                        paddle2a = null;
+                        paddleAI_Two();
+                    } else if (playersList.get(1) == null) {
+                        paddle1a = null;
+                        paddle3a = null;
+                        paddleAI_One();
+                    }
+                }
+                for (int i = 0; i < numberOfPlayers; i++) {
+                    if (playersList.get(i) == null) {
+                        if (i == 0) {
+                            paddleAI_TwoTwo();
+                            paddle0a = null;
+                        } else if (i == 1) {
+                            paddleAI_OneOne();
+                            paddle1a = null;
+                        } else if (i == 2) {
+                            paddleAI_TwoOne();
+                            paddle2a = null;
+                        } else if (i == 3) {
+                            paddleAI_OneOne();
+                            paddle3a = null;
+                        }
                     }
                 }
             }
@@ -1276,33 +1292,32 @@ public class Board extends JPanel implements ActionListener {
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_4_score);
 
                 } else {
-                    if(playersList.get(3)!=null) {
-                        JSONObject ballPosition = UDPObject.getPlayerScoreAndBall();
-                        while (ballPosition == null) {
-                            try {
-                                Thread.sleep(threadtimeout);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
+                    if(((numberOfPlayers==4)&&(playersList.get(3) != null))||(numberOfPlayers == 2)&&(playersList.get(1)!=null)) {
+                            JSONObject ballPosition = UDPObject.getPlayerScoreAndBall();
+                            while (ballPosition == null) {
+                                try {
+                                    Thread.sleep(threadtimeout);
+                                } catch (InterruptedException e1) {
+                                    e1.printStackTrace();
+                                }
+                                ballPosition = UDPObject.getPlayerScoreAndBall();
                             }
-                            ballPosition = UDPObject.getPlayerScoreAndBall();
-                        }
 
-                        if (ballPosition != null) {
-                            BallX = ballPosition.getDouble("b_x");
-                            BallY = ballPosition.getDouble("b_y");
-                            SpeedX = ballPosition.getDouble("B_X");
-                            SpeedY = ballPosition.getDouble("B_Y");
-                            deltaVelocityX = ballPosition.getDouble("v_x");
-                            deltaVelocityY = ballPosition.getDouble("v_y");
-                            player_4_score = ballPosition.getInt("p_score");
-                            UDPObject.resetBallAndScore();
+                            if (ballPosition != null) {
+                                BallX = ballPosition.getDouble("b_x");
+                                BallY = ballPosition.getDouble("b_y");
+                                SpeedX = ballPosition.getDouble("B_X");
+                                SpeedY = ballPosition.getDouble("B_Y");
+                                deltaVelocityX = ballPosition.getDouble("v_x");
+                                deltaVelocityY = ballPosition.getDouble("v_y");
+                                player_4_score = ballPosition.getInt("p_score");
+                                UDPObject.resetBallAndScore();
 
-                            ball.updateBallPositions(BallX, BallY);
+                                ball.updateBallPositions(BallX, BallY);
+                            }
                         }
-                    }
                 }
             }
-
         }
         // paddle two_one ********************************************************************************************************************
 
@@ -1324,7 +1339,7 @@ public class Board extends JPanel implements ActionListener {
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_3_score);
 
                 } else {
-                    if(playersList.get(2)!=null) {
+                    if((numberOfPlayers==2) && (playersList.get(0)!=null) || (numberOfPlayers!=2)&&(playersList.get(2)!=null)) {
                         JSONObject ballPosition = UDPObject.getPlayerScoreAndBall();
                         while (ballPosition == null) {
                             try {
@@ -1486,7 +1501,7 @@ public class Board extends JPanel implements ActionListener {
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_4_score);
 
                 } else {
-                    if(playersList.get(3)!=null) {
+                    if(((numberOfPlayers==4)&&(playersList.get(3) != null))||(numberOfPlayers == 2)&&(playersList.get(1)!=null)) {
                         JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
                         while (score_and_balls == null) {
                             try {
@@ -1537,7 +1552,7 @@ public class Board extends JPanel implements ActionListener {
                     UDPObject.sendBallAndScore(ball.ball_x, ball.ball_y, SpeedX, SpeedY, deltaVelocityX, deltaVelocityY, ball.id, player_3_score);
 
                 } else {
-                    if(playersList.get(2)!=null) {
+                    if((numberOfPlayers==2) && (playersList.get(0)!=null) || (numberOfPlayers!=2)&&(playersList.get(2)!=null)) {
                         JSONObject score_and_balls = UDPObject.getPlayerScoreAndBall();
                         while (score_and_balls == null) {
                             try {
