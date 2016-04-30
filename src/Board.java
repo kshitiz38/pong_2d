@@ -587,7 +587,7 @@ public class Board extends JPanel implements ActionListener {
         }
 
         if(numberOfPlayers==3)paddleAI_OneTwo();
-
+        if(UDPObject!=null)
         playersList=UDPObject.getPlayerlist();
         if (gameMode.equals("Multiplayer")) {
             if(numberOfPlayers==2){
