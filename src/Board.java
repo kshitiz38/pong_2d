@@ -16,7 +16,11 @@ import java.net.UnknownHostException;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Random;
-
+/*
+Board class is the main class for playing the game
+and all the game updates from score updation to repainting of ball takes place in this class.
+This class is used for the board of the game.
+ */
 public class Board extends JPanel implements ActionListener {
 
 

@@ -1,6 +1,10 @@
 /**
  * Created by Kshitiz Sharma on 28-Apr-16.
  */
+/*
+Physics class includes the equations for the detection of the collision of the ball with a paddle, a wall and with another wall
+It is used in Board.java for implementation of the collision stuff.
+ */
 public class PhysicsCollision {
 
     int PADDLE_WIDTH;

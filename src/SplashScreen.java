@@ -1,16 +1,4 @@
-/**
- * Created by Kshitiz Sharma on 25-Apr-16.
- */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- *
- * @author Kshitiz Sharma
- */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -20,6 +8,9 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+/*
+This is the Splash Screen for the game and provides the user with a loading screen
+ */
 public class SplashScreen extends JWindow {
 
 
